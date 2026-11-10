@@ -118,22 +118,21 @@ let S=null,OWN=[],OWNC=[];
 function botName(){return pick(FIRST)+' '+pick(LAST);}
 function freshCountries(){return WORLD.map((d,i)=>({id:i,name:d.n,short:d.n,a:d.a,cap:M.caps[i],treasury:300,alive:M.caps[i]>=0,leader:botName(),playerPres:false,mobil:0,tax:10}));}
 const freshInv=()=>({bread:5,cfish:0,ammo:40,crate:1,grain:4,fish:0,iron:3,steel:2,wood:1,lead:0,oil:0});
-const freshMarket=()=>{const m={};for(const k in ITEMS)if(ITEMS[k].price)m[k]=ITEMS[k].price;return m;};
 function newGame(name,countryId){
   S={v:3,tick:0,speed:1,owner:M.regions.map(g=>g.home),countries:freshCountries(),
     wars:[],battles:[],news:[],nextBattleId:1,nextWid:2,newsHot:true,
-    market:freshMarket(),election:{candidate:false},bots:JSON.parse(JSON.stringify(BOT_DEF)),
+    election:{candidate:false},bots:JSON.parse(JSON.stringify(BOT_DEF)),
     p:{name:name||'Karys',country:countryId,hp:100,maxHp:100,en:100,maxEn:100,money:120,str:10,xp:0,lvl:1,
       inv:freshInv(),weapons:[{id:1,t:1,dur:WPN[1].dur}],eq:1,useAmmo:true,mult:1,fame:0,dmg:0,
       st:{hits:0,won:0,crates:0,money:0},companies:[],president:false},
     over:false};
-  rebuildOwn();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);
+  rebuildOwn();mkInit();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);
   addNews(`${S.p.name} prisijungė prie šalies ${S.countries[countryId].short} kariuomenės.`,true);
   renderTerritory();save();
 }
 function save(){if(!S||S.__preview)return;try{localStorage.setItem(SAVE,JSON.stringify(S));}catch(e){}}
 function load(){try{const t=localStorage.getItem(SAVE);if(!t)return false;const o=JSON.parse(t);if(!o||o.owner.length!==M.regions.length||o.countries.length!==NC||!o.p.inv)return false;S=o;
-  S.bots=Object.assign(JSON.parse(JSON.stringify(BOT_DEF)),S.bots||{});S.p.inv=Object.assign(freshInv(),S.p.inv);S.market=Object.assign(freshMarket(),S.market);return true;}catch(e){return false;}}
+  S.bots=Object.assign(JSON.parse(JSON.stringify(BOT_DEF)),S.bots||{});S.p.inv=Object.assign(freshInv(),S.p.inv);delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
 function addNews(t,hot){S.news.unshift({t,tick:S.tick,hot:!!hot});if(S.news.length>150)S.news.length=150;if(hot||S.news.length<3)$('#tick1').textContent=t;}
 const C=i=>S.countries[i];
 const col=i=>`rgb(${COLORS[i].join(',')})`;
@@ -146,6 +145,84 @@ const ov=ci=>S.bots.ov[ci]||{mode:'auto',pw:1};
 function timeStr(t){const d=Math.floor(t/24)+1,h=t%24;return `Diena ${d}, ${String(h).padStart(2,'0')}:00`;}
 const near=(a,b)=>{const me=S.p.country;return a===me||b===me;};
 const eqW=()=>S.p.weapons.find(w=>w.id===S.p.eq)||null;
+
+// ---------- market ----------
+const MKW={w1:45,w2:130,w3:320};
+const MKEYS=Object.keys(ITEMS).filter(k=>ITEMS[k].price).concat(Object.keys(MKW));
+const isW=k=>k in MKW,wT=k=>+k[1];
+const mkBase=k=>isW(k)?MKW[k]:ITEMS[k].price;
+const mkName=k=>isW(k)?WPN[wT(k)].n:ITEMS[k].n;
+const mkIcon=k=>isW(k)?`<span class="fw big">${wico(wT(k))}</span>`:ico(k);
+const mkCat=k=>isW(k)?'gear':ITEMS[k].c;
+const mkDesc=k=>isW(k)?`×${WPN[wT(k)].mul} žalos, ${WPN[wT(k)].dur} smūgių`:(ITEMS[k].d||'Žaliava gamybai');
+const WARF={ammo:1,steel:.6,w1:.5,w2:.5,w3:.5,bread:.4,cfish:.4,iron:.4,lead:.6,oil:.5};
+const liq=k=>clamp(Math.round(120/mkBase(k)),1,80);
+const FEE=.02,HIST=168,MAXORD=12;
+const owned=k=>isW(k)?S.p.weapons.filter(w=>w.t===wT(k)).length:S.p.inv[k];
+const p2=v=>v.toFixed(2);
+function mkBook(k){const o=S.mk[k],L=liq(k),a=[],b=[];for(let i=0;i<6;i++){const q=()=>Math.max(1,Math.round(L*(.5+i*.35)*rr(.6,1.4)));
+  a.push([o.m*(1.015+i*.02),q()]);b.push([o.m*(.985-i*.02),q()]);}o.a=a;o.b=b;}
+function mkTarget(k){return mkBase(k)*S.mk[k].trend*(1+(WARF[k]||0)*Math.min(1,S.battles.length/40)*.5);}
+function mkMove(k){const o=S.mk[k];o.m=clamp(o.m*Math.exp(.025*(R()+R()+R()-1.5)+.03*Math.log(mkTarget(k)/o.m)),mkBase(k)*.3,mkBase(k)*4);o.hist.push(+o.m.toFixed(3));if(o.hist.length>HIST)o.hist.shift();mkBook(k);}
+function mkInit(){S.mk={};S.orders=S.orders||[];S.nextOid=S.nextOid||1;S.p.cost=S.p.cost||{};
+  MKEYS.forEach(k=>{S.mk[k]={m:mkBase(k)*rr(.85,1.15),trend:rr(.85,1.15),hist:[],vol:0};for(let i=0;i<72;i++)mkMove(k);});}
+function mkTick(){
+  MKEYS.forEach(k=>{S.mk[k].vol*=.9;mkMove(k);});
+  // bots trade into the player's limit orders
+  for(const o of S.orders){const m=S.mk[o.k],left=o.qty-o.done,gap=o.side==='buy'?(m.a[0][0]-o.price)/m.m:(o.price-m.b[0][0])/m.m;let f=0;
+    if(gap<=0)f=left;else if(gap<.07)f=Math.min(left,Math.floor(liq(o.k)*rr(0,.5)*(1-gap/.07)+R()*(1-gap/.07)));
+    if(f>0){fillOrder(o,f);}}
+  const fin=S.orders.filter(o=>o.done>=o.qty);if(fin.length){S.orders=S.orders.filter(o=>o.done<o.qty);
+    fin.forEach(o=>{addNews(`📈 Užsakymas įvykdytas: ${o.side==='buy'?'nupirkta':'parduota'} ${o.qty}× ${mkName(o.k)} po ₡${p2(o.price)}.`,true);});toast(`Užsakymas įvykdytas: ${fin.map(o=>o.qty+'× '+mkName(o.k)).join(', ')}`,3500);}
+}
+function mkDay(){
+  MKEYS.forEach(k=>{const o=S.mk[k];o.trend=clamp(o.trend*rr(.93,1.075)+(1-o.trend)*.06,.6,1.7);});
+  if(R()<.22){const k=pick(MKEYS),up=R()<.6,o=S.mk[k];o.trend=clamp(o.trend*(up?1.35:.72),.6,1.9);
+    addNews(up?`📈 Rinka: išaugo prekės „${mkName(k)}“ paklausa, kainos kyla.`:`📉 Rinka: prekės „${mkName(k)}“ perteklius, kainos krenta.`,true);}
+}
+function give(k,q){if(isW(k)){for(let i=0;i<q;i++)addWeapon(wT(k));}else S.p.inv[k]+=q;}
+function take(k,q){const p=S.p;if(!isW(k)){p.inv[k]-=q;return 1;}let f=0;
+  for(let i=0;i<q;i++){const c=p.weapons.filter(w=>w.t===wT(k)).sort((a,b)=>(a.id===p.eq)-(b.id===p.eq)||b.dur-a.dur)[0];f+=c.dur/WPN[c.t].dur;p.weapons=p.weapons.filter(w=>w!==c);
+    if(p.eq===c.id){const nx=p.weapons.slice().sort((a,b)=>b.t-a.t)[0];p.eq=nx?nx.id:null;}}return f/q;}
+function addCost(k,q,total){const c=S.p.cost[k]||{q:0,v:0};c.q+=q;c.v+=total;S.p.cost[k]=c;}
+function subCost(k,q){const c=S.p.cost[k];if(!c)return;const r=Math.max(0,1-q/Math.max(c.q,q));c.q=Math.max(0,c.q-q);c.v*=r;if(c.q<=0)delete S.p.cost[k];}
+// walk the book: what does q units cost (buy) or return (sell) right now
+function quote(k,side,q){const lv=side==='buy'?S.mk[k].a:S.mk[k].b;let left=q,total=0;for(const [pr,n] of lv){const t=Math.min(left,n);total+=t*pr;left-=t;if(!left)break;}
+  const done=q-left;return {done,total,avg:done?total/done:0};}
+const depth=(k,side)=>(side==='buy'?S.mk[k].a:S.mk[k].b).reduce((s,l)=>s+l[1],0);
+function maxQty(k,side,market,price){const p=S.p;if(side==='sell')return market?Math.min(owned(k),depth(k,'sell')):owned(k);
+  if(!market)return Math.min(9999,Math.floor(p.money/Math.max(.01,price)));
+  let n=0,money=p.money;for(const [pr,q] of S.mk[k].a){const t=Math.min(q,Math.floor(money/pr));n+=t;money-=t*pr;if(t<q)break;}return n;}
+function eat_book(k,side,q){const lv=side==='buy'?S.mk[k].a:S.mk[k].b;let left=q;for(const l of lv){const t=Math.min(left,l[1]);l[1]-=t;left-=t;if(!left)break;}
+  const o=S.mk[k];o[side==='buy'?'a':'b']=lv.filter(l=>l[1]>0);o.vol+=q;o.m*=1+(side==='buy'?1:-1)*Math.min(.15,.02*q/liq(k));}
+function tradeNow(k,side,q){const p=S.p;q=Math.floor(q);if(q<1)return toast('Įvesk kiekį.');
+  if(q>maxQty(k,side,true))return toast(side==='buy'?'Nepakanka pinigų arba pasiūlos.':'Neturi tiek prekių arba nėra tiek pirkėjų.');
+  const qt=quote(k,side,q);
+  if(side==='buy'){p.money-=qt.total;give(k,q);addCost(k,q,qt.total);toast(`Nupirkta ${q}× ${mkName(k)} už ₡${p2(qt.total)}`);}
+  else{const f=take(k,q),net=qt.total*f*(1-FEE);p.money+=net;myC().treasury+=qt.total*f*FEE;subCost(k,q);toast(`Parduota ${q}× ${mkName(k)} už ₡${p2(net)}`);}
+  eat_book(k,side,q);return true;}
+function placeOrder(k,side,q,price){const p=S.p;q=Math.floor(q);price=+(+price).toFixed(2);
+  if(isW(k))return toast('Ginklams galimi tik momentiniai sandoriai.');
+  if(q<1||!(price>0))return toast('Įvesk kainą ir kiekį.');if(S.orders.length>=MAXORD)return toast(`Daugiausia ${MAXORD} užsakymų vienu metu.`);
+  if(side==='buy'){if(p.money<q*price)return toast('Nepakanka pinigų.');p.money-=q*price;}else{if(owned(k)<q)return toast('Neturi tiek prekių.');take(k,q);}
+  S.orders.push({id:S.nextOid++,k,side,qty:q,done:0,price,tick:S.tick});toast('Užsakymas pateiktas. Jis įvykdomas, kai rinka pasiekia tavo kainą.',3200);return true;}
+function fillOrder(o,f){const p=S.p,v=f*o.price;o.done+=f;S.mk[o.k].vol+=f;
+  if(o.side==='buy'){give(o.k,f);addCost(o.k,f,v);}else{p.money+=v*(1-FEE);myC().treasury+=v*FEE;subCost(o.k,f);}}
+function cancelOrder(id){const o=S.orders.find(x=>x.id===id);if(!o)return;const left=o.qty-o.done;if(o.side==='buy')S.p.money+=left*o.price;else give(o.k,left);S.orders=S.orders.filter(x=>x!==o);toast('Užsakymas atšauktas, likutis grąžintas.');}
+const chg=(k,n)=>{const h=S.mk[k].hist,a=h[Math.max(0,h.length-1-n)];return (h[h.length-1]/a-1)*100;};
+const chgHtml=v=>`<span class="${v>=0?'up':'dn'}">${v>=0?'▲':'▼'} ${Math.abs(v).toFixed(1)}%</span>`;
+function demandTag(k){const r=S.mk[k].m/mkBase(k);return r>1.25?['Didelė paklausa','hot']:r<.8?['Perteklius','cold']:['Stabili rinka','mid'];}
+function spark(k,n,w,h){const d=S.mk[k].hist.slice(-n),mn=Math.min(...d),mx=Math.max(...d),r=mx-mn||1;
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline fill="none" stroke="${d[d.length-1]>=d[0]?'var(--ok)':'var(--hp)'}" stroke-width="1.5" points="${d.map((v,i)=>`${(i/(d.length-1)*w).toFixed(1)},${(h-2-(v-mn)/r*(h-4)).toFixed(1)}`).join(' ')}"/></svg>`;}
+function chart(k,n){const d=S.mk[k].hist.slice(-n),W=320,H=130,pl=4,pr=44,pt=8,pb=16;const lines=S.orders.filter(o=>o.k===k).map(o=>o.price);
+  let mn=Math.min(...d,...lines),mx=Math.max(...d,...lines);const pad=(mx-mn||mx*.02)*.12;mn-=pad;mx+=pad;
+  const x=i=>pl+i/(d.length-1)*(W-pl-pr),y=v=>pt+(mx-v)/(mx-mn)*(H-pt-pb),up=d[d.length-1]>=d[0],c=up?'var(--ok)':'var(--hp)';
+  const pts=d.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const grid=[0,.5,1].map(t=>{const v=mx-(mx-mn)*t,yy=y(v);return `<line x1="${pl}" x2="${W-pr}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width=".6"/><text x="${W-pr+4}" y="${yy+3}" fill="var(--muted)" font-size="9">${p2(v)}</text>`;}).join('');
+  const ol=S.orders.filter(o=>o.k===k).map(o=>`<line x1="${pl}" x2="${W-pr}" y1="${y(o.price)}" y2="${y(o.price)}" stroke="${o.side==='buy'?'var(--ok)':'var(--brass2)'}" stroke-width="1" stroke-dasharray="4 3"/>`).join('');
+  const hrs=d.length-1,lab=hrs>=48?`prieš ${Math.round(hrs/24)} d.`:`prieš ${hrs} val.`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Kainos grafikas">${grid}<polygon points="${pl},${H-pb} ${pts} ${W-pr},${H-pb}" fill="${c}" opacity=".12"/><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/>${ol}
+   <circle cx="${x(d.length-1)}" cy="${y(d[d.length-1])}" r="3" fill="${c}"/><text x="${pl}" y="${H-3}" fill="var(--muted)" font-size="9">${lab}</text><text x="${W-pr}" y="${H-3}" fill="var(--muted)" font-size="9" text-anchor="end">dabar</text></svg>`;}
 
 // ---------- simulation ----------
 function declareWar(a,b){if(atWar(a,b)||a===b)return;S.wars.push({a,b,since:S.tick});addNews(`⚔ ${C(a).short} paskelbė karą šaliai ${C(b).short}!`,near(a,b));}
@@ -207,6 +284,7 @@ function step(){
       if(mine>=cap||R()>.3*B.activity)continue;
       const en=byC[k],targets=[];OWN[ci].forEach(r=>M.regions[r].adj.forEach(a=>{if(en.includes(S.owner[a])&&!busy.has(a))targets.push(a);}));
       if(targets.length){const t=pick(targets);busy.add(t);startBattle(ci,t);}}}
+  mkTick();
   if(S.tick%24===0)newDay();
   checkVictory();
   if(S.tick%5===0)save();
@@ -218,7 +296,7 @@ function newDay(){
   const pk=Object.keys(prod);pk.forEach(k=>p.inv[k]+=prod[k]);
   if(pk.length)toast('Įmonės pagamino: '+pk.map(k=>`${ITEMS[k].i} ${prod[k]}`).join(' '));
   if(p.president)p.money+=40;
-  for(const k in S.market){const base=ITEMS[k].price;S.market[k]=clamp(S.market[k]*rr(.9,1.1)+(base-S.market[k])*.15,base*.5,base*2.2);}
+  mkDay();
   S.countries.forEach((c,ci)=>{if(!c.alive||c.playerPres)return;
     const m=ov(ci).mode,wars=S.wars.filter(w=>w.a===ci||w.b===ci);
     if(wars.length===0&&m!=='peaceful'&&m!=='frozen'&&S.wars.length<B.maxWars&&R()<.022*B.aggr*(m==='aggressive'?4:1)){
@@ -270,8 +348,6 @@ const A={
       pushFeed(b,s,{n:p.name,w:w?w.t:0,d,c:crit,me:1});
       if(sideC(b,s)===p.country)p.fame+=d/120;gainXp(2);}
     if(n>1||!tabIsBattle())toast(`${anyCrit?'💥 ':''}${fmt(total)} žalos`);},
-  buy(item,q){const pr=S.market[item]*q;if(S.p.money<pr)return toast('Nepakanka pinigų.');S.p.money-=pr;S.p.inv[item]+=q;S.market[item]*=1+.004*q;},
-  sell(item,q){if(S.p.inv[item]<q)return toast('Neturi tiek prekių.');S.p.inv[item]-=q;S.p.money+=S.market[item]*.8*q;S.market[item]*=1-.004*q;},
   craft(id){const r=RECIPES.find(x=>x.id===id);if(!has(r.cost))return toast('Trūksta žaliavų: '+costStr(r.cost));pay(r.cost);
     if(r.wpn){addWeapon(r.wpn);toast(`Pagaminta: ${WPN[r.wpn].n}`);}else{for(const k in r.out)S.p.inv[k]+=r.out[k];const k=Object.keys(r.out)[0];toast(`Pagaminta: ${r.out[k]}× ${ITEMS[k].n}`);}gainXp(1);},
   dismantle(id){const p=S.p,w=p.weapons.find(x=>x.id===id);if(!w)return;const back=Math.max(1,Math.floor(WPN[w.t].cost.steel*.5*w.dur/WPN[w.t].dur));
@@ -383,7 +459,29 @@ $('#zout').onclick=()=>{const r=cv.getBoundingClientRect();zoomAt(r.width/2,r.he
 $('#zhome').onclick=()=>focusCountry(S.p.country);
 
 // ---------- UI ----------
-let tab=null,botSel=-1,battleId=0,invView='main',invSel=null,bFilter='all';
+let tab=null,botSel=-1,battleId=0,invView='main',invSel=null,bFilter='all',mFilter='all';
+const T={k:'bread',side:'buy',market:true,price:1,qty:0,range:24};
+function openTrade(k,side){T.k=k;T.side=side||'buy';T.market=true;T.qty=0;T.price=S.mk[k].m;openSheet('trade');}
+const tMax=()=>maxQty(T.k,T.side,T.market,T.price);
+// live part of the trade window: redrawn every hour without touching the form
+function tradeLive(){const el=$('#tLive');if(!el)return;const k=T.k,o=S.mk[k],d=demandTag(k),c=S.p.cost[k],p=S.p;
+  if(T.market){T.price=T.side==='buy'?o.a[0][0]:o.b[0][0];const pi=$('#tPrice');if(pi)pi.value=p2(T.price);}
+  const bk=(lv,cls)=>lv.slice(0,5).map(l=>`<button class="lv ${cls}" data-act="tPick" data-i="${l[0]}"><span>₡${p2(l[0])}</span><span>${l[1]}</span></button>`).join('');
+  el.innerHTML=`<div class="thead"><span class="ti">${mkIcon(k)}</span><div class="grow"><div class="tprice">₡${p2(o.m)} <small>${chgHtml(chg(k,T.range))}</small></div><div class="muted">${mkDesc(k)} · <i class="dm ${d[1]}">${d[0]}</i></div></div><div class="town">Turi<b>${fmt(owned(k))}</b>${c&&c.q>0?`<small class="muted">vid. ₡${p2(c.v/c.q)}</small>`:''}</div></div>
+   ${chart(k,T.range)}
+   <div class="chips">${[[24,'24 val.'],[72,'3 d.'],[168,'7 d.']].map(([n,t])=>`<button class="chip${T.range===n?' on':''}" data-act="tRange" data-i="${n}">${t}</button>`).join('')}<span class="grow"></span><span class="muted">Apyvarta ${fmt(o.vol)}</span></div>
+   <div class="book"><div><small class="muted">Parduoda (kaina · kiekis)</small>${bk(o.a,'ask')}</div><div><small class="muted">Perka (kaina · kiekis)</small>${bk(o.b,'bid')}</div></div>`;
+  tradeSum();}
+function tradeSum(){const el=$('#tSum');if(!el)return;const k=T.k,p=S.p,mx=tMax(),sl=$('#tSlide'),go=$('#tGo');
+  sl.max=Math.max(1,mx);sl.value=Math.min(T.qty,mx);sl.disabled=mx<1;
+  let total,avg,warn='';const q=T.qty;
+  if(T.market){const qt=quote(k,T.side,Math.min(q,depth(k,T.side)));total=qt.total;avg=qt.avg||T.price;}else{total=q*T.price;avg=T.price;}
+  const fee=T.side==='sell'?total*FEE:0,after=T.side==='buy'?p.money-total:p.money+total-fee;
+  if(q>mx)warn=T.side==='buy'?'Tiek nupirkti negali: trūksta pinigų arba pasiūlos.':'Tiek parduoti negali.';
+  else if(!T.market&&q>0){const g=T.side==='buy'?T.price>=S.mk[k].a[0][0]:T.price<=S.mk[k].b[0][0];warn=g?'Kaina siekia rinką, užsakymas bus įvykdytas artimiausią valandą.':'Užsakymas lauks, kol rinka pasieks šią kainą.';}
+  el.innerHTML=`<dl class="kv"><dt>Vidutinė kaina</dt><dd>₡${p2(avg)}</dd><dt>${T.side==='buy'?'Sumokėsi':'Gausi'}</dt><dd><b>₡${p2(total-fee)}</b></dd>${fee?`<dt>Mokestis ${FEE*100}%</dt><dd>₡${p2(fee)}</dd>`:''}<dt>Likutis po sandorio</dt><dd>₡${p2(after)}</dd><dt>Daugiausia galima</dt><dd>${fmt(mx)}</dd></dl>${warn?`<div class="muted">${warn}</div>`:''}`;
+  go.textContent=`${T.market?'':'Pateikti užsakymą: '}${T.side==='buy'?'Pirkti':'Parduoti'} ${q}× už ₡${p2(total-fee)}`;go.className='btn big '+(T.side==='buy'?'buy':'sell');go.disabled=q<1||q>mx;}
+function tSetQty(q){T.qty=clamp(Math.floor(q)||0,0,99999);const i=$('#tQty');if(i&&+i.value!==T.qty)i.value=T.qty;tradeSum();}
 const tabIsBattle=()=>tab==='battle';
 const sw=(i,big)=>`<span class="sw" style="background:${col(i)}${big?';width:22px;height:16px':''}"></span>`;
 const flagBox=i=>`<span class="flagbox" style="border-color:${col(i)}">${flagOf(C(i).a)}</span>`;
@@ -437,10 +535,10 @@ function battleView(b){
      <div class="row"><span class="grow muted">Smūgių vienu paspaudimu</span>${[1,3,5].map(n=>`<button class="chip${p.mult===n?' on':''}" data-act="mult" data-i="${n}">×${n}</button>`).join('')}</div></div>
    <div class="muted">Pusė, kuri raunde padarė daugiau žalos, kas valandą gauna 1–3 taškus. ${RP} taškų laimi raundą, ${RWIN} raundai laimi mūšį. Bendra žala: ${fmt(b.tot[0])} prieš ${fmt(b.tot[1])}.</div>`;
 }
-function openSheet(t){tab=t;$('#rcard').hidden=true;$('#sheet').hidden=false;$('#sheet').classList.toggle('tall',t==='battle'||t==='inv');
-  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===(t==='battle'?'battles':t)));$('#sheetBody').scrollTop=0;renderSheet();}
+function openSheet(t){tab=t;$('#rcard').hidden=true;$('#sheet').hidden=false;$('#sheet').classList.toggle('tall',t==='battle'||t==='inv'||t==='trade'||t==='market');
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===(t==='battle'?'battles':t==='trade'?'market':t)));$('#sheetBody').scrollTop=0;renderSheet();}
 function closeSheet(){tab=null;$('#sheet').hidden=true;document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('on'));}
-$('#sheetClose').onclick=()=>tab==='battle'?openSheet('battles'):closeSheet();
+$('#sheetClose').onclick=()=>tab==='battle'?openSheet('battles'):tab==='trade'?openSheet('market'):closeSheet();
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{if(!S||S.__preview)return;invView='main';tab===b.dataset.t?closeSheet():openSheet(b.dataset.t);});
 const slider=(k,label,min,max,stepv)=>`<div class="sl"><div class="row"><label for="bot_${k}">${label}</label><output id="out_${k}">${fmtBot(k,S.bots[k])}</output></div><input type="range" id="bot_${k}" data-bot="${k}" min="${min}" max="${max}" step="${stepv}" value="${S.bots[k]}"></div>`;
 const fmtBot=(k,v)=>k==='maxWars'?String(v):Math.round(v*100)+'%';
@@ -467,8 +565,8 @@ function renderInv(){
     if(it.heal)act=`<button class="btn sm" data-act="eatItem" data-i="${k}" ${p.inv[k]?'':'disabled'}>Valgyti</button>`;
     if(k==='crate')act=`<button class="btn sm" data-act="openCrate" ${p.inv.crate?'':'disabled'}>Atidaryti</button>`;
     if(k==='ammo')act=`<label class="chk"><input type="checkbox" id="useAmmo" ${p.useAmmo?'checked':''}> Naudoti mūšyje</label>`;
-    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${S.market[k]?` · rinkoje ₡${S.market[k].toFixed(2)}`:''}</div></div>${act}
-      ${S.market[k]?`<button class="btn sm alt" data-act="sell" data-i="${k}" data-q="1" ${p.inv[k]?'':'disabled'}>Parduoti 1</button>`:''}</div></div>`;}
+    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${S.mk[k]?` · rinkoje ₡${p2(S.mk[k].m)}`:''}</div></div>${act}
+      ${S.mk[k]?`<button class="btn sm alt" data-act="trade" data-i="${k}" data-s="sell">Į rinką</button>`:''}</div></div>`;}
   h+=`<h4 class="sec">GINKLAI</h4>`;
   if(!p.weapons.length)h+=`<div class="muted">Neturi ginklų. Kovoji plikomis rankomis, kol pasigaminsi naują.</div>`;
   h+=`<div class="tiles w">${p.weapons.slice().sort((a,b)=>b.t-a.t).map(w=>`<button class="tile wt${p.eq===w.id?' on':''}" data-act="equip" data-i="${w.id}">${p.eq===w.id?'<span class="eqb">Uždėtas</span>':''}<span class="fw big">${wico(w.t)}</span><span class="te">×${WPN[w.t].mul}</span><span class="dur"><i style="width:${w.dur/WPN[w.t].dur*100}%;background:${WPN[w.t].col}"></i></span><span class="tn">${w.dur}</span></button>`).join('')}</div>
@@ -502,9 +600,24 @@ function renderSheet(){
     h+=`<div class="box"><h4>Įsigyti įmonę</h4>`+Object.entries(COMPANY).map(([k,d])=>`<div class="row"><div class="grow">${ITEMS[d.out].i} ${d.name}<div class="muted">${d.per}× ${ITEMS[d.out].n} per dieną</div></div><button class="btn sm" data-act="buyCo" data-i="${k}">₡${d.cost}</button></div>`).join('')+`</div>`;
   }
   if(tab==='market'){title='Rinka';
-    h+=`<div class="muted">Kainos keičiasi kasdien ir reaguoja į tavo pirkimus. Parduodant gauni 80% kainos.</div>`;
-    Object.keys(S.market).forEach(k=>{const it=ITEMS[k];h+=`<div class="box mk"><div class="row"><span class="ti sm">${ico(k)}</span><div class="grow"><b>${it.n}</b><div class="muted">${it.d?it.d+' · ':''}turi ${fmt(p.inv[k])}</div></div><div class="price">₡${S.market[k].toFixed(2)}</div></div>
-      <div class="row"><button class="btn sm" data-act="buy" data-i="${k}" data-q="1">+1</button><button class="btn sm" data-act="buy" data-i="${k}" data-q="10">+10</button><span class="grow"></span><button class="btn sm alt" data-act="sell" data-i="${k}" data-q="1">−1</button><button class="btn sm alt" data-act="sell" data-i="${k}" data-q="10">−10</button></div></div>`;});
+    const F={all:()=>true,food:k=>mkCat(k)==='food',raw:k=>mkCat(k)==='raw',gear:k=>mkCat(k)==='gear',mine:k=>owned(k)>0};
+    h+=`<div class="statstrip"><span>₡ ${fmt(p.money)}</span><span class="muted">Mokestis parduodant ${FEE*100}%</span></div>`;
+    if(S.orders.length)h+=`<div class="box"><h4>Mano užsakymai (${S.orders.length})</h4>${S.orders.map(o=>`<div class="row"><span class="ti sm">${mkIcon(o.k)}</span><button class="grow linkrow" data-act="trade" data-i="${o.k}"><b class="${o.side==='buy'?'up':'dn'}">${o.side==='buy'?'Pirkti':'Parduoti'}</b> ${o.qty}× ${mkName(o.k)} po ₡${p2(o.price)}<div class="muted">įvykdyta ${o.done}/${o.qty} · rinkoje ₡${p2(S.mk[o.k].m)}</div></button><button class="btn sm alt" data-act="cancelOrder" data-i="${o.id}">Atšaukti</button></div>`).join('')}</div>`;
+    h+=`<div class="chips">${[['all','Visos'],['food','Maistas'],['raw','Žaliavos'],['gear','Ginkluotė'],['mine','Turiu']].map(([k,n])=>`<button class="chip${mFilter===k?' on':''}" data-act="mFilter" data-i="${k}">${n}</button>`).join('')}</div>`;
+    h+=`<div class="mlist">${MKEYS.filter(F[mFilter]).map(k=>{const d=demandTag(k);return `<button class="mrow" data-act="trade" data-i="${k}"><span class="ti sm">${mkIcon(k)}</span><span class="mn"><b>${mkName(k)}</b><small class="muted">turi ${fmt(owned(k))} · <i class="dm ${d[1]}">${d[0]}</i></small></span>${spark(k,24,56,24)}<span class="mp"><b>₡${p2(S.mk[k].m)}</b><small>${chgHtml(chg(k,24))}</small></span></button>`;}).join('')||'<span class="muted">Nieko nėra.</span>'}</div>
+     <div class="muted">Kainos juda kas valandą: jas veikia karai, paklausos šuoliai ir tavo paties sandoriai. Paspausk prekę, kad pirktum arba parduotum.</div>`;
+  }
+  if(tab==='trade'){const k=T.k,o=S.mk[k];title=mkName(k);
+    h=`<div id="tLive"></div>
+     <div class="seg"><button class="${T.side==='buy'?'on buy':''}" data-act="tSide" data-i="buy">PIRKTI</button><button class="${T.side==='sell'?'on sell':''}" data-act="tSide" data-i="sell">PARDUOTI</button></div>
+     <label class="chk"><input type="checkbox" id="tMarket" ${T.market?'checked':''} ${isW(k)?'disabled':''}> Rinkos kaina, sandoris įvyksta iškart</label>
+     <div class="frow"><label for="tPrice">Kaina</label><div class="stepper"><button data-act="tStep" data-i="-1" ${T.market?'disabled':''} aria-label="Mažinti kainą">−</button><input type="number" inputmode="decimal" id="tPrice" step="0.01" min="0.01" value="${p2(T.price)}" ${T.market?'disabled':''}><button data-act="tStep" data-i="1" ${T.market?'disabled':''} aria-label="Didinti kainą">+</button></div></div>
+     <div class="frow"><label for="tQty">Kiekis</label><div class="stepper"><button data-act="tQ" data-i="-1" aria-label="Mažinti kiekį">−</button><input type="number" inputmode="numeric" id="tQty" step="1" min="0" value="${T.qty}"><button data-act="tQ" data-i="1" aria-label="Didinti kiekį">+</button></div></div>
+     <input type="range" id="tSlide" min="0" max="1" step="1" value="0" aria-label="Kiekis">
+     <div class="chips">${[[.1,'10%'],[.25,'25%'],[.5,'50%'],[1,'Max']].map(([f,n])=>`<button class="chip" data-act="tPct" data-i="${f}">${n}</button>`).join('')}<button class="chip" data-act="tPct" data-i="0">Išvalyti</button></div>
+     <div class="box" id="tSum"></div>
+     <button class="btn big" id="tGo" data-act="tGo"></button>
+     <div class="muted">Limitinis užsakymas (kai varnelė nuimta) laukia, kol rinka pasieks tavo kainą. Pinigai arba prekės tuo metu rezervuojami ir grąžinami atšaukus.</div>`;
   }
   if(tab==='country'){title=me.short;
     const wars=S.wars.filter(w=>w.a===p.country||w.b===p.country).map(w=>w.a===p.country?w.b:w.a);
@@ -551,14 +664,19 @@ function renderSheet(){
      <div class="row"><button class="btn alt" data-act="saveNow">Išsaugoti dabar</button><button class="btn red" data-act="askReset">Naujas žaidimas</button></div>
      <div class="muted">Plieno Frontas · sukūrė <a href="https://github.com/nusikales" target="_blank" rel="noopener" style="color:var(--brass2)">Nusikales</a></div></div>`;
   }
-  $('#sheetTitle').textContent=title;body.innerHTML=h;body.scrollTop=sc;tickLabel();
+  $('#sheetTitle').textContent=title;body.innerHTML=h;body.scrollTop=sc;tickLabel();if(tab==='trade')tradeLive();
   const on=(id,f)=>{const el=$('#'+id);if(el)el.onchange=()=>{f(el);save();renderSheet();};};
+  on('tMarket',el=>{T.market=el.checked;if(!T.market)T.price=+p2(S.mk[T.k].m);});
   on('useAmmo',el=>S.p.useAmmo=el.checked);on('newsHot',el=>S.newsHot=el.checked);
   on('botC',el=>botSel=+el.value);
   const setOv=(k,v)=>{const o=Object.assign({mode:'auto',pw:1},S.bots.ov[botSel]);o[k]=v;if(o.mode==='auto'&&o.pw===1)delete S.bots.ov[botSel];else S.bots.ov[botSel]=o;};
   on('botMode',el=>setOv('mode',el.value));on('botPw',el=>setOv('pw',+el.value));
 }
-$('#sheetBody').addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.bot;if(!k)return;S.bots[k]=+e.target.value;$('#out_'+k).textContent=fmtBot(k,S.bots[k]);});
+$('#sheetBody').addEventListener('input',e=>{const id=e.target.id;
+  if(id==='tQty')return tSetQty(+e.target.value);
+  if(id==='tSlide'){T.qty=+e.target.value;$('#tQty').value=T.qty;return tradeSum();}
+  if(id==='tPrice'){T.price=Math.max(.01,+e.target.value||0);return tradeSum();}
+  const k=e.target.dataset&&e.target.dataset.bot;if(!k)return;S.bots[k]=+e.target.value;$('#out_'+k).textContent=fmtBot(k,S.bots[k]);});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
   switch(a){
     case 'closeR':$('#rcard').hidden=true;sel=-1;break;
@@ -574,7 +692,16 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(
     case 'goto':{const g=M.regions[+t.dataset.r],r=cv.getBoundingClientRect();closeSheet();V.s=Math.max(V.s,2);V.x=r.width/2-g.lx*V.s;V.y=r.height/2-g.ly*V.s;sel=+t.dataset.r;showRegion(sel);break;}
     case 'gotoC':closeSheet();focusCountry(+t.dataset.i);break;
     case 'eat':A.eat();break;case 'work':A.work();break;case 'train':A.train();break;
-    case 'buy':A.buy(t.dataset.i,+t.dataset.q);break;case 'sell':A.sell(t.dataset.i,+t.dataset.q);break;
+    case 'trade':openTrade(t.dataset.i,t.dataset.s);return;
+    case 'mFilter':mFilter=t.dataset.i;break;
+    case 'cancelOrder':cancelOrder(+t.dataset.i);break;
+    case 'tSide':T.side=t.dataset.i;T.qty=Math.min(T.qty,tMax());break;
+    case 'tRange':T.range=+t.dataset.i;tradeLive();return;
+    case 'tPick':if(isW(T.k))return;T.market=false;T.price=+(+t.dataset.i).toFixed(2);break;
+    case 'tStep':T.price=Math.max(.01,+(T.price*(1+.01*t.dataset.i)+.01*t.dataset.i).toFixed(2));$('#tPrice').value=p2(T.price);tradeSum();return;
+    case 'tQ':tSetQty(T.qty+ +t.dataset.i);return;
+    case 'tPct':tSetQty(Math.floor(tMax()*t.dataset.i));return;
+    case 'tGo':{const ok=T.market?tradeNow(T.k,T.side,T.qty):placeOrder(T.k,T.side,T.qty,T.price);if(ok)T.qty=0;break;}
     case 'buyCo':A.buyCo(t.dataset.i);break;case 'upCo':A.upCo(+t.dataset.i);break;
     case 'run':A.run();break;case 'war':A.war(+t.dataset.i);break;case 'peace':A.peace(+t.dataset.i);break;case 'mobil':A.mobil();break;
     case 'attack':A.attack(+t.dataset.r);break;case 'emigrate':A.emigrate(+$('#emSel').value);break;
@@ -614,7 +741,7 @@ function refresh(force){
   $('#eBadge').hidden=!p.president;const ib=$('#iBadge');ib.hidden=!p.inv.crate;ib.textContent=p.inv.crate;
   document.querySelectorAll('#speed button').forEach(b=>b.classList.toggle('on',+b.dataset.s===S.speed));
   const ae=document.activeElement,busy=!force&&ae&&$('#sheetBody').contains(ae)&&(ae.tagName==='SELECT'||ae.type==='range');
-  if(!busy)renderSheet();
+  if(tab==='trade'&&!force)tradeLive();else if(!busy)renderSheet();
   if(!$('#rcard').hidden)showRegion(+$('#rcard').dataset.r);
 }
 document.querySelectorAll('#speed button').forEach(b=>b.onclick=()=>{if(!S||S.__preview)return;S.speed=+b.dataset.s;refresh();});
