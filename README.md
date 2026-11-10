@@ -30,6 +30,6 @@ node src/build.js
 - Karys: sveikata, energija, lygis, jėga, darbas ir treniruotės
 - Inventorius: maistas, šoviniai, žaliavos, ginklai su patvarumu, gamyba, ardymas, trofėjų dėžės
 - Mūšiai: raundai, taškai, žalos juosta, kovotojų smūgių sąrašai, pusių premijos
-- Ekonomika: rinka su kintančiomis kainomis ir įmonės, gaminančios žaliavas
+- Ekonomika: gyva rinka su užsakymų knyga, kainų grafikais, momentiniais ir limitiniais užsakymais; įmonės, gaminančios žaliavas
 - Politika: prezidento rinkimai, karai, taika, mobilizacija
 - Botų skydelis: agresija, aktyvumas, jėga ir elgesys kiekvienai šaliai
