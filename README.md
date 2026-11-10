@@ -28,7 +28,8 @@ node src/build.js
 ## Kas yra žaidime
 
 - Karys: sveikata, energija, lygis, jėga, darbas ir treniruotės
-- Inventorius: maistas, šoviniai, žaliavos, ginklai su patvarumu, gamyba, ardymas, trofėjų dėžės
+- Inventorius: maistas, trijų retumų šoviniai, žaliavos, gamyba, ardymas, trofėjų dėžės
+- Ekipuotė: 6 retumai, ginklai nuo peilio iki naikintuvo, šalmas, liemenė, pirštinės, kelnės ir batai su atakos, gynybos, taiklumo, išsisukimo ir kritinio smūgio rėžiais bei patvarumu
 - Mūšiai: raundai, taškai, žalos juosta, kovotojų smūgių sąrašai, pusių premijos
 - Ekonomika: gyva rinka su užsakymų knyga, kainų grafikais, momentiniais ir limitiniais užsakymais; įmonės, gaminančios žaliavas
 - Politika: prezidento rinkimai, karai, taika, mobilizacija
