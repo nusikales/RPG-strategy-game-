@@ -29,7 +29,10 @@ node src/build.js
 
 - Veikėjas: 50 lygių, 5 įgūdžių taškai už lygį (žala, šarvai, gyvybės, darbo našumas, darbo energija, įmonių limitas, darbuotojai), prestižas
 - Misijos: dieninės, savaitinės ir mėnesinės (po 10, premija už 7), tik jos duoda XP
-- Įmonės: statomos už geležį, variklis, sandėlis, darbuotojai, gamybos grandinės (geležis → plienas, žuvis → kepta žuvis, grūdai → pyragas, molis → plytos)
+- Įmonės: statomos už geležį, variklis, sandėlis, darbuotojai, gamybos grandinės (geležis → plienas, žuvis → kepta žuvis, grūdai → pyragas, molis → plytos, mediena → lentos, švinas → šoviniai, nafta → degalai)
+- Šalis: 10 vietų parlamentas (rinkimai, siūlymai ir balsavimai dėl karo, taikos, mokesčių, mobilizacijos, statybų ir premijų mūšiams), iždas, aljansai su kvietimais ir išdavystėmis, bunkeriai ir kareivinės regionuose
+- Įmonių pelno mokestis šalies iždui, įmones galima perkelti į kitas šalis
+- Nustatymai žaidime (Botai → Nustatymai): lygiai, įgūdžiai, misijos, įmonės, mūšiai, šalis
 - Inventorius: maistas, trijų retumų šoviniai, žaliavos, gamyba, ardymas, trofėjų dėžės
 - Ekipuotė: 6 retumai, ginklai nuo peilio iki naikintuvo, šalmas, liemenė, pirštinės, kelnės ir batai su atakos, gynybos, taiklumo, išsisukimo ir kritinio smūgio rėžiais bei patvarumu
 - Mūšiai: raundai, taškai, žalos juosta, kovotojų smūgių sąrašai, pusių premijos
