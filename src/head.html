@@ -226,11 +226,32 @@ h4.sec{margin:4px 0 0;font-family:var(--display);font-size:14px;letter-spacing:.
 .tape>div.me{background:rgba(217,164,65,.14);}
 .tape>div span:last-child{text-align:right;}
 .chip:disabled{opacity:.35;}
+
+/* character and companies */
+button.lvl{padding:0;color:var(--fg);cursor:pointer;}
+.lvl .badge{position:absolute;top:-5px;right:-8px;background:var(--hp);color:#fff;border-radius:999px;font-size:10px;padding:0 5px;line-height:16px;font-weight:600;font-family:var(--body);}
+.ebar{position:relative;height:22px;border-radius:5px;background:#0b161d;border:1px solid var(--line);overflow:hidden;}
+.ebar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#7a5a1c,var(--brass));}
+.ebar.full i{background:linear-gradient(90deg,#2f7a4c,var(--ok));}
+.ebar.xp i{background:linear-gradient(90deg,#3a4f9a,#7d8fe6);}
+.ebar span{position:relative;display:block;font-size:12px;font-weight:600;line-height:20px;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;}
+.upg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.upg button{display:grid;gap:1px;background:#22343f;border:1px solid var(--line);border-radius:6px;padding:6px 4px;min-width:0;}
+.upg button b{font-family:var(--display);font-size:14px;}.upg button small{font-size:11px;color:var(--muted);}
+.upg button:disabled{opacity:.45;}
+.seg.three{grid-template-columns:repeat(3,1fr);}
+.xprow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;font-family:var(--display);}
+.mslist{display:grid;gap:4px;}
+.ms{position:relative;display:flex;gap:8px;padding:6px 8px 8px;background:rgba(0,0,0,.18);border-radius:5px;font-size:14px;overflow:hidden;}
+.ms i{position:absolute;left:0;bottom:0;height:3px;background:var(--brass);}
+.ms.done{color:var(--muted);}.ms.done i{background:var(--ok);}
+.ms .mp{font-family:var(--display);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.skrow{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;flex-wrap:nowrap;}
 </style>
 
 <div id="app">
   <div id="top">
-    <div class="lvl" id="lvl">1<small><i id="xpbar"></i></small></div>
+    <button class="lvl" id="lvl" data-act="tab" data-i="char" aria-label="Veikėjas, misijos ir įgūdžiai">1<small><i id="xpbar"></i></small><span class="badge" id="pBadge" hidden></span></button>
     <div class="bars">
       <div class="bar hp"><i id="hpbar"></i><span id="hptxt">❤ 100/100</span></div>
       <div class="bar en"><i id="enbar"></i><span id="entxt">⚡ 100/100</span></div>
@@ -253,7 +274,7 @@ h4.sec{margin:4px 0 0;font-family:var(--display);font-size:14px;letter-spacing:.
   <nav id="tabs">
     <button data-t="inv"><svg viewBox="0 0 24 24"><path d="M5 8h14v12H5zM9 8V5h6v3M5 13h14M11 12v3h2v-3"/></svg>Inventorius<span class="badge" id="iBadge" hidden></span></button>
     <button data-t="battles"><svg viewBox="0 0 24 24"><path d="M4 4l9 9M4 4v4M4 4h4M20 4l-9 9M20 4v4M20 4h-4M7 15l-3 3 2 2 3-3M17 15l3 3-2 2-3-3"/></svg>Mūšiai<span class="badge" id="bBadge" hidden></span></button>
-    <button data-t="work"><svg viewBox="0 0 24 24"><path d="M3 20V10l5 3V10l5 3V6h3l1 14M3 20h18M17 6h3v14"/></svg>Darbas</button>
+    <button data-t="work"><svg viewBox="0 0 24 24"><path d="M3 20V10l5 3V10l5 3V6h3l1 14M3 20h18M17 6h3v14"/></svg>Įmonės</button>
     <button data-t="market"><svg viewBox="0 0 24 24"><path d="M3 4h2l2 11h11l2-8H6M9 20a1 1 0 100-2 1 1 0 000 2zM17 20a1 1 0 100-2 1 1 0 000 2z"/></svg>Rinka</button>
     <button data-t="country"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Šalis<span class="badge" id="eBadge" hidden>!</span></button>
     <button data-t="bots"><svg viewBox="0 0 24 24"><path d="M12 3v3M6 6h12v10H6zM9 11h.01M15 11h.01M9 20h6M3 10v4M21 10v4"/></svg>Botai</button>

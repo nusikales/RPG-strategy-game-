@@ -27,7 +27,9 @@ node src/build.js
 
 ## Kas yra žaidime
 
-- Karys: sveikata, energija, lygis, jėga, darbas ir treniruotės
+- Veikėjas: 50 lygių, 5 įgūdžių taškai už lygį (žala, šarvai, gyvybės, darbo našumas, darbo energija, įmonių limitas, darbuotojai), prestižas
+- Misijos: dieninės, savaitinės ir mėnesinės (po 10, premija už 7), tik jos duoda XP
+- Įmonės: statomos už geležį, variklis, sandėlis, darbuotojai, gamybos grandinės (geležis → plienas, žuvis → kepta žuvis, grūdai → pyragas, molis → plytos)
 - Inventorius: maistas, trijų retumų šoviniai, žaliavos, gamyba, ardymas, trofėjų dėžės
 - Ekipuotė: 6 retumai, ginklai nuo peilio iki naikintuvo, šalmas, liemenė, pirštinės, kelnės ir batai su atakos, gynybos, taiklumo, išsisukimo ir kritinio smūgio rėžiais bei patvarumu
 - Mūšiai: raundai, taškai, žalos juosta, kovotojų smūgių sąrašai, pusių premijos
