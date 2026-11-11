@@ -216,6 +216,24 @@ h4.sec{margin:4px 0 0;font-family:var(--display);font-size:14px;letter-spacing:.
 .stepper input:disabled{color:var(--muted);}
 .btn.big{padding:14px;font-size:16px;}
 .btn.buy{background:#2f7a4c;color:#fff;}.btn.sell{background:var(--att);color:#fff;}
+
+/* gear */
+.tile.gt{border-color:var(--rc,var(--line));background:linear-gradient(180deg,#1a2a33,color-mix(in srgb,var(--rc,#22363f) 16%,#22363f));}
+.tile.gt.on{box-shadow:0 0 0 2px var(--brass) inset;}
+.tile.gt .fw svg{width:44px;height:38px;}
+.tile.gt .te{color:var(--fg);}
+.slots{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;}
+.slots .tile{min-height:84px;padding-top:5px;}
+.slots .tile .fw svg{width:32px;height:30px;}
+.slots .tile .te{font-size:10px;}.slots .tile .tn{font-size:13px;}
+.tile.empty{opacity:.4;color:var(--muted);border-style:dashed;align-content:center;}
+.statstrip.sm{font-size:13px;padding:6px 10px;gap:10px;}
+.fr.half{opacity:.6;}
+.tape{display:grid;gap:2px;font-size:13px;}
+.tape>div{display:grid;grid-template-columns:1fr auto 84px;gap:8px;padding:2px 6px;border-radius:4px;font-variant-numeric:tabular-nums;}
+.tape>div.me{background:rgba(217,164,65,.14);}
+.tape>div span:last-child{text-align:right;}
+.chip:disabled{opacity:.35;}
 </style>
 
 <div id="app">
@@ -343,29 +361,53 @@ function genMap(){
 const ITEMS={
   bread:{n:'Duona',i:'🍞',d:'+15 ❤',heal:15,price:4,c:'food'},
   cfish:{n:'Kepta žuvis',i:'🍣',d:'+35 ❤',heal:35,price:9,c:'food'},
-  ammo:{n:'Šoviniai',svg:'ammo',d:'+20% žalos',price:1.2,c:'gear'},
+  a1:{n:'Šoviniai',svg:'ammo',col:'#b9c2c6',d:'+10% žalos',price:1.2,c:'ammo'},a2:{n:'Sustiprinti šoviniai',svg:'ammo',col:'#5b9be6',d:'+20% žalos',price:3,c:'ammo'},a3:{n:'Šarvamušiai šoviniai',svg:'ammo',col:'#b07be6',d:'+35% žalos',price:7,c:'ammo'},
   crate:{n:'Trofėjų dėžė',i:'📦',d:'Atidaryk',c:'gear'},
   grain:{n:'Grūdai',i:'🌾',price:1.5,c:'raw'},fish:{n:'Žuvis',i:'🐟',price:2.5,c:'raw'},
   iron:{n:'Geležis',i:'🪨',price:3,c:'raw'},steel:{n:'Plienas',i:'🔩',price:11,c:'raw'},
   wood:{n:'Mediena',i:'🪵',price:4,c:'raw'},lead:{n:'Švinas',i:'🔘',price:5,c:'raw'},oil:{n:'Nafta',i:'🛢️',price:9,c:'raw'}
 };
 const RAWS=['grain','fish','iron','wood','lead','oil'];
-const WPN={1:{n:'Pistoletas',mul:1.3,dur:30,crit:.05,col:'#7fb38f',cost:{steel:3,wood:1}},
-  2:{n:'Automatas',mul:1.7,dur:40,crit:.08,col:'#6fa3e0',cost:{steel:8,wood:3,oil:2}},
-  3:{n:'Snaiperinis šautuvas',mul:2.2,dur:50,crit:.2,col:'#b58ae0',cost:{steel:16,wood:4,oil:6}}};
+// ---------- gear: weapons and armour with rarities ----------
+const RAR=[{n:'Paprastas',c:'#9aa7ad'},{n:'Neįprastas',c:'#6dbf7b'},{n:'Retas',c:'#5b9be6'},{n:'Epinis',c:'#b07be6'},{n:'Legendinis',c:'#e6b84d'},{n:'Mitinis',c:'#e6584d'}];
+const DEFR=[[2,4],[4,7],[7,10],[10,14],[14,18],[18,24]];
+// every rarity has its own stat range; an item rolls its value inside that range
+const SLOT={w:{n:'Ginklas',st:'Ataka',ic:'⚔',rng:[[10,25],[30,55],[60,95],[100,150],[170,250],[280,400]]},
+  helm:{n:'Šalmas',st:'Gynyba',ic:'🛡',rng:DEFR},chest:{n:'Liemenė',st:'Gynyba',ic:'🛡',rng:DEFR},
+  gloves:{n:'Pirštinės',st:'Taiklumas',ic:'🎯',rng:[[5,9],[9,14],[14,20],[20,27],[27,35],[35,45]]},
+  pants:{n:'Kelnės',st:'Išsisukimas',ic:'💨',rng:DEFR},
+  boots:{n:'Batai',st:'Kritinis',ic:'💥',rng:[[2,4],[4,6],[6,9],[9,13],[13,18],[18,25]]}};
+const SLOTS=Object.keys(SLOT),ARMOR=SLOTS.slice(1);
+const WN=['Peilis','Pistoletas','Automatas','Snaiperinis šautuvas','Tankas','Naikintuvas F-16'];
+const WDUR=[60,50,50,40,30,25],WPRICE=[15,45,130,320,900,2400],APRICE=[12,35,100,250,700,1900];
+const WCOST=[{steel:1,wood:1},{steel:3,wood:1},{steel:8,wood:3,oil:2},{steel:16,wood:4,oil:6},{steel:60,oil:20,lead:10},{steel:150,oil:60,lead:30}];
+const ACOST={steel:4,wood:2},AODDS=[.5,.78,.91,.97,.995,1];
+const AMMO={a1:.1,a2:.2,a3:.35};
+const gMax=(s,r)=>s==='w'?WDUR[r]:80+r*20;
+const gFull=(s,r)=>s==='w'?WN[r]:`${SLOT[s].n} · ${RAR[r].n}`;
 const RECIPES=[
   {id:'bread',out:{bread:1},cost:{grain:2}},{id:'cfish',out:{cfish:1},cost:{fish:2}},
-  {id:'steel',out:{steel:1},cost:{iron:3}},{id:'ammo',out:{ammo:10},cost:{lead:1,steel:1}},
-  {id:'w1',wpn:1,cost:WPN[1].cost},{id:'w2',wpn:2,cost:WPN[2].cost},{id:'w3',wpn:3,cost:WPN[3].cost}];
+  {id:'steel',out:{steel:1},cost:{iron:3}},{id:'a1',out:{a1:10},cost:{lead:1,steel:1}},
+  {id:'a2',out:{a2:10},cost:{lead:2,steel:2,oil:1}},{id:'a3',out:{a3:10},cost:{lead:4,steel:3,oil:3}}]
+  .concat(WCOST.map((c,r)=>({id:'w'+r,gw:r,cost:c})),ARMOR.map(s=>({id:'ar_'+s,armor:s,cost:ACOST})));
 const COMPANY={farm:{name:'Ūkis',out:'grain',per:6,cost:250},fishery:{name:'Žvejybos įmonė',out:'fish',per:4,cost:300},
   mine:{name:'Geležies kasykla',out:'iron',per:5,cost:400},sawmill:{name:'Lentpjūvė',out:'wood',per:3,cost:350},
   leadmine:{name:'Švino kasykla',out:'lead',per:3,cost:450},oilrig:{name:'Naftos gręžinys',out:'oil',per:2,cost:600}};
-const SVG={ammo:'<svg viewBox="0 0 24 24"><path d="M9 19V10c0-4 3-7 3-7s3 3 3 7v9z" fill="#e0b050"/><rect x="8" y="18" width="8" height="3.5" rx="1" fill="#8a6420"/></svg>',
-  w1:'<svg viewBox="0 0 24 24"><path d="M3 7h18v4h-9l-1 3H8l-1 6H3l2-9H3z" fill="currentColor"/></svg>',
-  w2:'<svg viewBox="0 0 24 24"><path d="M1 9h13l1-2h3v2h5v2h-9l-1 2h-2l-1 6H7l1-6H5l-2 3H1z" fill="currentColor"/></svg>',
-  w3:'<svg viewBox="0 0 24 24"><path d="M0 11h12v-1h12v2H14l-1 2h-3l-1 5H6l1-5H3l-1 2H0zM8 6h8v3H8z" fill="currentColor"/></svg>'};
-const ico=k=>ITEMS[k].svg?SVG[ITEMS[k].svg]:ITEMS[k].i;
-const wico=t=>`<span style="color:${WPN[t].col}">${SVG['w'+t]}</span>`;
+const P=d=>`<svg viewBox="0 0 24 24"><path d="${d}" fill="currentColor"/></svg>`;
+const SVG={ammo:'<svg viewBox="0 0 24 24"><path d="M9 19V10c0-4 3-7 3-7s3 3 3 7v9z" fill="currentColor"/><rect x="8" y="18" width="8" height="3.5" rx="1" fill="#6b5a3a"/></svg>',
+  w0:P('M3 21l3-5 2 2-5 3zM8 15L19 2c2 4 1 8-2 11l-6 5z'),
+  w1:P('M3 7h18v4h-9l-1 3H8l-1 6H3l2-9H3z'),
+  w2:P('M1 9h13l1-2h3v2h5v2h-9l-1 2h-2l-1 6H7l1-6H5l-2 3H1z'),
+  w3:P('M0 11h12v-1h12v2H14l-1 2h-3l-1 5H6l1-5H3l-1 2H0zM8 6h8v3H8z'),
+  w4:P('M2 14h20l-2 5H4zM6 9h9v4H6zM15 10h8v2h-8zM4 20h16v1H4z'),
+  w5:P('M12 1l2 8 8 6v2l-8-2-1 5 3 2v1H8v-1l3-2-1-5-8 2v-2l8-6z'),
+  helm:P('M4 15a8 8 0 0116 0v2H4zM3 17h18v2.5H3z'),
+  chest:P('M7 3l2 2h6l2-2 3 3-2 4v11H6V10L4 6z'),
+  gloves:P('M7 21v-7L5 9l2-1 2 4V4h2v6h1V3h2v7h1V5h2v9l-1 7z'),
+  pants:P('M6 3h12l1 18h-5l-2-11-2 11H5z'),
+  boots:P('M8 3h6v10l6 3v5H6V13z')};
+const ico=k=>ITEMS[k].svg?`<span style="color:${ITEMS[k].col}">${SVG[ITEMS[k].svg]}</span>`:ITEMS[k].i;
+const gico=(s,r)=>`<span style="color:${RAR[r].c}">${SVG[s==='w'?'w'+r:s]}</span>`;
 const costStr=c=>Object.entries(c).map(([k,v])=>`${v}× ${ITEMS[k].n}`).join(', ');
 
 // ---------- state ----------
@@ -373,22 +415,24 @@ const SAVE='plieno-frontas-v3',RP=30,RWIN=2;
 let S=null,OWN=[],OWNC=[];
 function botName(){return pick(FIRST)+' '+pick(LAST);}
 function freshCountries(){return WORLD.map((d,i)=>({id:i,name:d.n,short:d.n,a:d.a,cap:M.caps[i],treasury:300,alive:M.caps[i]>=0,leader:botName(),playerPres:false,mobil:0,tax:10}));}
-const freshInv=()=>({bread:5,cfish:0,ammo:40,crate:1,grain:4,fish:0,iron:3,steel:2,wood:1,lead:0,oil:0});
+const freshInv=()=>({bread:5,cfish:0,a1:40,a2:0,a3:0,crate:1,grain:4,fish:0,iron:3,steel:2,wood:1,lead:0,oil:0});
 function newGame(name,countryId){
   S={v:3,tick:0,speed:1,owner:M.regions.map(g=>g.home),countries:freshCountries(),
     wars:[],battles:[],news:[],nextBattleId:1,nextWid:2,newsHot:true,
     election:{candidate:false},bots:JSON.parse(JSON.stringify(BOT_DEF)),
     p:{name:name||'Karys',country:countryId,hp:100,maxHp:100,en:100,maxEn:100,money:120,str:10,xp:0,lvl:1,
-      inv:freshInv(),weapons:[{id:1,t:1,dur:WPN[1].dur}],eq:1,useAmmo:true,mult:1,fame:0,dmg:0,
+      inv:freshInv(),gear:[],eq:{},ammoSel:'a1',mult:1,fame:0,dmg:0,
       st:{hits:0,won:0,crates:0,money:0},companies:[],president:false},
     over:false};
-  rebuildOwn();mkInit();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);
+  addGear('w',0);addGear('w',1);rebuildOwn();mkInit();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);
   addNews(`${S.p.name} prisijungė prie šalies ${S.countries[countryId].short} kariuomenės.`,true);
   renderTerritory();save();
 }
 function save(){if(!S||S.__preview)return;try{localStorage.setItem(SAVE,JSON.stringify(S));}catch(e){}}
 function load(){try{const t=localStorage.getItem(SAVE);if(!t)return false;const o=JSON.parse(t);if(!o||o.owner.length!==M.regions.length||o.countries.length!==NC||!o.p.inv)return false;S=o;
-  S.bots=Object.assign(JSON.parse(JSON.stringify(BOT_DEF)),S.bots||{});S.p.inv=Object.assign(freshInv(),S.p.inv);delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
+  S.bots=Object.assign(JSON.parse(JSON.stringify(BOT_DEF)),S.bots||{});if(!S.p.gear){const q=S.p;(S.orders||[]).forEach(o=>{const l=o.qty-o.done;if(o.side==='buy')q.money+=l*o.price;else if(q.inv[o.k]!=null)q.inv[o.k]+=l;});S.orders=[];S.mk=null;q.cost={};
+    q.inv.a1=q.inv.ammo||0;delete q.inv.ammo;q.ammoSel=q.useAmmo?'a1':'';const old=q.weapons||[];q.gear=[];q.eq={};old.forEach(w=>{addGear('w',w.t).dur=Math.min(w.dur,WDUR[w.t]);});delete q.weapons;}
+  S.p.inv=Object.assign(freshInv(),S.p.inv);delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
 function addNews(t,hot){S.news.unshift({t,tick:S.tick,hot:!!hot});if(S.news.length>150)S.news.length=150;if(hot||S.news.length<3)$('#tick1').textContent=t;}
 const C=i=>S.countries[i];
 const col=i=>`rgb(${COLORS[i].join(',')})`;
@@ -400,30 +444,30 @@ function power(ci){const c=C(ci);return 120+OWN[ci].length*28+Math.sqrt(Math.max
 const ov=ci=>S.bots.ov[ci]||{mode:'auto',pw:1};
 function timeStr(t){const d=Math.floor(t/24)+1,h=t%24;return `Diena ${d}, ${String(h).padStart(2,'0')}:00`;}
 const near=(a,b)=>{const me=S.p.country;return a===me||b===me;};
-const eqW=()=>S.p.weapons.find(w=>w.id===S.p.eq)||null;
 
 // ---------- market ----------
-const MKW={w1:45,w2:130,w3:320};
-const MKEYS=Object.keys(ITEMS).filter(k=>ITEMS[k].price).concat(Object.keys(MKW));
-const isW=k=>k in MKW,wT=k=>+k[1];
-const mkBase=k=>isW(k)?MKW[k]:ITEMS[k].price;
-const mkName=k=>isW(k)?WPN[wT(k)].n:ITEMS[k].n;
-const mkIcon=k=>isW(k)?`<span class="fw big">${wico(wT(k))}</span>`:ico(k);
-const mkCat=k=>isW(k)?'gear':ITEMS[k].c;
-const mkDesc=k=>isW(k)?`×${WPN[wT(k)].mul} žalos, ${WPN[wT(k)].dur} smūgių`:(ITEMS[k].d||'Žaliava gamybai');
-const WARF={ammo:1,steel:.6,w1:.5,w2:.5,w3:.5,bread:.4,cfish:.4,iron:.4,lead:.6,oil:.5};
+const GKEYS=[];SLOTS.forEach(s=>RAR.forEach((_,r)=>GKEYS.push(`g:${s}:${r}`)));
+const MKEYS=Object.keys(ITEMS).filter(k=>ITEMS[k].price).concat(GKEYS);
+const isG=k=>k[1]===':',isW=isG,gS=k=>k.split(':')[1],gR=k=>+k.split(':')[2];
+const mkBase=k=>isG(k)?(gS(k)==='w'?WPRICE:APRICE)[gR(k)]:ITEMS[k].price;
+const mkName=k=>isG(k)?gFull(gS(k),gR(k)):ITEMS[k].n;
+const mkIcon=k=>isG(k)?`<span class="fw big">${gico(gS(k),gR(k))}</span>`:ico(k);
+const mkCat=k=>isG(k)?(gS(k)==='w'?'wpn':'armor'):ITEMS[k].c;
+const mkDesc=k=>{if(!isG(k))return ITEMS[k].d||'Žaliava gamybai';const s=gS(k),r=gR(k),g=SLOT[s].rng[r];return `${SLOT[s].st} +${g[0]}–${g[1]}%, patvarumas ${gMax(s,r)}`;};
+const WARF={a1:1,a2:1,a3:1,steel:.6,w1:.5,w2:.5,w3:.5,bread:.4,cfish:.4,iron:.4,lead:.6,oil:.5};
 const liq=k=>clamp(Math.round(120/mkBase(k)),1,80);
 const FEE=.02,HIST=168,MAXORD=12;
-const owned=k=>isW(k)?S.p.weapons.filter(w=>w.t===wT(k)).length:S.p.inv[k];
+const owned=k=>isG(k)?S.p.gear.filter(g=>g.s===gS(k)&&g.r===gR(k)).length:S.p.inv[k];
 const p2=v=>v.toFixed(2);
 function mkBook(k){const o=S.mk[k],L=liq(k),a=[],b=[];for(let i=0;i<6;i++){const q=()=>Math.max(1,Math.round(L*(.5+i*.35)*rr(.6,1.4)));
   a.push([o.m*(1.015+i*.02),q()]);b.push([o.m*(.985-i*.02),q()]);}o.a=a;o.b=b;}
-function mkTarget(k){return mkBase(k)*S.mk[k].trend*(1+(WARF[k]||0)*Math.min(1,S.battles.length/40)*.5);}
+function mkTarget(k){return mkBase(k)*S.mk[k].trend*(1+(WARF[k]||(isG(k)?.45:0))*Math.min(1,S.battles.length/40)*.5);}
 function mkMove(k){const o=S.mk[k];o.m=clamp(o.m*Math.exp(.025*(R()+R()+R()-1.5)+.03*Math.log(mkTarget(k)/o.m)),mkBase(k)*.3,mkBase(k)*4);o.hist.push(+o.m.toFixed(3));if(o.hist.length>HIST)o.hist.shift();mkBook(k);}
 function mkInit(){S.mk={};S.orders=S.orders||[];S.nextOid=S.nextOid||1;S.p.cost=S.p.cost||{};
   MKEYS.forEach(k=>{S.mk[k]={m:mkBase(k)*rr(.85,1.15),trend:rr(.85,1.15),hist:[],vol:0};for(let i=0;i<72;i++)mkMove(k);});}
 function mkTick(){
-  MKEYS.forEach(k=>{S.mk[k].vol*=.9;mkMove(k);});
+  MKEYS.forEach(k=>{const o=S.mk[k];o.vol*=.9;mkMove(k);
+    if(R()<.5){const sd=R()<.5+.3*Math.log(mkTarget(k)/o.m)?'buy':'sell',q=1+Math.floor(R()*liq(k)*.6);o.vol+=q;tape(k,{n:pick(FIRST),s:sd,q,p:sd==='buy'?o.a[0][0]:o.b[0][0]});}});
   // bots trade into the player's limit orders
   for(const o of S.orders){const m=S.mk[o.k],left=o.qty-o.done,gap=o.side==='buy'?(m.a[0][0]-o.price)/m.m:(o.price-m.b[0][0])/m.m;let f=0;
     if(gap<=0)f=left;else if(gap<.07)f=Math.min(left,Math.floor(liq(o.k)*rr(0,.5)*(1-gap/.07)+R()*(1-gap/.07)));
@@ -436,10 +480,11 @@ function mkDay(){
   if(R()<.22){const k=pick(MKEYS),up=R()<.6,o=S.mk[k];o.trend=clamp(o.trend*(up?1.35:.72),.6,1.9);
     addNews(up?`📈 Rinka: išaugo prekės „${mkName(k)}“ paklausa, kainos kyla.`:`📉 Rinka: prekės „${mkName(k)}“ perteklius, kainos krenta.`,true);}
 }
-function give(k,q){if(isW(k)){for(let i=0;i<q;i++)addWeapon(wT(k));}else S.p.inv[k]+=q;}
-function take(k,q){const p=S.p;if(!isW(k)){p.inv[k]-=q;return 1;}let f=0;
-  for(let i=0;i<q;i++){const c=p.weapons.filter(w=>w.t===wT(k)).sort((a,b)=>(a.id===p.eq)-(b.id===p.eq)||b.dur-a.dur)[0];f+=c.dur/WPN[c.t].dur;p.weapons=p.weapons.filter(w=>w!==c);
-    if(p.eq===c.id){const nx=p.weapons.slice().sort((a,b)=>b.t-a.t)[0];p.eq=nx?nx.id:null;}}return f/q;}
+function give(k,q){if(isG(k)){for(let i=0;i<q;i++)addGear(gS(k),gR(k));}else S.p.inv[k]+=q;}
+// selling gear hands over the weakest unequipped piece first; worn pieces pay less
+function take(k,q){const p=S.p;if(!isG(k)){p.inv[k]-=q;return 1;}let f=0;
+  for(let i=0;i<q;i++){const c=p.gear.filter(g=>g.s===gS(k)&&g.r===gR(k)).sort((a,b)=>(p.eq[a.s]===a.id)-(p.eq[b.s]===b.id)||a.v-b.v)[0];f+=c.dur/gMax(c.s,c.r);removeGear(c);}return f/q;}
+function tape(k,e){const o=S.mk[k];e.t=S.tick;(o.tape=o.tape||[]).unshift(e);if(o.tape.length>6)o.tape.length=6;}
 function addCost(k,q,total){const c=S.p.cost[k]||{q:0,v:0};c.q+=q;c.v+=total;S.p.cost[k]=c;}
 function subCost(k,q){const c=S.p.cost[k];if(!c)return;const r=Math.max(0,1-q/Math.max(c.q,q));c.q=Math.max(0,c.q-q);c.v*=r;if(c.q<=0)delete S.p.cost[k];}
 // walk the book: what does q units cost (buy) or return (sell) right now
@@ -456,13 +501,13 @@ function tradeNow(k,side,q){const p=S.p;q=Math.floor(q);if(q<1)return toast('Įv
   const qt=quote(k,side,q);
   if(side==='buy'){p.money-=qt.total;give(k,q);addCost(k,q,qt.total);toast(`Nupirkta ${q}× ${mkName(k)} už ₡${p2(qt.total)}`);}
   else{const f=take(k,q),net=qt.total*f*(1-FEE);p.money+=net;myC().treasury+=qt.total*f*FEE;subCost(k,q);toast(`Parduota ${q}× ${mkName(k)} už ₡${p2(net)}`);}
-  eat_book(k,side,q);return true;}
+  tape(k,{n:p.name,s:side,q,p:qt.avg,you:1});eat_book(k,side,q);return true;}
 function placeOrder(k,side,q,price){const p=S.p;q=Math.floor(q);price=+(+price).toFixed(2);
-  if(isW(k))return toast('Ginklams galimi tik momentiniai sandoriai.');
+  if(isW(k))return toast('Ekipuotei galimi tik momentiniai sandoriai.');
   if(q<1||!(price>0))return toast('Įvesk kainą ir kiekį.');if(S.orders.length>=MAXORD)return toast(`Daugiausia ${MAXORD} užsakymų vienu metu.`);
   if(side==='buy'){if(p.money<q*price)return toast('Nepakanka pinigų.');p.money-=q*price;}else{if(owned(k)<q)return toast('Neturi tiek prekių.');take(k,q);}
   S.orders.push({id:S.nextOid++,k,side,qty:q,done:0,price,tick:S.tick});toast('Užsakymas pateiktas. Jis įvykdomas, kai rinka pasiekia tavo kainą.',3200);return true;}
-function fillOrder(o,f){const p=S.p,v=f*o.price;o.done+=f;S.mk[o.k].vol+=f;
+function fillOrder(o,f){const p=S.p,v=f*o.price;o.done+=f;S.mk[o.k].vol+=f;tape(o.k,{n:pick(FIRST),s:o.side==='buy'?'sell':'buy',q:f,p:o.price,me:1});
   if(o.side==='buy'){give(o.k,f);addCost(o.k,f,v);}else{p.money+=v*(1-FEE);myC().treasury+=v*FEE;subCost(o.k,f);}}
 function cancelOrder(id){const o=S.orders.find(x=>x.id===id);if(!o)return;const left=o.qty-o.done;if(o.side==='buy')S.p.money+=left*o.price;else give(o.k,left);S.orders=S.orders.filter(x=>x!==o);toast('Užsakymas atšauktas, likutis grąžintas.');}
 const chg=(k,n)=>{const h=S.mk[k].hist,a=h[Math.max(0,h.length-1-n)];return (h[h.length-1]/a-1)*100;};
@@ -516,8 +561,8 @@ function resolveBattle(b,win){
 function botDmg(ci){return power(ci)*rr(.6,1.4)*S.bots.power*(ci===S.p.country?S.bots.ally:1)*(ov(ci).pw||1);}
 function battleTick(b){
   for(let s=0;s<2;s++){const ci=sideC(b,s),d=botDmg(ci)*(1+bonus(b,s));b.dmg[s]+=d;b.tot[s]+=d;
-    const crit=R()<.15,part=d*rr(.35,.75);pushFeed(b,s,{n:pick(FIRST),w:1+Math.floor(R()*R()*3),d:Math.round(part),c:crit});
-    if(R()<.6)pushFeed(b,s,{n:pick(FIRST),w:1+Math.floor(R()*R()*3),d:Math.round(d-part),c:false});}
+    const crit=R()<.15,part=d*rr(.35,.75);pushFeed(b,s,{n:pick(FIRST),w:Math.floor(R()*R()*R()*6),d:Math.round(part),c:crit});
+    if(R()<.6)pushFeed(b,s,{n:pick(FIRST),w:Math.floor(R()*R()*R()*6),d:Math.round(d-part),c:false});}
   const sum=b.dmg[0]+b.dmg[1],lead=b.dmg[0]>b.dmg[1]?0:1,sh=b.dmg[lead]/(sum||1),g=sh>.8?3:sh>.62?2:1;
   b.pts[lead]+=g;b.gain={s:lead,g};
   if(b.pts[lead]>=RP){b.rw[lead]++;if(b.rw[lead]>=RWIN)return lead;
@@ -586,34 +631,47 @@ function checkVictory(){
 function gainXp(n){const p=S.p;p.xp+=n;while(p.xp>=p.lvl*50){p.xp-=p.lvl*50;p.lvl++;p.maxHp+=5;p.maxEn+=5;p.hp=p.maxHp;p.en=p.maxEn;toast(`Naujas lygis: ${p.lvl}!`);}}
 const has=c=>Object.entries(c).every(([k,v])=>S.p.inv[k]>=v);
 const pay=c=>Object.entries(c).forEach(([k,v])=>S.p.inv[k]-=v);
-function addWeapon(t){const w={id:S.nextWid++,t,dur:WPN[t].dur};S.p.weapons.push(w);if(!eqW())S.p.eq=w.id;return w;}
-function hitDmg(b,s){const p=S.p,w=eqW(),am=p.useAmmo&&p.inv.ammo>0;
-  return (40+p.str*4)*(1+p.lvl*.05)*(w?WPN[w.t].mul:1)*(am?1.2:1)*(b?1+bonus(b,s):1);}
+const eqG=s=>S.p.gear.find(g=>g.id===S.p.eq[s])||null;
+function addGear(s,r,v){const a=SLOT[s].rng[r],g={id:S.nextWid++,s,r,v:v||Math.round(rr(a[0],a[1])),dur:gMax(s,r)};S.p.gear.push(g);if(!eqG(s))S.p.eq[s]=g.id;return g;}
+function removeGear(g){const p=S.p;p.gear=p.gear.filter(x=>x!==g);if(p.eq[g.s]===g.id){const nx=p.gear.filter(x=>x.s===g.s).sort((a,b)=>b.v-a.v)[0];if(nx)p.eq[g.s]=nx.id;else delete p.eq[g.s];}}
+const rollR=()=>{const x=R();return AODDS.findIndex(o=>x<o);};
+const ammoOn=()=>{const k=S.p.ammoSel;return k&&S.p.inv[k]>0?k:null;};
+// everything the equipped gear adds up to
+function pstats(){const v=s=>{const g=eqG(s);return g?g.v:0;},def=Math.min(80,v('helm')+v('chest')),a=ammoOn();
+  return {atk:v('w'),def,prec:Math.min(100,50+v('gloves')),dodge:v('pants'),crit:5+v('boots'),ammo:a?AMMO[a]:0,cost:10*(1-def/100)};}
+const hitBase=(b,s,ps)=>(40+S.p.str*4)*(1+S.p.lvl*.05)*(1+ps.atk/100)*(1+ps.ammo)*(b?1+bonus(b,s):1);
+// average damage of one hit: precise hits do full or critical damage, the rest do half
+function hitDmg(b,s){const ps=pstats(),pr=ps.prec/100;return hitBase(b,s,ps)*(pr*(1+ps.crit/100)+(1-pr)*.5);}
+const fmt1=v=>(Math.round(v*10)/10).toLocaleString('lt-LT');
 const A={
   work(){const p=S.p;if(p.en<10)return toast('Per mažai energijos.');p.en-=10;const w=Math.round(6+p.lvl*1.2);p.money+=w;myC().treasury+=w*.5;gainXp(3);
     const k=pick(RAWS);p.inv[k]++;toast(`Uždirbai ₡${w} ir ${ITEMS[k].i} ${ITEMS[k].n}`);},
   train(){const p=S.p;if(p.en<15)return toast('Per mažai energijos.');p.en-=15;p.str+=1;gainXp(4);toast(`Jėga: ${p.str}`);},
   eat(k){const p=S.p;if(!k)k=p.inv.bread>0?'bread':p.inv.cfish>0?'cfish':null;if(!k||p.inv[k]<1)return toast('Neturi maisto. Pasigamink arba nusipirk rinkoje.');
     if(p.hp>=p.maxHp)return toast('Sveikata pilna.');p.inv[k]--;p.hp=Math.min(p.maxHp,p.hp+ITEMS[k].heal);},
-  hit(id,s){const p=S.p,b=S.battles.find(x=>x.id===id);if(!b)return;if(p.hp<10)return toast('Per mažai sveikatos. Pavalgyk.');
-    let total=0,n=0,anyCrit=false;
-    for(let i=0;i<p.mult&&p.hp>=10;i++){const w=eqW(),am=p.useAmmo&&p.inv.ammo>0,crit=R()<(w?WPN[w.t].crit:.03);
-      const d=Math.round(hitDmg(b,s)*rr(.9,1.1)*(crit?2:1));p.hp-=10;if(am)p.inv.ammo--;
-      if(w&&--w.dur<=0){p.weapons=p.weapons.filter(x=>x!==w);const nx=p.weapons.slice().sort((a,c)=>c.t-a.t)[0];p.eq=nx?nx.id:null;toast(`${WPN[w.t].n} susidėvėjo.`);}
+  hit(id,s){const p=S.p,b=S.battles.find(x=>x.id===id);if(!b)return;if(p.hp<pstats().cost)return toast('Per mažai sveikatos. Pavalgyk.');
+    let total=0,n=0,anyCrit=false,dodged=0;
+    for(let i=0;i<p.mult;i++){const ps=pstats();if(p.hp<ps.cost)break;
+      const dodge=R()<ps.dodge/100,precise=R()<ps.prec/100,crit=precise&&R()<ps.crit/100,a=ammoOn(),w=eqG('w');
+      const d=Math.round(hitBase(b,s,ps)*rr(.9,1.1)*(crit?2:precise?1:.5));
+      if(a)p.inv[a]--;
+      if(dodge)dodged++;else{p.hp-=ps.cost;SLOTS.forEach(sl=>{const g=eqG(sl);if(g&&--g.dur<=0){removeGear(g);toast(`${gFull(g.s,g.r)} susidėvėjo.`,3000);}});}
       b.dmg[s]+=d;b.tot[s]+=d;b.pl[s]+=d;p.dmg+=d;p.st.hits++;total+=d;n++;anyCrit=anyCrit||crit;
-      pushFeed(b,s,{n:p.name,w:w?w.t:0,d,c:crit,me:1});
+      pushFeed(b,s,{n:p.name,w:w?w.r:-1,d,c:crit,h:!precise,me:1});
       if(sideC(b,s)===p.country)p.fame+=d/120;gainXp(2);}
-    if(n>1||!tabIsBattle())toast(`${anyCrit?'💥 ':''}${fmt(total)} žalos`);},
+    if(n>1||dodged||!tabIsBattle())toast(`${anyCrit?'💥 ':''}${fmt(total)} žalos${dodged?` · išsisukai ${dodged}×`:''}`);},
   craft(id){const r=RECIPES.find(x=>x.id===id);if(!has(r.cost))return toast('Trūksta žaliavų: '+costStr(r.cost));pay(r.cost);
-    if(r.wpn){addWeapon(r.wpn);toast(`Pagaminta: ${WPN[r.wpn].n}`);}else{for(const k in r.out)S.p.inv[k]+=r.out[k];const k=Object.keys(r.out)[0];toast(`Pagaminta: ${r.out[k]}× ${ITEMS[k].n}`);}gainXp(1);},
-  dismantle(id){const p=S.p,w=p.weapons.find(x=>x.id===id);if(!w)return;const back=Math.max(1,Math.floor(WPN[w.t].cost.steel*.5*w.dur/WPN[w.t].dur));
-    p.weapons=p.weapons.filter(x=>x!==w);if(p.eq===id){const nx=p.weapons.slice().sort((a,c)=>c.t-a.t)[0];p.eq=nx?nx.id:null;}p.inv.steel+=back;toast(`Išardyta. +${back} ${ITEMS.steel.n}`);},
-  equip(id){S.p.eq=S.p.eq===id?null:id;},
+    if(r.gw!=null){const g=addGear('w',r.gw);toast(`Pagaminta: ${WN[g.r]}, ataka +${g.v}%`,3000);}
+    else if(r.armor){const g=addGear(r.armor,rollR());invSel='g'+g.id;toast(`Pagaminta: ${gFull(g.s,g.r)}, ${SLOT[g.s].st.toLowerCase()} +${g.v}%`,3500);}
+    else{for(const k in r.out)S.p.inv[k]+=r.out[k];const k=Object.keys(r.out)[0];toast(`Pagaminta: ${r.out[k]}× ${ITEMS[k].n}`);}gainXp(1);},
+  dismantle(id){const p=S.p,g=p.gear.find(x=>x.id===id);if(!g)return;const back=Math.max(1,Math.floor((g.s==='w'?WCOST[g.r].steel*.5:2+g.r*3)*g.dur/gMax(g.s,g.r)));
+    removeGear(g);p.inv.steel+=back;toast(`Išardyta. +${back} ${ITEMS.steel.n}`);},
+  equip(id){const g=S.p.gear.find(x=>x.id===id);if(!g)return;if(S.p.eq[g.s]===id)delete S.p.eq[g.s];else S.p.eq[g.s]=id;},
   openCrate(){const p=S.p;if(p.inv.crate<1)return;p.inv.crate--;const got=[];const m=Math.round(rr(20,80));p.money+=m;got.push('₡'+m);
     for(let i=0;i<2;i++){const k=pick(RAWS.concat(['steel'])),q=Math.round(rr(3,8));p.inv[k]+=q;got.push(`${q}× ${ITEMS[k].n}`);}
-    const a=Math.round(rr(10,30));p.inv.ammo+=a;got.push(`${a}× ${ITEMS.ammo.n}`);
-    const r=R();if(r<.04){addWeapon(3);got.push(WPN[3].n);}else if(r<.16){addWeapon(2);got.push(WPN[2].n);}
-    toast('📦 '+got.join(', '),4000);},
+    const ak=R()<.7?'a1':R()<.75?'a2':'a3',a=Math.round(rr(10,30));p.inv[ak]+=a;got.push(`${a}× ${ITEMS[ak].n}`);
+    if(R()<.6){const g=addGear(pick(SLOTS),rollR());got.push(gFull(g.s,g.r));}
+    toast('📦 '+got.join(', '),4500);},
   buyCo(type){const d=COMPANY[type];if(S.p.money<d.cost)return toast('Nepakanka pinigų.');S.p.money-=d.cost;S.p.companies.push({type,lvl:1});toast(`Įsigijai: ${d.name}`);},
   upCo(i){const c=S.p.companies[i],cost=COMPANY[c.type].cost*c.lvl;if(S.p.money<cost)return toast('Nepakanka pinigų.');S.p.money-=cost;c.lvl++;},
   run(){if(S.p.money<50)return toast('Registracija kainuoja ₡50.');S.p.money-=50;S.election.candidate=true;toast('Užsiregistravai rinkimuose!');},
@@ -726,7 +784,8 @@ function tradeLive(){const el=$('#tLive');if(!el)return;const k=T.k,o=S.mk[k],d=
   el.innerHTML=`<div class="thead"><span class="ti">${mkIcon(k)}</span><div class="grow"><div class="tprice">₡${p2(o.m)} <small>${chgHtml(chg(k,T.range))}</small></div><div class="muted">${mkDesc(k)} · <i class="dm ${d[1]}">${d[0]}</i></div></div><div class="town">Turi<b>${fmt(owned(k))}</b>${c&&c.q>0?`<small class="muted">vid. ₡${p2(c.v/c.q)}</small>`:''}</div></div>
    ${chart(k,T.range)}
    <div class="chips">${[[24,'24 val.'],[72,'3 d.'],[168,'7 d.']].map(([n,t])=>`<button class="chip${T.range===n?' on':''}" data-act="tRange" data-i="${n}">${t}</button>`).join('')}<span class="grow"></span><span class="muted">Apyvarta ${fmt(o.vol)}</span></div>
-   <div class="book"><div><small class="muted">Parduoda (kaina · kiekis)</small>${bk(o.a,'ask')}</div><div><small class="muted">Perka (kaina · kiekis)</small>${bk(o.b,'bid')}</div></div>`;
+   <div class="book"><div><small class="muted">Parduoda (kaina · kiekis)</small>${bk(o.a,'ask')}</div><div><small class="muted">Perka (kaina · kiekis)</small>${bk(o.b,'bid')}</div></div>
+   <div class="tape"><small class="muted">Paskutiniai sandoriai</small>${(o.tape||[]).map(e=>`<div class="${e.me||e.you?'me':''}"><span>${e.you?'Tu':esc(e.n)} <b class="${e.s==='buy'?'up':'dn'}">${e.s==='buy'?'nupirko':'pardavė'}</b>${e.me?(e.s==='buy'?' iš tavęs':' tau'):''} ${e.q}×</span><span>₡${p2(e.p)}</span><span class="muted">${S.tick-e.t?'prieš '+(S.tick-e.t)+' val.':'dabar'}</span></div>`).join('')||'<div class="muted">Dar nebuvo.</div>'}</div>`;
   tradeSum();}
 function tradeSum(){const el=$('#tSum');if(!el)return;const k=T.k,p=S.p,mx=tMax(),sl=$('#tSlide'),go=$('#tGo');
   sl.max=Math.max(1,mx);sl.value=Math.min(T.qty,mx);sl.disabled=mx<1;
@@ -766,11 +825,11 @@ function battleCard(b,wide){
    <span class="bdmg"><span>🔥 ${fmt(b.dmg[0])}</span><span>${fmt(b.dmg[1])} 🔥</span></span></button>`;
 }
 function feedRows(b,s){
-  const rows=b.feed[s].map(e=>`<div class="fr${e.c?' crit':''}${e.me?' me':''}"><span class="av" style="background:${col(sideC(b,s))}">${esc(e.n[0])}</span><span class="fn">${esc(e.n)}</span>${e.w?`<span class="fw">${wico(e.w)}</span>`:''}<span class="fd">🔥 ${fmt(e.d)}${e.c?'!':''}</span></div>`);
+  const rows=b.feed[s].map(e=>`<div class="fr${e.c?' crit':''}${e.me?' me':''}${e.h?' half':''}"><span class="av" style="background:${col(sideC(b,s))}">${esc(e.n[0])}</span><span class="fn">${esc(e.n)}</span>${e.w>=0?`<span class="fw">${gico('w',Math.min(5,e.w))}</span>`:''}<span class="fd">🔥 ${fmt(e.d)}${e.c?'!':''}</span></div>`);
   while(rows.length<5)rows.push('<div class="fr empty"></div>');return rows.join('');
 }
 function battleView(b){
-  const p=S.p,g=M.regions[b.region],pa=pct(b.dmg[0],b.dmg[1]),w=eqW(),am=p.useAmmo&&p.inv.ammo>0;
+  const p=S.p,g=M.regions[b.region],pa=pct(b.dmg[0],b.dmg[1]),ps=pstats(),w=eqG('w');
   const hills=s=>`<div class="hill ${s?'d':'a'}"><i style="width:${Math.min(100,b.pts[s]/RP*100)}%"></i></div>`;
   return `<div class="feeds"><div class="feed l">${feedRows(b,0)}</div><div class="fmid"><span class="muted">Raundas</span><b>${b.round}</b><span class="muted">iš ${RWIN*2-1}</span></div><div class="feed r">${feedRows(b,1)}</div></div>
    <div class="btitle">${C(b.def).cap===b.region?'<span class="cap">★</span> ':''}${esc(g.name)} <button class="btn sm alt" data-act="goto" data-r="${b.region}" aria-label="Rodyti žemėlapyje">⌖</button></div>
@@ -781,13 +840,14 @@ function battleView(b){
    <div class="dbar"><div class="a" style="width:${clamp(pa,12,88)}%"><small>${pa.toFixed(1)}%</small><b>🔥 ${fmt(b.dmg[0])}</b></div><div class="d"><small>${(100-pa).toFixed(1)}%</small><b>🔥 ${fmt(b.dmg[1])}</b></div></div>
    <div class="sides">
      <div class="sidecol"><div class="row"><span class="grow">${cname(b.att)}</span><span class="bon">🔥 +${Math.round(bonus(b,0)*100)}%</span></div>
-       <button class="fight a" data-act="hit" data-b="${b.id}" data-s="0" ${p.hp<10?'disabled':''}>⚔ PULTI<small>−${10*p.mult} ❤ · ~${fmt(hitDmg(b,0)*p.mult)}</small></button>${b.pl[0]?`<div class="muted">Tavo žala: ${fmt(b.pl[0])}</div>`:''}</div>
+       <button class="fight a" data-act="hit" data-b="${b.id}" data-s="0" ${p.hp<ps.cost?'disabled':''}>⚔ PULTI<small>−${fmt1(ps.cost*p.mult)} ❤ · ~${fmt(hitDmg(b,0)*p.mult)}</small></button>${b.pl[0]?`<div class="muted">Tavo žala: ${fmt(b.pl[0])}</div>`:''}</div>
      <div class="sidecol"><div class="row"><span class="grow">${cname(b.def)}</span><span class="bon">🔥 +${Math.round(bonus(b,1)*100)}%</span></div>
-       <button class="fight d" data-act="hit" data-b="${b.id}" data-s="1" ${p.hp<10?'disabled':''}>🛡 GINTI<small>−${10*p.mult} ❤ · ~${fmt(hitDmg(b,1)*p.mult)}</small></button>${b.pl[1]?`<div class="muted">Tavo žala: ${fmt(b.pl[1])}</div>`:''}</div>
+       <button class="fight d" data-act="hit" data-b="${b.id}" data-s="1" ${p.hp<ps.cost?'disabled':''}>🛡 GINTI<small>−${fmt1(ps.cost*p.mult)} ❤ · ~${fmt(hitDmg(b,1)*p.mult)}</small></button>${b.pl[1]?`<div class="muted">Tavo žala: ${fmt(b.pl[1])}</div>`:''}</div>
    </div>
    <div class="box"><div class="row"><span class="grow">❤ ${Math.floor(p.hp)}/${p.maxHp} · 🍞 ${p.inv.bread} · 🍣 ${p.inv.cfish}</span><button class="btn sm alt" data-act="eat">Valgyti</button></div>
-     <div class="row"><span class="grow loadout">${w?`<span class="fw">${wico(w.t)}</span> ${WPN[w.t].n} ×${WPN[w.t].mul} <span class="muted">(${w.dur})</span>`:'<span class="muted">Be ginklo</span>'}</span>
-       <label class="chk"><input type="checkbox" id="useAmmo" ${p.useAmmo?'checked':''}> Šoviniai (${p.inv.ammo})</label></div>
+     <div class="statstrip sm">${statLine(ps)}</div>
+     <div class="row"><span class="grow loadout">${w?`<span class="fw">${gico('w',w.r)}</span> <span style="color:${RAR[w.r].c}">${WN[w.r]}</span> +${w.v}% <span class="muted">(${w.dur})</span>`:'<span class="muted">Be ginklo</span>'}</span><button class="btn sm alt" data-act="tab" data-i="inv">Ekipuotė</button></div>
+     <div class="row"><span class="muted">Šoviniai</span><span class="chips grow">${[['','Be']].concat(Object.keys(AMMO).map(k=>[k,`+${AMMO[k]*100}% (${p.inv[k]})`])).map(([k,n])=>`<button class="chip${(p.ammoSel||'')===k?' on':''}" ${k?`style="color:${ITEMS[k].col}"`:''} data-act="ammoSel" data-i="${k}" ${k&&!p.inv[k]?'disabled':''}>${n}</button>`).join('')}</span></div>
      <div class="row"><span class="grow muted">Smūgių vienu paspaudimu</span>${[1,3,5].map(n=>`<button class="chip${p.mult===n?' on':''}" data-act="mult" data-i="${n}">×${n}</button>`).join('')}</div></div>
    <div class="muted">Pusė, kuri raunde padarė daugiau žalos, kas valandą gauna 1–3 taškus. ${RP} taškų laimi raundą, ${RWIN} raundai laimi mūšį. Bendra žala: ${fmt(b.tot[0])} prieš ${fmt(b.tot[1])}.</div>`;
 }
@@ -799,34 +859,49 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{if(!S||S.__p
 const slider=(k,label,min,max,stepv)=>`<div class="sl"><div class="row"><label for="bot_${k}">${label}</label><output id="out_${k}">${fmtBot(k,S.bots[k])}</output></div><input type="range" id="bot_${k}" data-bot="${k}" min="${min}" max="${max}" step="${stepv}" value="${S.bots[k]}"></div>`;
 const fmtBot=(k,v)=>k==='maxWars'?String(v):Math.round(v*100)+'%';
 const tile=(k,sel)=>{const it=ITEMS[k],n=S.p.inv[k];return `<button class="tile c-${it.c}${sel?' on':''}${n?'':' zero'}" data-act="selItem" data-i="${k}"><span class="ti">${ico(k)}</span>${it.d?`<span class="te">${it.d}</span>`:''}<span class="tn">${fmt(n)}</span></button>`;};
+const gTile=(g,cls)=>{const on=S.p.eq[g.s]===g.id;return `<button class="tile gt${invSel==='g'+g.id?' on':''} ${cls||''}" style="--rc:${RAR[g.r].c}" data-act="selGear" data-i="${g.id}">${on&&!cls?'<span class="eqb">Uždėta</span>':''}<span class="fw big">${gico(g.s,g.r)}</span><span class="te">${SLOT[g.s].ic} +${g.v}%</span><span class="dur"><i style="width:${g.dur/gMax(g.s,g.r)*100}%;background:${RAR[g.r].c}"></i></span><span class="tn">${g.dur}</span></button>`;};
+const statLine=ps=>`<span>⚔ +${ps.atk}%</span><span>🛡 ${ps.def}%</span><span>🎯 ${ps.prec}%</span><span>💨 ${ps.dodge}%</span><span>💥 ${ps.crit}%</span>`;
 function renderInv(){
   const p=S.p;let h='';
   if(invView==='craft'){
     h+=`<button class="btn alt" data-act="invView" data-i="main">← Inventorius</button>`;
-    RECIPES.forEach(r=>{const ok=has(r.cost),nm=r.wpn?WPN[r.wpn].n:Object.entries(r.out).map(([k,v])=>`${v}× ${ITEMS[k].n}`).join(''),ic=r.wpn?`<span class="fw big">${wico(r.wpn)}</span>`:`<span class="ti sm">${ico(Object.keys(r.out)[0])}</span>`;
-      h+=`<div class="box"><div class="row">${ic}<div class="grow"><b>${nm}</b>${r.wpn?` <span class="muted">×${WPN[r.wpn].mul} žalos, ${WPN[r.wpn].dur} smūgių, kritinis ${Math.round(WPN[r.wpn].crit*100)}%</span>`:''}
+    RECIPES.forEach(r=>{const ok=has(r.cost);let nm,ic,ex='';
+      if(r.gw!=null){const g=SLOT.w.rng[r.gw];nm=`<span style="color:${RAR[r.gw].c}">${WN[r.gw]}</span>`;ic=`<span class="fw big">${gico('w',r.gw)}</span>`;ex=` <span class="muted">ataka +${g[0]}–${g[1]}%, ${WDUR[r.gw]} smūgių</span>`;}
+      else if(r.armor){nm=SLOT[r.armor].n;ic=`<span class="fw big">${gico(r.armor,0)}</span>`;ex=` <span class="muted">${SLOT[r.armor].st.toLowerCase()}, retumas atsitiktinis</span>`;}
+      else{nm=Object.entries(r.out).map(([k,v])=>`${v}× ${ITEMS[k].n}`).join('');ic=`<span class="ti sm">${ico(Object.keys(r.out)[0])}</span>`;}
+      h+=`<div class="box"><div class="row">${ic}<div class="grow"><b>${nm}</b>${ex}
         <div class="muted">${Object.entries(r.cost).map(([k,v])=>`<span class="${p.inv[k]>=v?'':'lack'}">${ITEMS[k].i||''} ${v} ${ITEMS[k].n} (${p.inv[k]})</span>`).join(' · ')}</div></div>
         <button class="btn sm" data-act="craft" data-i="${r.id}" ${ok?'':'disabled'}>Gaminti</button></div></div>`;});
+    h+=`<div class="muted">Aprangos retumo tikimybės: ${RAR.map((r,i)=>`<span style="color:${r.c}">${r.n} ${+((AODDS[i]-(i?AODDS[i-1]:0))*100).toFixed(1)}%</span>`).join(' · ')}</div>`;
     return h;
   }
   if(invView==='dismantle'){
-    h+=`<button class="btn alt" data-act="invView" data-i="main">← Inventorius</button><div class="muted">Išardęs ginklą atgauni dalį plieno. Kuo labiau susidėvėjęs, tuo mažiau.</div>`;
-    if(!p.weapons.length)h+=`<div class="muted">Neturi ginklų.</div>`;
-    p.weapons.forEach(w=>h+=`<div class="box"><div class="row"><span class="fw big">${wico(w.t)}</span><div class="grow"><b>${WPN[w.t].n}</b><div class="muted">Likę ${w.dur}/${WPN[w.t].dur} smūgių${p.eq===w.id?' · uždėtas':''}</div></div><button class="btn sm red" data-act="dismantle" data-i="${w.id}">Ardyti</button></div></div>`);
+    h+=`<button class="btn alt" data-act="invView" data-i="main">← Inventorius</button><div class="muted">Išardęs ekipuotę atgauni dalį plieno. Kuo labiau susidėvėjusi, tuo mažiau.</div>`;
+    if(!p.gear.length)h+=`<div class="muted">Neturi ekipuotės.</div>`;
+    p.gear.slice().sort((a,b)=>a.r-b.r||a.v-b.v).forEach(g=>h+=`<div class="box"><div class="row"><span class="fw big">${gico(g.s,g.r)}</span><div class="grow"><b style="color:${RAR[g.r].c}">${gFull(g.s,g.r)}</b><div class="muted">${SLOT[g.s].st} +${g.v}% · ${g.dur}/${gMax(g.s,g.r)}${p.eq[g.s]===g.id?' · uždėta':''}</div></div><button class="btn sm red" data-act="dismantle" data-i="${g.id}">Ardyti</button></div></div>`);
     return h;
   }
   h+=`<div class="row"><button class="btn grow" data-act="invView" data-i="craft">🛠 GAMINTI</button><button class="btn alt grow" data-act="invView" data-i="dismantle">🔧 ARDYTI</button></div>`;
-  h+=`<h4 class="sec">DAIKTAI</h4><div class="tiles">${['crate','cfish','bread','ammo'].map(k=>tile(k,invSel===k)).join('')}${Object.keys(ITEMS).filter(k=>ITEMS[k].c==='raw').map(k=>tile(k,invSel===k)).join('')}</div>`;
+  h+=`<div class="statstrip">${statLine(pstats())}</div>
+   <div class="slots">${SLOTS.map(s=>{const g=eqG(s);return g?gTile(g,'slot'):`<div class="tile gt slot empty"><span class="fw big">${SVG[s==='w'?'w1':s]}</span><span class="te">${SLOT[s].n}</span></div>`;}).join('')}</div>`;
+  h+=`<h4 class="sec">DAIKTAI</h4><div class="tiles">${['crate','cfish','bread','a1','a2','a3'].map(k=>tile(k,invSel===k)).join('')}${Object.keys(ITEMS).filter(k=>ITEMS[k].c==='raw').map(k=>tile(k,invSel===k)).join('')}</div>`;
   if(invSel&&ITEMS[invSel]){const it=ITEMS[invSel],k=invSel;let act='';
     if(it.heal)act=`<button class="btn sm" data-act="eatItem" data-i="${k}" ${p.inv[k]?'':'disabled'}>Valgyti</button>`;
     if(k==='crate')act=`<button class="btn sm" data-act="openCrate" ${p.inv.crate?'':'disabled'}>Atidaryti</button>`;
-    if(k==='ammo')act=`<label class="chk"><input type="checkbox" id="useAmmo" ${p.useAmmo?'checked':''}> Naudoti mūšyje</label>`;
-    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${S.mk[k]?` · rinkoje ₡${p2(S.mk[k].m)}`:''}</div></div>${act}
+    if(AMMO[k])act=p.ammoSel===k?`<button class="btn sm alt" data-act="ammoSel" data-i="">Nebenaudoti</button>`:`<button class="btn sm" data-act="ammoSel" data-i="${k}">Naudoti mūšyje</button>`;
+    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${S.mk[k]?` · rinkoje ₡${p2(S.mk[k].m)}`:''}${p.ammoSel===k?' · naudojami':''}</div></div>${act}
       ${S.mk[k]?`<button class="btn sm alt" data-act="trade" data-i="${k}" data-s="sell">Į rinką</button>`:''}</div></div>`;}
-  h+=`<h4 class="sec">GINKLAI</h4>`;
-  if(!p.weapons.length)h+=`<div class="muted">Neturi ginklų. Kovoji plikomis rankomis, kol pasigaminsi naują.</div>`;
-  h+=`<div class="tiles w">${p.weapons.slice().sort((a,b)=>b.t-a.t).map(w=>`<button class="tile wt${p.eq===w.id?' on':''}" data-act="equip" data-i="${w.id}">${p.eq===w.id?'<span class="eqb">Uždėtas</span>':''}<span class="fw big">${wico(w.t)}</span><span class="te">×${WPN[w.t].mul}</span><span class="dur"><i style="width:${w.dur/WPN[w.t].dur*100}%;background:${WPN[w.t].col}"></i></span><span class="tn">${w.dur}</span></button>`).join('')}</div>
-   <div class="muted">Paspausk ginklą, kad jį uždėtum arba nuimtum. Vienas smūgis sunaudoja vieną ginklo patvarumo tašką ir vieną šovinį.</div>`;
+  h+=`<h4 class="sec">EKIPUOTĖ (${p.gear.length})</h4>`;
+  if(!p.gear.length)h+=`<div class="muted">Neturi ekipuotės. Pasigamink, nusipirk rinkoje arba laimėk trofėjų dėžę.</div>`;
+  h+=`<div class="tiles">${p.gear.slice().sort((a,b)=>SLOTS.indexOf(a.s)-SLOTS.indexOf(b.s)||b.r-a.r||b.v-a.v).map(g=>gTile(g)).join('')}</div>`;
+  const g=invSel&&invSel[0]==='g'?p.gear.find(x=>'g'+x.id===invSel):null;
+  if(g){const rg=SLOT[g.s].rng[g.r],on=p.eq[g.s]===g.id,cur=eqG(g.s),diff=cur&&!on?g.v-cur.v:0;
+    h+=`<div class="box" style="border-color:${RAR[g.r].c}"><div class="row"><span class="fw big">${gico(g.s,g.r)}</span><div class="grow"><b style="color:${RAR[g.r].c}">${gFull(g.s,g.r)}</b> <span class="muted">${g.s==='w'?RAR[g.r].n:''}</span>
+      <div>${SLOT[g.s].st} <b>+${g.v}%</b> <span class="muted">(šio retumo rėžiai ${rg[0]}–${rg[1]}%)</span>${diff?` <span class="${diff>0?'up':'dn'}">${diff>0?'▲ +':'▼ '}${diff}</span>`:''}</div>
+      <div class="muted">Patvarumas ${g.dur}/${gMax(g.s,g.r)} smūgių</div></div></div>
+      <div class="row"><button class="btn sm grow" data-act="equip" data-i="${g.id}">${on?'Nuimti':'Uždėti'}</button><button class="btn sm alt" data-act="trade" data-i="g:${g.s}:${g.r}" data-s="sell">Į rinką</button><button class="btn sm red" data-act="dismantle" data-i="${g.id}">Ardyti</button></div></div>`;}
+  h+=`<div class="muted">${RAR.map(r=>`<span style="color:${r.c}">■ ${r.n}</span>`).join(' ')}</div>
+   <div class="muted">⚔ ataka didina žalą. 🛡 gynyba (šalmas ir liemenė) mažina sveikatos kainą už smūgį. 🎯 taiklumas yra tikimybė smogti pilna jėga, kitaip žala perpus mažesnė. 💨 išsisukęs neprarandi sveikatos ir nedėvi ekipuotės. 💥 kritinis smūgis padaro dvigubą žalą.</div>`;
   return h;
 }
 function renderSheet(){
@@ -856,10 +931,10 @@ function renderSheet(){
     h+=`<div class="box"><h4>Įsigyti įmonę</h4>`+Object.entries(COMPANY).map(([k,d])=>`<div class="row"><div class="grow">${ITEMS[d.out].i} ${d.name}<div class="muted">${d.per}× ${ITEMS[d.out].n} per dieną</div></div><button class="btn sm" data-act="buyCo" data-i="${k}">₡${d.cost}</button></div>`).join('')+`</div>`;
   }
   if(tab==='market'){title='Rinka';
-    const F={all:()=>true,food:k=>mkCat(k)==='food',raw:k=>mkCat(k)==='raw',gear:k=>mkCat(k)==='gear',mine:k=>owned(k)>0};
+    const F={all:()=>true,food:k=>mkCat(k)==='food',raw:k=>mkCat(k)==='raw',ammo:k=>mkCat(k)==='ammo',wpn:k=>mkCat(k)==='wpn',armor:k=>mkCat(k)==='armor',mine:k=>owned(k)>0};
     h+=`<div class="statstrip"><span>₡ ${fmt(p.money)}</span><span class="muted">Mokestis parduodant ${FEE*100}%</span></div>`;
     if(S.orders.length)h+=`<div class="box"><h4>Mano užsakymai (${S.orders.length})</h4>${S.orders.map(o=>`<div class="row"><span class="ti sm">${mkIcon(o.k)}</span><button class="grow linkrow" data-act="trade" data-i="${o.k}"><b class="${o.side==='buy'?'up':'dn'}">${o.side==='buy'?'Pirkti':'Parduoti'}</b> ${o.qty}× ${mkName(o.k)} po ₡${p2(o.price)}<div class="muted">įvykdyta ${o.done}/${o.qty} · rinkoje ₡${p2(S.mk[o.k].m)}</div></button><button class="btn sm alt" data-act="cancelOrder" data-i="${o.id}">Atšaukti</button></div>`).join('')}</div>`;
-    h+=`<div class="chips">${[['all','Visos'],['food','Maistas'],['raw','Žaliavos'],['gear','Ginkluotė'],['mine','Turiu']].map(([k,n])=>`<button class="chip${mFilter===k?' on':''}" data-act="mFilter" data-i="${k}">${n}</button>`).join('')}</div>`;
+    h+=`<div class="chips">${[['all','Visos'],['food','Maistas'],['raw','Žaliavos'],['ammo','Šoviniai'],['wpn','Ginklai'],['armor','Apranga'],['mine','Turiu']].map(([k,n])=>`<button class="chip${mFilter===k?' on':''}" data-act="mFilter" data-i="${k}">${n}</button>`).join('')}</div>`;
     h+=`<div class="mlist">${MKEYS.filter(F[mFilter]).map(k=>{const d=demandTag(k);return `<button class="mrow" data-act="trade" data-i="${k}"><span class="ti sm">${mkIcon(k)}</span><span class="mn"><b>${mkName(k)}</b><small class="muted">turi ${fmt(owned(k))} · <i class="dm ${d[1]}">${d[0]}</i></small></span>${spark(k,24,56,24)}<span class="mp"><b>₡${p2(S.mk[k].m)}</b><small>${chgHtml(chg(k,24))}</small></span></button>`;}).join('')||'<span class="muted">Nieko nėra.</span>'}</div>
      <div class="muted">Kainos juda kas valandą: jas veikia karai, paklausos šuoliai ir tavo paties sandoriai. Paspausk prekę, kad pirktum arba parduotum.</div>`;
   }
@@ -923,7 +998,7 @@ function renderSheet(){
   $('#sheetTitle').textContent=title;body.innerHTML=h;body.scrollTop=sc;tickLabel();if(tab==='trade')tradeLive();
   const on=(id,f)=>{const el=$('#'+id);if(el)el.onchange=()=>{f(el);save();renderSheet();};};
   on('tMarket',el=>{T.market=el.checked;if(!T.market)T.price=+p2(S.mk[T.k].m);});
-  on('useAmmo',el=>S.p.useAmmo=el.checked);on('newsHot',el=>S.newsHot=el.checked);
+  on('newsHot',el=>S.newsHot=el.checked);
   on('botC',el=>botSel=+el.value);
   const setOv=(k,v)=>{const o=Object.assign({mode:'auto',pw:1},S.bots.ov[botSel]);o[k]=v;if(o.mode==='auto'&&o.pw===1)delete S.bots.ov[botSel];else S.bots.ov[botSel]=o;};
   on('botMode',el=>setOv('mode',el.value));on('botPw',el=>setOv('pw',+el.value));
@@ -945,6 +1020,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(
     case 'selItem':invSel=invSel===t.dataset.i?null:t.dataset.i;break;
     case 'eatItem':A.eat(t.dataset.i);break;case 'openCrate':A.openCrate();break;
     case 'craft':A.craft(t.dataset.i);break;case 'dismantle':A.dismantle(+t.dataset.i);break;case 'equip':A.equip(+t.dataset.i);break;
+    case 'selGear':invSel=invSel==='g'+t.dataset.i?null:'g'+t.dataset.i;break;case 'ammoSel':S.p.ammoSel=t.dataset.i;break;
     case 'goto':{const g=M.regions[+t.dataset.r],r=cv.getBoundingClientRect();closeSheet();V.s=Math.max(V.s,2);V.x=r.width/2-g.lx*V.s;V.y=r.height/2-g.ly*V.s;sel=+t.dataset.r;showRegion(sel);break;}
     case 'gotoC':closeSheet();focusCountry(+t.dataset.i);break;
     case 'eat':A.eat();break;case 'work':A.work();break;case 'train':A.train();break;
