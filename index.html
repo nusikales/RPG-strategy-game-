@@ -264,6 +264,11 @@ select.fit{flex:none;max-width:45%;}
 .cfg{flex-wrap:nowrap;font-size:14px;}
 .cfg input{width:84px;flex:none;background:#0b161d;border:1px solid var(--line);border-radius:6px;color:var(--fg);font:inherit;font-family:var(--display);text-align:center;padding:7px 4px;font-variant-numeric:tabular-nums;}
 .cfg input.mod{border-color:var(--brass);color:var(--brass2);}
+.rev{display:grid;gap:6px;margin:8px 0;padding:8px;border:1px solid #6a3a22;border-radius:8px;background:rgba(120,50,20,.18);}
+.ebar.rv{height:10px;}.ebar.rv i{background:linear-gradient(90deg,#8a3a1c,#ff8a3d);}
+.revrow{display:flex;gap:8px;align-items:center;}.revrow .grow{min-width:0;}.revrow .btn{flex:none;}.revrow .row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.box.warn{border-color:#8a3a1c;background:rgba(120,40,20,.22);}
+input.num{width:84px;flex:none;background:#0b161d;border:1px solid var(--line);border-radius:6px;color:var(--fg);font:inherit;text-align:center;padding:7px 4px;}
 details summary{cursor:pointer;padding:4px 0;}
 </style>
 
@@ -350,7 +355,23 @@ const CFG=[
  ['Šalis',[['seats','Vietos parlamente',10,3,30,1],['elecDays','Rinkimai kas kiek dienų',5,1,60,1],['favor','Botų palankumas tau %',35,0,100,5],['voteH','Balsavimo trukmė valandomis',6,1,72,1],
   ['presPay','Pirmininko alga per dieną ₡',40,0,10000,5],['mpPay','Deputato alga per dieną ₡',15,0,10000,5],['regInc','Regiono pajamos į iždą per valandą ₡',2,0,100,.5],['fee','Rinkos mokestis parduodant %',2,0,50,.5],
   ['allyMax','Daugiausia šalių aljanse',6,2,50,1],['allyCount','Daugiausia aljansų pasaulyje',12,0,50,1],['allyHelp','Sąjungininko pagalba mūšyje % jo jėgos',20,0,100,5],
-  ['allyJoin','Tikimybė, kad sąjungininkas stos į karą %',50,0,100,5],['betray','Išdavystės tikimybė per dieną %',.5,0,20,.1]]]];
+  ['allyJoin','Tikimybė, kad sąjungininkas stos į karą %',50,0,100,5],['betray','Išdavystės tikimybė per dieną %',.5,0,20,.1]]],
+ ['Sukilimai',[['revMax','Sukilimo lygis, nuo kurio prasideda mūšis',100,5,100000,5],['revHp','Sukilimo mygtuko kaina gyvybėmis',15,0,500,1],
+  ['revMe','Tavo paspaudimas prideda sukilimo taškų',5,0,10000,1],['revBot','Boto veiksmas prideda sukilimo taškų',1,0,10000,.5],['revPay','Atlygis tau už paspaudimą ₡',2,0,10000,1],
+  ['revFame','Šlovė už paspaudimą',3,0,1000,1],['revDecay','Sukilimo lygis mažėja per dieną %',10,0,100,1],['revKeep','Lieka sukilimo % po pralaimėto mūšio',0,0,100,5],
+  ['revCd','Pertrauka po sukilimo mūšio valandomis',24,0,1000,1],['revBon','Sukilėlių žalos priedas mūšyje %',25,0,500,5],['revLim','Daugiausia sukilimo mūšių vienai šaliai vienu metu',2,1,50,1],
+  ['revCash','Iždas atkurtai valstybei ₡',300,0,100000,50],['revAlly','Sukilti galima ir prieš sąjungininkę (1 taip, 0 ne)',0,0,1,1],
+  ['revPop','Sukilėlių jėga: % regiono jėgos už kiekvieną okupuotą savo regioną',100,0,1000,10],['revDef','Okupanto jėga sukilimo mūšyje %',60,0,300,5]]],
+ ['Botai piliečiai',[['cStart','Botų piliečių naujame žaidime vienam regionui',2,0,50,1],['cMax','Daugiausia botų pasaulyje',4000,0,50000,100],
+  ['cAct','Boto veiksmo tikimybė per valandą %',30,0,100,5],['cHp','Boto gyvybės',100,10,5000,10],['cHpReg','Boto gyvybių atsistatymas per valandą',5,0,500,1],
+  ['cHitHp','Boto smūgio kaina gyvybėmis',10,0,500,1],['cDmg','Boto smūgio žala',40,0,100000,5],['cLvl','Boto smūgis stiprėja kartu su šalies karių lygiu (1 taip, 0 ne)',1,0,1,1],
+  ['cRev','Sukilimo prioritetas %',60,0,100,5],['cBounty','Kovos dėl premijų prioritetas %',70,0,100,5],['cFight','Kova už savo šalį be premijos %',25,0,100,5],
+  ['cAllyF','Kova už sąjungininkes dėl premijų (1 taip, 0 ne)',1,0,1,1],['cFeed','Botų smūgių rodymas mūšio sraute %',35,0,100,5],
+  ['cWork','Boto uždarbis už darbą ₡',3,0,10000,.5],['cTax','Boto darbo mokestis į iždą %',20,0,100,5],['cDon','Botas aukoja šaliai savo pinigų per dieną %',10,0,100,5],
+  ['cLoyal','Ištikimas botas be valstybės keičia pilietybę po dienų (0 = niekada)',20,0,365,1],
+  ['cOpp','Oportunistų dalis tarp naujų botų %',10,0,100,1],['cOppChk','Oportunistas svarsto keisti pilietybę per dieną %',30,0,100,5],
+  ['cOppGain','Kiek % geresnė turi būti nauja šalis',25,0,1000,5],['cOppCost','Pilietybės keitimo kaina botui ₡',20,0,100000,5],
+  ['cOppEco','Oportunistas vertina ekonomiką (svoris)',1,0,10,.25],['cOppWar','Oportunistas vertina premijas ir pergales (svoris)',1,0,10,.25],['cOppNear','Oportunistas renkasi tik kaimynes (1 taip, 0 ne)',0,0,1,1]]]];
 const CFI={};CFG.forEach(g=>g[1].forEach(it=>CFI[it[0]]=it));
 const G=k=>S&&S.cfg&&S.cfg[k]!=null?S.cfg[k]:CFI[k][2];
 const BOT_DEF={aggr:1,activity:1,power:1,ally:1,peace:1,maxWars:20,xp:1,ptsMe:5,ptsBot:5,ptsPrest:5,ov:{}};
@@ -477,7 +498,7 @@ function newGame(name,countryId){
       inv:freshInv(),gear:[],eq:{},ammoSel:'a1',mult:1,fame:0,dmg:0,
       st:{hits:0,won:0,crates:0,money:0},companies:[],president:false,mp:false},
     over:false};
-  addGear('w',0);addGear('w',1);msRoll();rebuildOwn();mkInit();S.countries[countryId].tax=10;ensureParl();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);
+  addGear('w',0);addGear('w',1);msRoll();rebuildOwn();mkInit();S.countries[countryId].tax=10;ensureParl();S.countries.forEach((c,i)=>c.treasury=300+OWN[i].length*120);citInit();
   addNews(`${S.p.name} prisijungė prie šalies ${S.countries[countryId].short} kariuomenės.`,true);
   renderTerritory();save();
 }
@@ -489,7 +510,7 @@ function load(){try{const t=localStorage.getItem(SAVE);if(!t)return false;const 
     q.companies=(q.companies||[]).map(c=>({type:COMPANY[c.type]?c.type:'mine',ae:c.lvl||0,st:0,workers:0,eff:0}));}
   if(!S.alliances){S.alliances=[];S.bld={};S.bills=[];S.votes=[];S.fin={t:{},y:{}};S.cfg={};S.p.mp=false;S.countries.forEach((c,i)=>{if(i!==S.p.country)c.tax=5*Math.round(rr(1,5));});S.battles.forEach(b=>b.bounty=[0,0]);}
   S.p.companies.forEach(c=>{if(c.reg==null)c.reg=S.countries[S.p.country].cap;});rebuildOwn();ensureParl();
-  S.p.inv=Object.assign(freshInv(),S.p.inv);recalc();msRoll();delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
+  S.p.inv=Object.assign(freshInv(),S.p.inv);recalc();msRoll();if(!S.cit)citInit();S.rev=S.rev||{};S.revCd=S.revCd||{};delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
 function addNews(t,hot){S.news.unshift({t,tick:S.tick,hot:!!hot});if(S.news.length>150)S.news.length=150;if(hot||S.news.length<3)$('#tick1').textContent=t;}
 const C=i=>S.countries[i];
 const col=i=>`rgb(${COLORS[i].join(',')})`;
@@ -596,13 +617,15 @@ function makePeace(a,b,quiet,terms){const mine=x=>(x.att===a&&x.def===b)||(x.att
 // battle: sides 0 = attacker, 1 = defender; first to G('rwin') rounds, a round is won at G('rp') points
 const sideC=(b,s)=>s?b.def:b.att;
 const bonus=(b,s)=>b.bon[s]+(C(sideC(b,s)).mobil>S.tick?G('mobilBonus')/100:0);
-function startBattle(att,region){
+function startBattle(att,region,rev){
   if(S.battles.some(b=>b.region===region))return;
   const def=S.owner[region];if(def===att)return;
   let adj=0;M.regions[region].adj.forEach(a=>{if(S.owner[a]===att)adj++;});
-  S.battles.push({id:S.nextBattleId++,region,att,def,rw:[0,0],pts:[0,0],dmg:[0,0],tot:[0,0],pl:[0,0],round:1,start:S.tick,bounty:[0,0],
-    bon:[Math.min(.2,adj*.05),C(def).cap===region?.55:.25],feed:[[],[]],gain:null});
-  if(near(att,def))addNews(`🔥 Prasidėjo mūšis dėl ${M.regions[region].name}: ${C(att).short} puola ${C(def).short}.`,true);
+  const b={id:S.nextBattleId++,region,att,def,rw:[0,0],pts:[0,0],dmg:[0,0],tot:[0,0],pl:[0,0],round:1,start:S.tick,bounty:[0,0],
+    bon:[rev?G('revBon')/100:Math.min(.2,adj*.05),C(def).cap===region?.55:.25],feed:[[],[]],gain:null};
+  if(rev){b.rev=1;rs('start');}S.battles.push(b);
+  if(rev)addNews(`✊ Sukilimas! ${M.regions[region].name} gyventojai sukilo prieš ${C(def).short} už ${C(att).short}.`,near(att,def));
+  else if(near(att,def))addNews(`🔥 Prasidėjo mūšis dėl ${M.regions[region].name}: ${C(att).short} puola ${C(def).short}.`,true);
 }
 function pushFeed(b,s,e){b.feed[s].unshift(e);if(b.feed[s].length>5)b.feed[s].length=5;}
 function resolveBattle(b,win){
@@ -611,22 +634,29 @@ function resolveBattle(b,win){
     if(mine>0){const reward=Math.round(15+mine/40);p.money+=reward;p.st.won++;track('win',1);p.st.money+=reward;let t=`Laimėjai mūšį dėl ${reg.name}! +₡${reward}`;
       if(mine>=400){p.inv.crate++;p.st.crates++;t+=' ir 📦';}toast(t);}
     else toast(`Mūšis dėl ${reg.name} pralaimėtas.`);}
-  if(win===0&&S.owner[b.region]===b.def&&C(b.att).alive){
-    const old=b.def;S.owner[b.region]=b.att;rebuildOwn();
-    addNews(`🏴 ${C(b.att).short} užėmė regioną „${reg.name}“.`,near(b.att,old));
+  if(b.rev){rs(win===0?'won':'lost');if(win===0){delete S.rev[b.region];delete S.revCd[b.region];}else{S.rev[b.region]=G('revMax')*G('revKeep')/100;S.revCd[b.region]=S.tick+G('revCd');
+      addNews(`✊ Sukilimas ${reg.name} numalšintas: ${C(b.def).short} išlaikė regioną.`,near(b.att,b.def));}}
+  if(win===0&&S.owner[b.region]===b.def&&(C(b.att).alive||b.rev)){
+    const old=b.def;S.owner[b.region]=b.att;
+    if(!C(b.att).alive){const c=C(b.att);c.alive=true;c.cap=b.region;c.treasury=Math.max(c.treasury,G('revCash'));c.leader=botName();rs('restored');
+      addNews(`🎉 ${c.name} atkurta! Sukilėliai išvadavo ${reg.name}.`,true);if(S.p.country===b.att)toast(`🎉 Tavo valstybė ${c.short} atkurta!`,4000);}
+    rebuildOwn();
+    addNews(b.rev?`✊ Sukilėliai išvadavo regioną „${reg.name}“: jis vėl priklauso ${C(b.att).short}.`:`🏴 ${C(b.att).short} užėmė regioną „${reg.name}“.`,near(b.att,old));
     if(C(old).cap===b.region){const rs=OWN[old];if(rs.length){C(old).cap=rs.reduce((m,r)=>M.regions[r].cells>M.regions[m].cells?r:m,rs[0]);}}
     C(b.att).treasury+=150;fin(b.att,'war',150);
-    if(OWN[old].length===0){C(old).alive=false;alLeave(old);S.wars=S.wars.filter(w=>w.a!==old&&w.b!==old);S.battles=S.battles.filter(x=>x.att!==old);
-      addNews(`☠ ${C(old).name}: valstybė nustojo egzistavusi. Ją užkariavo ${C(b.att).short}.`,true);
-      if(p.country===old){p.country=b.att;ensureParl();addNews(`${p.name} tapo šalies ${C(b.att).short} piliečiu.`,true);showModal('defeat');}
+    if(OWN[old].length===0){C(old).alive=false;alLeave(old);S.wars=S.wars.filter(w=>w.a!==old&&w.b!==old);S.battles=S.battles.filter(x=>x.att!==old||x.rev);
+      addNews(`☠ ${C(old).name}: valstybė nustojo egzistavusi. Ją užkariavo ${C(b.att).short}. Piliečiai gali kelti sukilimus.`,true);
+      if(p.country===old){p.mp=false;p.president=false;C(old).playerPres=false;S.bills=[];lastConq=b.att;showModal('defeat');}
     }
     renderTerritory();
   } else if(near(b.att,b.def))addNews(`🛡 ${C(b.def).short} apgynė ${reg.name} nuo ${C(b.att).short}.`,true);
 }
 const botLvl=ci=>1+(((C(ci).lvl||1)-1)*S.bots.ptsBot+(C(ci).pres||0)*S.bots.ptsPrest)*G('botPt')/100;
 function botDmg(ci){return botLvl(ci)*power(ci)*rr(.6,1.4)*S.bots.power*(ci===S.p.country?S.bots.ally:1)*(ov(ci).pw||1);}
+const revPw=ci=>S.owner.reduce((n,o,r)=>n+(o!==ci&&M.regions[r].home===ci?1:0),0)*28*G('revPop')/100;
 function battleTick(b){
   for(let s=0;s<2;s++){const ci=sideC(b,s),al=alOf(ci);let d=botDmg(ci)*bmul(b,s);
+    if(b.rev){if(s)d*=G('revDef')/100;else d+=revPw(ci)*botLvl(ci)*rr(.6,1.4)*S.bots.power*bmul(b,s);}
     if(al){let h=0;al.members.forEach(m=>{if(m!==ci&&C(m).alive)h+=botDmg(m);});d+=Math.min(d,h*G('allyHelp')/100);}
     if(pool(b,s)>0){d*=1+G('bountyBot')/100;b.bounty[s]=Math.max(0,b.bounty[s]-G('bountyHit')*2);}
     b.dmg[s]+=d;b.tot[s]+=d;
@@ -645,7 +675,7 @@ function step(){
   p.hp=Math.min(p.maxHp,p.hp+G('hpReg'));p.en=Math.min(p.maxEn,p.en+G('enReg'));p.companies.forEach(c=>{c.eff=Math.min(coCap(c),c.eff+coAuto(c));});
   S.countries.forEach((c,i)=>{if(c.alive){const v=OWN[i].length*G('regInc');c.treasury+=v;fin(i,'reg',v);}});
   const done=[];
-  for(const b of S.battles){if(S.owner[b.region]!==b.def||!C(b.att).alive){done.push([b,-2]);continue;}const w=battleTick(b);if(w>=0)done.push([b,w]);}
+  for(const b of S.battles){if(S.owner[b.region]!==b.def||(!C(b.att).alive&&!b.rev)){done.push([b,-2]);continue;}const w=battleTick(b);if(w>=0)done.push([b,w]);}
   if(done.length){const ids=new Set(done.map(d=>d[0].id));S.battles=S.battles.filter(b=>!ids.has(b.id));done.forEach(([b,w])=>{refund(b);if(w>=0)resolveBattle(b,w);});}
   if(S.tick%2===0){const byC={};S.wars.forEach(w=>{(byC[w.a]=byC[w.a]||[]).push(w.b);(byC[w.b]=byC[w.b]||[]).push(w.a);});
     const busy=new Set(S.battles.map(b=>b.region));
@@ -654,7 +684,7 @@ function step(){
       if(mine>=cap||R()>.3*B.activity)continue;
       const en=byC[k],targets=[];OWN[ci].forEach(r=>M.regions[r].adj.forEach(a=>{if(en.includes(S.owner[a])&&!busy.has(a))targets.push(a);}));
       if(targets.length){const t=pick(targets);busy.add(t);startBattle(ci,t);}}}
-  resolveBills();mkTick();
+  citTick();resolveBills();mkTick();
   if(S.tick%24===0)newDay();
   checkVictory();
   if(S.tick%5===0)save();
@@ -687,7 +717,8 @@ function newDay(){
     else if(R()<.004)aiAct(ci,{kind:'allyLeave'});
     if(R()<.02){const v=5*Math.round(rr(1,5));if(v!==c.tax)aiAct(ci,{kind:'tax',v});}
   });
-  if(day%G('elecDays')===0)election();
+  citDay();revDay();
+  if(day%G('elecDays')===0&&myC().alive)election();
 }
 // ---------- treasury, parliament, alliances, buildings, bounties ----------
 function fin(ci,k,v){if(S.fin&&ci===S.p.country)S.fin.t[k]=(S.fin.t[k]||0)+v;}
@@ -695,6 +726,68 @@ function spend(ci,v){C(ci).treasury-=v;fin(ci,'out',-v);}
 const occ=(a,b)=>OWN[a].reduce((n,r)=>n+(M.regions[r].home===b?1:0),0);
 function fixCap(ci){const c=C(ci),rs=OWN[ci];if(!rs.length||S.owner[c.cap]===ci)return;c.cap=rs.includes(M.caps[ci])?M.caps[ci]:rs.reduce((m,r)=>M.regions[r].cells>M.regions[m].cells?r:m,rs[0]);}
 const TERMS={keep:'kiekviena šalis pasilieka užimtas žemes',back:'užimtos žemės grąžinamos'};
+// ---------- revolts and bot citizens ----------
+// S.rev[region] = revolt points of the region's original (home) country; at G('revMax') a revolt battle starts.
+// S.cit = individual bot citizens: {n:name, c:citizenship, hp, m:money, o:1 = opportunist, x:days without a state}
+let lastConq=-1,CN=10,CT='mix';
+const revOk=r=>{const h=M.regions[r].home,o=S.owner[r];return o!==h&&(G('revAlly')||!allied(h,o));};
+const revBusy=r=>S.battles.some(b=>b.region===r);
+const revCool=r=>Math.max(0,(S.revCd[r]||0)-S.tick);
+const rs=k=>{S.rstat=S.rstat||{};S.rstat[k]=(S.rstat[k]||0)+1;};
+const revCount=ci=>S.battles.filter(b=>b.rev&&b.att===ci).length;
+function revAdd(r,v){if(!revOk(r)||revBusy(r)||revCool(r))return false;const h=M.regions[r].home;
+  S.rev[r]=Math.min(G('revMax'),(S.rev[r]||0)+v);
+  if(S.rev[r]>=G('revMax')&&revCount(h)<G('revLim')){S.rev[r]=0;startBattle(h,r,true);}return true;}
+// regions occupied from each country where a revolt can be raised now
+function revTargets(){const t={};S.owner.forEach((o,r)=>{const h=M.regions[r].home;if(o!==h&&revOk(r)&&!revBusy(r)&&!revCool(r))(t[h]=t[h]||[]).push(r);});return t;}
+function revDay(){const k=1-G('revDecay')/100;for(const r in S.rev){if(!revOk(+r)){delete S.rev[r];continue;}S.rev[r]*=k;if(S.rev[r]<.5)delete S.rev[r];}
+  for(const r in S.revCd)if(S.revCd[r]<=S.tick)delete S.revCd[r];}
+function newCit(ci,type){const o=type==='opp'?1:type==='loyal'?0:(R()<G('cOpp')/100?1:0);return {n:botName(),c:ci,hp:G('cHp'),m:Math.round(rr(5,40)),o,x:0};}
+function citInit(){S.cit=[];S.rev=S.rev||{};S.revCd=S.revCd||{};const per=G('cStart');if(!per)return;
+  S.countries.forEach((c,ci)=>{if(!c.alive)return;for(let i=0;i<OWN[ci].length*per&&S.cit.length<G('cMax');i++)S.cit.push(newCit(ci));});}
+const citBy=()=>{const n=new Array(NC).fill(0);S.cit.forEach(z=>n[z.c]++);return n;};
+function citRandC(){const al=S.countries.filter(c=>c.alive);let t=0;al.forEach(c=>t+=OWN[c.id].length);let x=R()*t;for(const c of al){x-=OWN[c.id].length;if(x<0)return c.id;}return al[0].id;}
+function citAdd(n,ci,type){n=Math.max(0,Math.floor(n));const room=Math.max(0,G('cMax')-S.cit.length),k=Math.min(n,room);
+  for(let i=0;i<k;i++)S.cit.push(newCit(ci>=0?ci:citRandC(),type));
+  toast(k<n?`Pridėta ${k} botų. Pasiektas limitas ${G('cMax')} (keičiamas nustatymuose).`:`Pridėta ${k} botų${ci>=0?' šaliai '+C(ci).short:''}.`,3000);}
+function citDel(n,ci,type){n=Math.max(0,Math.floor(n));const ok=z=>(ci<0||z.c===ci)&&(type==='mix'||(type==='opp')===!!z.o);
+  const idx=[];S.cit.forEach((z,i)=>{if(ok(z))idx.push(i);});for(let i=idx.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]];}
+  const kill=new Set(idx.slice(0,n));S.cit=S.cit.filter((_,i)=>!kill.has(i));toast(`Pašalinta ${kill.size} botų${ci>=0?' iš šalies '+C(ci).short:''}.`);}
+function citHit(z,b,s){const ci=sideC(b,s);let d=G('cDmg')*(G('cLvl')?botLvl(z.c):1)*rr(.6,1.4)*S.bots.power*bmul(b,s);if(ci===S.p.country)d*=S.bots.ally;
+  z.hp-=G('cHitHp');b.dmg[s]+=d;b.tot[s]+=d;
+  if(pool(b,s)>0){const pay=Math.min(b.bounty[s],G('bountyHit'));b.bounty[s]-=pay;z.m+=pay;}
+  if(R()<G('cFeed')/100)pushFeed(b,s,{n:z.n,w:Math.floor(R()*R()*4),d:Math.round(d),c:false,bot:z.o?'o':'l'});}
+function citTick(){const L=S.cit;if(!L||!L.length)return;
+  const act=G('cAct')/100,hpMax=G('cHp'),reg=G('cHpReg'),cost=G('cHitHp');
+  const tg=revTargets(),own={},rb={},bnt=[];
+  S.battles.forEach(b=>{for(let s=0;s<2;s++){const ci=sideC(b,s);(own[ci]=own[ci]||[]).push([b,s]);if(pool(b,s)>0)bnt.push([b,s]);}if(b.rev)(rb[b.att]=rb[b.att]||[]).push(b);});
+  for(const z of L){z.hp=Math.min(hpMax,z.hp+reg);if(R()>=act)continue;const ci=z.c,c=C(ci),fit=z.hp>=cost;
+    // 1) revolt has priority: fight an ongoing revolt or push the revolt meter
+    if(fit&&R()<G('cRev')/100){if(rb[ci]&&R()<.6){citHit(z,pick(rb[ci]),0);continue;}
+      const t=tg[ci];if(t&&t.length){let r=t[0];for(let i=0;i<3;i++){const q=pick(t);if((S.rev[q]||0)>(S.rev[r]||0))r=q;}z.hp-=cost;revAdd(r,G('revBot'));if(revBusy(r))tg[ci]=t.filter(x=>x!==r);continue;}}
+    // 2) fight where a bounty is paid: loyal bots for their own country (and allies), opportunists for anyone
+    if(fit&&bnt.length&&R()<G('cBounty')/100){const ok=bnt.filter(([b,s])=>{const x=sideC(b,s);return z.o||x===ci||(G('cAllyF')&&allied(x,ci));});
+      if(ok.length){const [b,s]=ok.reduce((m,e)=>pool(e[0],e[1])>pool(m[0],m[1])?e:m,ok[0]);citHit(z,b,s);continue;}}
+    // 3) defend / attack for their own country without a bounty
+    if(fit&&own[ci]&&R()<G('cFight')/100){const [b,s]=pick(own[ci]);citHit(z,b,s);continue;}
+    // 4) otherwise work: the economy grows, part goes to the treasury
+    const w=G('cWork'),tx=w*G('cTax')/100;z.m+=w-tx;if(c.alive){c.treasury+=tx;fin(ci,'cit',tx);}}}
+function citScore(ci,n){const c=C(ci);if(!c.alive)return 0;const pop=(n[ci]||0)+5;
+  const eco=(OWN[ci].length*G('regInc')*24+Math.max(0,c.treasury)*.05+G('cWork')*24)*(1-c.tax/100)/pop;
+  let war=0;S.battles.forEach(b=>{if(b.att===ci)war+=pool(b,0)+b.rw[0]*20;if(b.def===ci)war+=pool(b,1)+b.rw[1]*20;});
+  return eco*G('cOppEco')+war/pop*G('cOppWar')+.01;}
+function citDay(){const L=S.cit;if(!L||!L.length)return;const n=citBy(),moved={},don=G('cDon')/100,loy=G('cLoyal'),me=S.p.country;
+  const alive=S.countries.filter(c=>c.alive).map(c=>c.id),sc={},score=ci=>sc[ci]!=null?sc[ci]:(sc[ci]=citScore(ci,n));
+  const go=(z,to,why)=>{rs(why==='o'?'opp':'loy');const k=z.c+'>'+to+'>'+why;moved[k]=(moved[k]||0)+1;n[z.c]--;n[to]++;z.c=to;z.x=0;};
+  for(const z of L){const c=C(z.c);
+    if(c.alive){z.x=0;if(z.m>20&&don>0){const v=z.m*don;z.m-=v;c.treasury+=v;fin(z.c,'cit',v);}}
+    else{z.x++;if(don>0&&z.m>20){const v=z.m*don;z.m-=v;c.treasury+=v;}}
+    if(z.o){if(R()<G('cOppChk')/100||!c.alive){const pool2=G('cOppNear')&&c.alive?neighbors(z.c).filter(x=>C(x).alive):alive;if(!pool2.length)continue;
+        let best=z.c,bv=score(z.c);for(let i=0;i<6;i++){const t=pick(pool2);if(t!==z.c&&score(t)>bv){best=t;bv=score(t);}}
+        if(best!==z.c&&(bv>score(z.c)*(1+G('cOppGain')/100)||!c.alive)&&z.m>=G('cOppCost')){z.m-=G('cOppCost');go(z,best,'o');}}}
+    else if(!c.alive&&loy>0&&z.x>=loy){const t=S.owner[M.caps[z.c]];if(t!==z.c&&C(t).alive)go(z,t,'l');}}
+  for(const k in moved){const [a,b,why]=k.split('>'),q=moved[k];if(+a===me||+b===me)
+    addNews(why==='o'?`💼 ${q} oportunist${q===1?'as':'ai'} iš ${C(+a).short} dėl naudos tapo ${C(+b).short} piliečiais.`:`🏳 ${q} ${C(+a).short} piliečių po ${loy} d. be valstybės priėmė ${C(+b).short} pilietybę.`,true);}}
 // alliances
 const AN1=['Šiaurės','Plieno','Aušros','Laisvės','Geležinė','Rytų','Vakarų','Pietų','Vienybės','Audros','Erelių','Vilkų'],AN2=['sąjunga','lyga','ašis','brolija','koalicija','taryba'];
 const alName=()=>{for(let i=0;i<20;i++){const n=pick(AN1)+' '+pick(AN2);if(!S.alliances.some(a=>a.name===n))return n;}return 'Sąjunga '+(S.nextAl||1);};
@@ -797,7 +890,7 @@ function resolveBills(){if(!S.bills||!S.bills.length)return;const p=S.p,ci=p.cou
     addNews(`🏛 ${ok?'Priimta':'Atmesta'} (${y}:${no}): ${title}.${why?' '+why:''}`,true);if(b.mine||v)toast(`${ok?'✔ Priimta':'✖ Atmesta'} ${y}:${no} · ${title}`,3500);});}
 function voteBill(id,v){const b=S.bills.find(x=>x.id===id);if(!b||!S.p.mp)return;b.vote=v;b.end=Math.min(b.end,S.tick+1);}
 const PF={war:-1,peace:-1,terms:'keep',tax:10,bb:-1,ba:250,br:-1,bk:'b',inv:-1,mv:-1};
-function propose(kind){const p=S.p,ci=p.country;if(!p.mp)return toast('Siūlyti gali tik deputatai.');const b={kind,mine:true};
+function propose(kind){const p=S.p,ci=p.country;if(!myC().alive)return toast('Tavo valstybė okupuota. Pirmiausia ją reikia atkurti sukilimais.');if(!p.mp)return toast('Siūlyti gali tik deputatai.');const b={kind,mine:true};
   if(kind==='war')b.t=+PF.war;if(kind==='peace'){b.t=+PF.peace;b.terms=PF.terms;}if(kind==='tax')b.v=+PF.tax;
   if(kind==='bounty'){b.bid=+PF.bb;b.amt=+PF.ba;}if(kind==='build'){b.r=+PF.br;b.bk=PF.bk;}if(kind==='allyInv')b.t=+PF.inv;if(kind==='allyNew')b.name=alName();
   toast(billCheck(ci,b)||queueBill(b,p.name)||'Siūlymas pateiktas. Deputatai balsuos.',3000);}
@@ -937,6 +1030,12 @@ const A={
   run(){if(S.p.money<50)return toast('Registracija kainuoja ₡50.');S.p.money-=50;S.election.candidate=true;toast('Užsiregistravai rinkimuose!');},
   attack(r){if(S.p.president)startBattle(S.p.country,r);},
   emigrate(ci){if(ci===S.p.country||!C(ci).alive)return;if(S.p.money<100)return toast('Emigracija kainuoja ₡100.');S.p.money-=100;S.p.country=ci;ensureParl();addNews(`${S.p.name} emigravo į šalį ${C(ci).short}.`,true);focusCountry(ci);},
+  revolt(r){const p=S.p,g=M.regions[r];if(g.home!==p.country)return toast('Sukilti gali tik šio regiono šalies piliečiai.');
+    if(S.owner[r]===p.country)return;if(!revOk(r))return toast('Prieš sąjungininkę sukilti negalima (keičiama nustatymuose).');
+    if(revBusy(r))return toast('Čia jau vyksta mūšis. Kovok jame!');if(revCool(r))return toast(`Sukilimas ką tik numalšintas. Palauk ${revCool(r)} val.`);
+    if(p.hp<G('revHp'))return toast('Per mažai gyvybių. Pavalgyk.');p.hp-=G('revHp');p.money+=G('revPay');p.fame+=G('revFame');
+    revAdd(r,G('revMe'));const b=S.battles.find(x=>x.region===r&&x.rev);toast(b?`✊ Sukilimas prasidėjo! Kovok dėl ${g.name}.`:`✊ Sukilimas ${g.name}: ${Math.floor(S.rev[r]||0)}/${G('revMax')}`);},
+  acceptCit(ci){if(!C(ci).alive)return;const p=S.p,old=p.country;p.country=ci;ensureParl();addNews(`${p.name} paliko ${C(old).short} ir tapo šalies ${C(ci).short} piliečiu.`,true);focusCountry(ci);},
   worldPeace(){S.wars=[];S.battles.forEach(refund);S.battles=[];addNews('🕊 Visame pasaulyje paskelbtos paliaubos.',true);},
   botsReset(){S.bots=JSON.parse(JSON.stringify(BOT_DEF));toast('Botų nustatymai atstatyti.');}
 };
@@ -1001,6 +1100,9 @@ function draw(t){
     cx.font=`700 ${clamp(size/7,10,22)}px "Chakra Petch",sans-serif`;cx.lineWidth=3.5;cx.strokeStyle='rgba(8,14,18,.85)';
     const tx=c.short.toUpperCase();cx.strokeText(tx,X,Y-9);cx.fillStyle=ci===me?'#f6d58a':'#f2f5f2';cx.fillText(tx,X,Y-9);});
   const pulse=(Math.sin(t/220)+1)/2,br=clamp(5+k*5,6,12);
+  if(S.rev&&k>.9){const rm=G('revMax');cx.lineWidth=3;for(const ri in S.rev){const v=S.rev[ri];if(v<1)continue;const g2=M.regions[ri],X=V.x+g2.lx*k,Y=V.y+g2.ly*k;if(!on(X,Y))continue;
+    const mine=g2.home===me;cx.beginPath();cx.arc(X,Y,7,0,7);cx.fillStyle='rgba(20,14,8,.75)';cx.fill();
+    cx.beginPath();cx.arc(X,Y,7,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,v/rm));cx.strokeStyle=mine?'#ff8a3d':'#c9a25a';cx.stroke();}}
   S.battles.forEach(b=>{const g2=M.regions[b.region];const X=V.x+g2.lx*k,Y=V.y+g2.ly*k;if(!on(X,Y))return;const mine=b.att===me||b.def===me;
     cx.beginPath();cx.arc(X,Y,br+2+pulse*4,0,7);cx.fillStyle=mine?'rgba(230,80,70,.4)':'rgba(240,196,106,.25)';cx.fill();
     cx.beginPath();cx.arc(X,Y,br,0,7);cx.fillStyle=mine?'#b3382f':'#5a4a24';cx.fill();cx.lineWidth=2;cx.strokeStyle=col(b.att);cx.stroke();
@@ -1068,17 +1170,23 @@ function showRegion(r){
    <div class="muted">${cname(oi)}${oi!==g.home?' (okupuota)':''} · gyventojų ${fmt(g.pop)} · lyderis ${esc(o.leader)}${o.playerPres?' (tu)':''}${o.al?' · 🤝 '+esc(alOf(oi).name):''}</div>
    <div class="muted">🏰 Bunkeris ${bld(r,'b')} · 🎖 Kareivinės ${bld(r,'k')} · įmonių pelno mokestis ${o.tax}%</div>`;
   if(oi===p.country&&p.mp)h+=`<div class="row">${Object.entries(BLD).map(([k,d])=>`<button class="btn sm alt grow" data-act="propB" data-r="${r}" data-i="${k}" ${bld(r,k)>=G('bldMax')?'disabled':''}>${d.ic} Siūlyti ${bld(r,k)+1} lyg. (₡${bldCost(r,k)})</button>`).join('')}</div>`;
+  if(oi!==g.home)h+=revBox(r);
   if(b)h+=battleCard(b,true);
   else if(oi!==p.country&&atWar(p.country,oi)){
     if(p.president&&[...g.adj].some(a=>S.owner[a]===p.country))h+=`<button class="btn red" data-act="attack" data-r="${r}">Pulti regioną</button>`;
     else h+=`<div class="muted">Tavo šalis kariauja su šia šalimi.</div>`;}
   el.innerHTML=h;el.dataset.r=r;
 }
+function revBox(r){const g=M.regions[r],p=S.p,v=S.rev[r]||0,mx=G('revMax'),cd=revCool(r),mine=g.home===p.country,b=S.battles.find(x=>x.region===r&&x.rev);
+  return `<div class="rev"><div class="row"><span class="grow">✊ Sukilimas už ${cname(g.home)}${C(g.home).alive?'':' <small class="muted">(valstybė okupuota)</small>'}</span><b>${Math.floor(v)}/${mx}</b></div>
+   <div class="ebar rv"><i style="width:${Math.min(100,v/mx*100)}%"></i></div>
+   ${b?`<div class="muted">Vyksta sukilimo mūšis.</div>`:cd?`<div class="muted">Sukilimas numalšintas, naujas galimas po ${cd} val.</div>`:!revOk(r)?`<div class="muted">Šalys sąjungininkės: sukilimas negalimas.</div>`:
+   mine?`<button class="btn red" data-act="revolt" data-r="${r}" ${p.hp<G('revHp')?'disabled':''}>✊ Kelti sukilimą <small>−${G('revHp')} ❤ · +${G('revMe')}</small></button>`:`<div class="muted">Sukilti gali tik ${esc(C(g.home).short)} piliečiai.</div>`}</div>`;}
 // compact battle card for lists and the map
 function battleCard(b,wide){
   const g=M.regions[b.region];
   return `<button class="bcard${wide?' wide':''}" data-act="openBattle" data-b="${b.id}">
-   <span class="bname">${C(b.def).cap===b.region?'★ ':''}${esc(g.name)}</span>
+   <span class="bname">${b.rev?'✊ ':''}${C(b.def).cap===b.region?'★ ':''}${esc(g.name)}</span>
    <span class="bscore">${flagBox(b.att)}<b>${b.rw[0]}</b><i>⚔</i><b>${b.rw[1]}</b>${flagBox(b.def)}</span>
    <span class="bpts"><span class="pa">▲ ${b.pts[0]}</span><span class="muted">R${b.round}</span><span class="pd">${b.pts[1]} ▲</span></span>
    <span class="split"><i style="width:${pct(b.dmg[0],b.dmg[1])}%;background:var(--att)"></i><i style="flex:1;background:var(--def)"></i></span>
@@ -1092,7 +1200,7 @@ function battleView(b){
   const p=S.p,g=M.regions[b.region],pa=pct(b.dmg[0],b.dmg[1]),ps=pstats(),w=eqG('w');
   const hills=s=>`<div class="hill ${s?'d':'a'}"><i style="width:${Math.min(100,b.pts[s]/G('rp')*100)}%"></i></div>`;
   return `<div class="feeds"><div class="feed l">${feedRows(b,0)}</div><div class="fmid"><span class="muted">Raundas</span><b>${b.round}</b><span class="muted">iš ${G('rwin')*2-1}</span></div><div class="feed r">${feedRows(b,1)}</div></div>
-   <div class="btitle">${C(b.def).cap===b.region?'<span class="cap">★</span> ':''}${esc(g.name)} <button class="btn sm alt" data-act="goto" data-r="${b.region}" aria-label="Rodyti žemėlapyje">⌖</button></div>
+   <div class="btitle">${b.rev?'✊ Sukilimas · ':''}${C(b.def).cap===b.region?'<span class="cap">★</span> ':''}${esc(g.name)} <button class="btn sm alt" data-act="goto" data-r="${b.region}" aria-label="Rodyti žemėlapyje">⌖</button></div>
    <div class="bbig">${flagBox(b.att)}<b>${b.rw[0]}</b><i>⚔</i><b>${b.rw[1]}</b>${flagBox(b.def)}</div>
    <div class="tickrow"><span class="muted" id="nextTick"></span>${b.gain?`<span class="gain ${b.gain.s?'d':'a'}">▲ +${b.gain.g} ${esc(C(sideC(b,b.gain.s)).short)}</span>`:'<span class="muted">Raundas prasideda</span>'}</div>
    <div class="ptsrow"><span class="pa">▲ ${b.pts[0]}</span><span class="muted">iki ${G('rp')} taškų</span><span class="pd">${b.pts[1]} ▲</span></div>
@@ -1246,11 +1354,16 @@ function renderSheet(){
     const sel=(key,opts,cls)=>{if(!opts.length)return '';if(!opts.some(o=>String(o[0])===String(PF[key])))PF[key]=opts[0][0];return `<select data-pf="${key}" class="${cls||'grow'}" aria-label="Pasirinkimas">${opts.map(o=>`<option value="${o[0]}" ${String(o[0])===String(PF[key])?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;};
     const role=p.president?'Parlamento pirmininkas':p.mp?'Deputatas':'Pilietis';
     h+=`<div class="seg three">${[['c','Šalis'],['p',`Parlamentas${S.bills.length?' ('+S.bills.length+')':''}`],['a','Aljansas']].map(([k,n])=>`<button class="${kView===k?'on buy':''}" data-act="kView" data-i="${k}">${n}</button>`).join('')}</div>`;
-    if(kView==='c'){const F=S.fin,row=(k,n)=>`<dt>${n}</dt><dd>${fmt(F.t[k]||0)} <span class="muted">· vakar ${fmt(F.y[k]||0)}</span></dd>`;
+    if(kView==='c'){const occR=S.owner.map((o,r)=>o!==ci&&M.regions[r].home===ci?r:-1).filter(r=>r>=0).sort((a,b)=>(S.rev[b]||0)-(S.rev[a]||0));
+      if(!me.alive)h+=`<div class="box warn"><h4>☠ Valstybė okupuota</h4><div class="muted">Tavo šalis neturi nė vieno regiono. Kelk sukilimus žemiau: laimėjus sukilimo mūšį, valstybė atkuriama. Ištikimi botai piliečiai irgi sukyla, o oportunistai gali pasirinkti kitą šalį. Kitos šalies pilietybę gali priimti skiltyje „Emigracija“.</div></div>`;
+      if(occR.length)h+=`<div class="box"><h4>✊ Okupuoti regionai (${occR.length})</h4><div class="muted">Kiekvienas paspaudimas kainuoja ${G('revHp')} ❤ ir prideda ${G('revMe')} sukilimo taškų. Botai piliečiai irgi prisideda. Pasiekus ${G('revMax')} prasideda mūšis dėl regiono.</div>
+        ${occR.slice(0,25).map(r=>`<div class="revrow"><button class="btn sm alt" data-act="goto" data-r="${r}" aria-label="Rodyti žemėlapyje">⌖</button><div class="grow"><div class="row"><span class="grow">${esc(M.regions[r].name)} <small class="muted">· ${esc(C(S.owner[r]).short)}</small></span><small>${Math.floor(S.rev[r]||0)}/${G('revMax')}</small></div><div class="ebar rv"><i style="width:${Math.min(100,(S.rev[r]||0)/G('revMax')*100)}%"></i></div></div>
+          ${revBusy(r)?`<button class="btn sm" data-act="openBattle" data-b="${S.battles.find(x=>x.region===r).id}">⚔</button>`:`<button class="btn sm red" data-act="revolt" data-r="${r}" ${revCool(r)||!revOk(r)||p.hp<G('revHp')?'disabled':''}>✊</button>`}</div>`).join('')}</div>`;
+      const F=S.fin,row=(k,n)=>`<dt>${n}</dt><dd>${fmt(F.t[k]||0)} <span class="muted">· vakar ${fmt(F.y[k]||0)}</span></dd>`;
       h+=`<div class="box"><div class="row">${sw(ci,1)}<b class="grow">${cname(ci)}</b><span class="muted">${role}</span></div><dl class="kv">
         <dt>Pirmininkas</dt><dd>${esc(me.leader)}${p.president?' (tu)':''}</dd><dt>Regionai</dt><dd>${OWN[ci].length}</dd><dt>Karinė galia</dt><dd>${fmt(power(ci))}${me.mobil>S.tick?' 🔺 mobilizacija':''}</dd>
         <dt>Karai</dt><dd>${wars.length?wars.map(w=>esc(C(w).short)).join(', '):'nėra'}</dd><dt>Aljansas</dt><dd>${al?esc(al.name):'nėra'}</dd><dt>Įmonių pelno mokestis</dt><dd>${me.tax}%</dd></dl></div>
-       <div class="box"><div class="row"><h4 class="grow">Šalies iždas</h4><b class="tprice">₡${fmt(me.treasury)}</b></div><dl class="kv">${row('reg','Regionų pajamos')}${row('tax','Įmonių mokesčiai')}${row('fee','Rinkos mokestis')}${row('war','Karo grobis')}${row('out','Išlaidos')}</dl>
+       <div class="box"><div class="row"><h4 class="grow">Šalies iždas</h4><b class="tprice">₡${fmt(me.treasury)}</b></div><dl class="kv">${row('reg','Regionų pajamos')}${row('tax','Įmonių mokesčiai')}${row('fee','Rinkos mokestis')}${row('cit','Botų piliečių mokesčiai ir aukos')}${row('war','Karo grobis')}${row('out','Išlaidos')}</dl>
         <div class="muted">Iš iždo mokama už mobilizaciją, bunkerius, kareivines, premijas mūšiams ir deputatų algas. Kaip jį leisti, sprendžia parlamentas.</div></div>`;
       if(p.president)h+=`<div class="box"><h4>Pirmininko valdžia</h4><div class="muted">Kai šalis kariauja, gali pats pradėti mūšį: paspausk priešo regioną žemėlapyje šalia savo sienos ir rinkis „Pulti regioną“. Alga ₡${G('presPay')} per dieną iš iždo.</div></div>`;
       h+=`<div class="box"><h4>Emigracija</h4><div class="muted">Pakeisk pilietybę už ₡100. Vietą parlamente prarasi.</div><div class="row"><select id="emSel" class="grow" aria-label="Šalis">${optList(-1,ci)}</select><button class="btn sm alt" data-act="emigrate">Emigruoti</button></div></div>`;
@@ -1304,7 +1417,14 @@ function renderSheet(){
     else{
     const alive=S.countries.filter(c=>c.alive);if(botSel<0||!C(botSel).alive)botSel=alive.find(c=>c.id!==p.country).id;
     const o=ov(botSel),bc=C(botSel),bw=S.wars.filter(w=>w.a===botSel||w.b===botSel).map(w=>w.a===botSel?w.b:w.a);
-    h+=`<div class="box"><h4>Visi botai</h4>
+    const cb=citBy(),nOpp=S.cit.filter(z=>z.o).length,nEx=S.cit.filter(z=>!C(z.c).alive).length,nRev=Object.keys(S.rev).length,nRb=S.battles.filter(b=>b.rev).length;
+    const cTypes=[['mix','Pagal nustatymą'],['loyal','Ištikimi'],['opp','Oportunistai']];
+    h+=`<div class="box"><h4>Botai piliečiai</h4><dl class="kv"><dt>Iš viso</dt><dd>${fmt(S.cit.length)} / ${fmt(G('cMax'))}</dd><dt>Ištikimi</dt><dd>${fmt(S.cit.length-nOpp)}</dd><dt>Oportunistai</dt><dd>${fmt(nOpp)}</dd><dt>Be valstybės (sukilėliai)</dt><dd>${fmt(nEx)}</dd><dt>Sukilimai</dt><dd>${nRev} regionuose · mūšių ${nRb}</dd>${(()=>{const t=S.rstat||{};return `<dt>Sukilimų istorija</dt><dd>${t.start||0} mūšių · laimėta ${t.won||0} · atkurta valstybių ${t.restored||0}</dd><dt>Pilietybės pakeitimai</dt><dd>oportunistų ${t.opp||0} · ištikimų ${t.loy||0}</dd>`;})()}</dl>
+      <div class="row"><label for="cN" class="grow">Kiekis</label><input type="number" inputmode="numeric" id="cN" min="1" max="50000" step="1" value="${CN}" class="num"><select id="cT" aria-label="Botų tipas">${cTypes.map(([k,n])=>`<option value="${k}" ${CT===k?'selected':''}>${n}</option>`).join('')}</select></div>
+      <div class="row"><button class="btn sm grow" data-act="citAdd" data-i="-1">+ Pridėti po pasaulį</button><button class="btn sm grow red" data-act="citDel" data-i="-1">− Atimti iš visų</button></div>
+      <div class="chips">${[-100,-10,10,100].map(v=>`<button class="chip" data-act="citQ" data-i="${v}">${v>0?'+':'−'}${Math.abs(v)}</button>`).join('')}<span class="muted">greitai po pasaulį</span></div>
+      <div class="muted">Kiekvienas botas yra atskiras pilietis: dirba (kelia šalies ekonomiką ir moka mokesčius), kovoja mūšiuose už premijas ir kelia sukilimus okupuotuose savo šalies regionuose. Praradę valstybę ištikimi botai pilietybės iškart nekeičia, o kovoja dėl jos atkūrimo. Oportunistai keičia pilietybę, kai kita šalis naudingesnė. Elgseną reguliuok skiltyje „Nustatymai“ → „Botai piliečiai“ ir „Sukilimai“.</div></div>
+     <div class="box"><h4>Visi botai</h4>
       ${slider('aggr','Agresija (kaip dažnai skelbia karus)',0,4,.25)}
       ${slider('activity','Mūšių aktyvumas',0,3,.25)}
       ${slider('peace','Taikingumas (kaip greitai taikosi)',0,4,.25)}
@@ -1321,10 +1441,12 @@ function renderSheet(){
      <div class="box"><h4>Viena šalis</h4><select id="botC" aria-label="Šalis">${optList(botSel,-1)}</select>
       <dl class="kv"><dt>Lyderis</dt><dd>${esc(bc.leader)}${bc.playerPres?' (tu)':''}</dd><dt>Karių lygis</dt><dd>${bc.lvl||1}${bc.pres?' · ★'+bc.pres:''} (+${Math.round((botLvl(botSel)-1)*100)}%)</dd><dt>Regionai</dt><dd>${OWN[botSel].length}</dd><dt>Galia</dt><dd>${fmt(power(botSel))}</dd><dt>Iždas</dt><dd>₡${fmt(bc.treasury)}</dd><dt>Karai</dt><dd>${bw.length?bw.map(w=>esc(C(w).short)).join(', '):'nėra'}</dd></dl>
       <div class="row"><label for="botMode" class="grow">Elgesys</label><select id="botMode">${Object.entries(MODES).map(([k,v])=>`<option value="${k}" ${o.mode===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      <dl class="kv"><dt>Botai piliečiai</dt><dd>${fmt(cb[botSel])} <span class="muted">· oportunistų ${S.cit.filter(z=>z.c===botSel&&z.o).length}</span></dd></dl>
+      <div class="row"><button class="btn sm grow" data-act="citAdd" data-i="${botSel}">+ Pridėti šiai šaliai</button><button class="btn sm grow red" data-act="citDel" data-i="${botSel}">− Atimti iš šios šalies</button></div>
       <div class="row"><label for="botPw" class="grow">Jėga</label><select id="botPw">${[.25,.5,1,1.5,2,3].map(v=>`<option value="${v}" ${(o.pw||1)===v?'selected':''}>${v*100}%</option>`).join('')}</select></div>
       <div class="muted">Taikus neskelbia karų. Agresyvus puola net stipresnius. Užšaldytas nieko nepuola, tik ginasi.</div>
       <button class="btn sm alt" data-act="gotoC" data-i="${botSel}">Rodyti žemėlapyje</button></div>
-     <div class="box"><h4>Stipriausios šalys</h4>${alive.slice().sort((a,b)=>OWN[b.id].length-OWN[a.id].length).slice(0,10).map((c,i)=>`<div class="row">${sw(c.id)}<span class="grow">${i+1}. ${esc(c.short)}</span><span class="muted">${OWN[c.id].length} reg. · ${MODES[ov(c.id).mode]}</span></div>`).join('')}
+     <div class="box"><h4>Stipriausios šalys</h4>${alive.slice().sort((a,b)=>OWN[b.id].length-OWN[a.id].length).slice(0,10).map((c,i)=>`<div class="row">${sw(c.id)}<span class="grow">${i+1}. ${esc(c.short)}</span><span class="muted">${OWN[c.id].length} reg. · 👥 ${fmt(cb[c.id])} · ${MODES[ov(c.id).mode]}</span></div>`).join('')}
       <div class="muted">Gyvų šalių: ${alive.length} iš ${NC} · karų: ${S.wars.length} · mūšių: ${S.battles.length}</div></div>`;}
   }
   if(tab==='more'){title='Žinios';
@@ -1339,13 +1461,14 @@ function renderSheet(){
   const on=(id,f)=>{const el=$('#'+id);if(el)el.onchange=()=>{f(el);save();renderSheet();};};
   on('tMarket',el=>{T.market=el.checked;if(!T.market)T.price=+p2(S.mk[T.k].m);});
   on('newsHot',el=>S.newsHot=el.checked);
-  on('botC',el=>botSel=+el.value);
+  on('botC',el=>botSel=+el.value);on('cT',el=>CT=el.value);
   const setOv=(k,v)=>{const o=Object.assign({mode:'auto',pw:1},S.bots.ov[botSel]);o[k]=v;if(o.mode==='auto'&&o.pw===1)delete S.bots.ov[botSel];else S.bots.ov[botSel]=o;};
   on('botMode',el=>setOv('mode',el.value));on('botPw',el=>setOv('pw',+el.value));
 }
 $('#sheetBody').addEventListener('input',e=>{const id=e.target.id;
   if(id==='tQty')return tSetQty(+e.target.value);
   if(id==='tSlide'){T.qty=+e.target.value;$('#tQty').value=T.qty;return tradeSum();}
+  if(id==='cN'){CN=clamp(Math.floor(+e.target.value)||1,1,50000);return;}
   if(id==='tPrice'){T.price=Math.max(.01,+e.target.value||0);return tradeSum();}
   if(e.target.dataset&&e.target.dataset.cfg)return;
   const k=e.target.dataset&&e.target.dataset.bot;if(!k)return;S.bots[k]=+e.target.value;$('#out_'+k).textContent=fmtBot(k,S.bots[k]);});
@@ -1388,6 +1511,10 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(
     case 'coMove':CA.coMove(+t.dataset.i,+PF.mv);break;
     case 'attack':A.attack(+t.dataset.r);break;case 'emigrate':A.emigrate(+$('#emSel').value);break;
     case 'worldPeace':A.worldPeace();break;case 'botsReset':A.botsReset();break;
+    case 'revolt':A.revolt(+t.dataset.r);break;case 'acceptCit':$('#modal').hidden=true;A.acceptCit(+t.dataset.i);break;
+    case 'citAdd':{const e=$('#cN');if(e)CN=clamp(Math.floor(+e.value)||1,1,50000);citAdd(CN,+t.dataset.i,CT);break;}
+    case 'citDel':{const e=$('#cN');if(e)CN=clamp(Math.floor(+e.value)||1,1,50000);citDel(CN,+t.dataset.i,CT);break;}
+    case 'citQ':{const v=+t.dataset.i;if(v>0)citAdd(v,-1,CT);else citDel(-v,-1,CT);break;}
     case 'saveNow':save();toast('Išsaugota.');break;
     case 'askReset':showModal('reset');break;
     case 'start':{const name=($('#pname').value||'').trim().slice(0,20)||'Karys',ci=+$('#pcountry').value;$('#modal').hidden=true;newGame(name,ci);focusCountry(ci);refresh(true);return;}
@@ -1408,7 +1535,8 @@ function showModal(kind){
   if(kind==='prestige')h=`<h1>Prestižas ${S.p.prestige+1}?</h1><div class="muted">Grįši į 1 lygį ir prarasi visus įgūdžius. Mainais visam laikui turėsi ${(S.p.prestige+1)*S.bots.ptsPrest} papildomų įgūdžių taškų. Daiktai, pinigai ir įmonės lieka.</div><div class="row"><button class="btn" data-act="prestige">Daryti prestižą</button><button class="btn alt" data-act="closeModal">Atšaukti</button></div>`;
   if(kind==='reset')h=`<h1>Naujas žaidimas?</h1><div class="muted">Dabartinis progresas bus ištrintas.</div><div class="row"><button class="btn red" data-act="doReset">Taip, pradėti iš naujo</button><button class="btn alt" data-act="closeModal">Atšaukti</button></div>`;
   if(kind==='elected')h=`<h1>${S.p.president?'Tu parlamento pirmininkas!':'Tu deputatas!'}</h1><div class="muted">${esc(myC().name)} išrinko tave į parlamentą. Skiltyje „Šalis“ → „Parlamentas“ gali siūlyti karą, taiką, mokesčius, statybas, premijas mūšiams ir balsuoti. ${S.p.president?'Kaip pirmininkas gali pats pradėti mūšius.':''} Alga ₡${S.p.president?G('presPay'):G('mpPay')} per dieną iš iždo.</div><button class="btn" data-act="closeModal">Pradėti dirbti</button>`;
-  if(kind==='defeat')h=`<h1>Šalis krito</h1><div class="muted">Tavo šalis buvo užkariauta. Dabar tavo šalis yra ${esc(myC().name)} ir tu kovoji toliau.</div><button class="btn" data-act="closeModal">Tęsti</button>`;
+  if(kind==='defeat'){const q=lastConq>=0&&C(lastConq).alive?lastConq:-1;h=`<h1>Šalis krito</h1><div class="muted">${esc(myC().name)} neteko visų regionų. Gali likti jos piliečiu ir kelti sukilimus okupuotuose regionuose (kainuoja gyvybes): kai sukilimas pasiekia ${G('revMax')}, prasideda mūšis, o laimėjus valstybė atkuriama. Arba gali priimti kitos šalies pilietybę.</div>
+    <div class="row"><button class="btn red" data-act="closeModal">✊ Likti ir sukilti</button>${q>=0?`<button class="btn alt" data-act="acceptCit" data-i="${q}">Priimti pilietybę: ${esc(C(q).short)}</button>`:''}</div>`;}
   if(kind==='victory')h=`<h1>Pergalė!</h1><div class="muted">${esc(myC().name)} valdo visą pasaulį per ${Math.floor(S.tick/24)+1} dienas. Tavo bendra žala: ${fmt(S.p.dmg)}.</div><button class="btn" data-act="doReset">Žaisti dar kartą</button>`;
   m.innerHTML=`<div class="card">${h}</div>`;
 }
@@ -1423,7 +1551,7 @@ function refresh(force){
   const nb=S.battles.filter(b=>b.att===p.country||b.def===p.country).length;const bb=$('#bBadge');bb.hidden=!nb;bb.textContent=nb;
   {const nv=p.mp?(S.bills||[]).filter(b=>!b.vote).length:0,eb=$('#eBadge');eb.hidden=!nv;eb.textContent=nv;}const ib=$('#iBadge');ib.hidden=!p.inv.crate;ib.textContent=p.inv.crate;
   document.querySelectorAll('#speed button').forEach(b=>b.classList.toggle('on',+b.dataset.s===S.speed));
-  const ae=document.activeElement,busy=!force&&ae&&$('#sheetBody').contains(ae)&&(ae.tagName==='SELECT'||ae.type==='range'||ae.dataset.cfg);
+  const ae=document.activeElement,busy=!force&&ae&&$('#sheetBody').contains(ae)&&(ae.tagName==='SELECT'||ae.type==='range'||ae.type==='number'||ae.dataset.cfg);
   if(tab==='trade'&&!force)tradeLive();else if(!busy||force)renderSheet();
   if(!$('#rcard').hidden)showRegion(+$('#rcard').dataset.r);
 }
