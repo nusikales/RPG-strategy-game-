@@ -46,6 +46,11 @@ const CFG=[
   ['presPay','Pirmininko alga per dieną ₡',40,0,10000,5],['mpPay','Deputato alga per dieną ₡',15,0,10000,5],['regInc','Regiono pajamos į iždą per valandą ₡',2,0,100,.5],['fee','Rinkos mokestis parduodant %',2,0,50,.5],
   ['allyMax','Daugiausia šalių aljanse',6,2,50,1],['allyCount','Daugiausia aljansų pasaulyje',12,0,50,1],['allyHelp','Sąjungininko pagalba mūšyje % jo jėgos',20,0,100,5],
   ['allyJoin','Tikimybė, kad sąjungininkas stos į karą %',50,0,100,5],['betray','Išdavystės tikimybė per dieną %',.5,0,20,.1]]],
+['Dėžės',[['crDmg','Trofėjų dėžė už kiekvieną padarytą žalą',800,10,1000000,50],['cr2Dmg','Elitinė dėžė už kiekvieną padarytą žalą',10000,10,10000000,500],
+  ['crWin','Trofėjų dėžės už laimėtą mūšį (kai padarei bent 400 žalos)',1,0,100,1],['crWpn','Tikimybė, kad iš dėžės iškris ginklas, o ne apranga %',35,0,100,5],
+  ['crN','Daiktų trofėjų dėžėje',1,1,20,1],['cr2N','Daiktų elitinėje dėžėje',2,1,20,1],['cr2Price','Elitinės dėžės bazinė kaina rinkoje ₡',250,1,1000000,10],
+  ['crW0','Trofėjų dėžė: „Paprastas“ svoris',60,0,1000,1],['crW1','Trofėjų dėžė: „Neįprastas“ svoris',25,0,1000,1],['crW2','Trofėjų dėžė: „Retas“ svoris',10,0,1000,1],['crW3','Trofėjų dėžė: „Epinis“ svoris',4,0,1000,1],['crW4','Trofėjų dėžė: „Legendinis“ svoris',1,0,1000,1],['crW5','Trofėjų dėžė: „Mitinis“ svoris',0,0,1000,1],
+  ['c2W0','Elitinė dėžė: „Paprastas“ svoris',0,0,1000,1],['c2W1','Elitinė dėžė: „Neįprastas“ svoris',25,0,1000,1],['c2W2','Elitinė dėžė: „Retas“ svoris',35,0,1000,1],['c2W3','Elitinė dėžė: „Epinis“ svoris',25,0,1000,1],['c2W4','Elitinė dėžė: „Legendinis“ svoris',12,0,1000,1],['c2W5','Elitinė dėžė: „Mitinis“ svoris',3,0,1000,1]]],
  ['Sukilimai',[['revMax','Sukilimo lygis, nuo kurio prasideda mūšis',100,5,100000,5],['revHp','Sukilimo mygtuko kaina gyvybėmis',15,0,500,1],
   ['revMe','Tavo paspaudimas prideda sukilimo taškų',5,0,10000,1],['revBot','Boto veiksmas prideda sukilimo taškų',1,0,10000,.5],['revPay','Atlygis tau už paspaudimą ₡',2,0,10000,1],
   ['revFame','Šlovė už paspaudimą',3,0,1000,1],['revDecay','Sukilimo lygis mažėja per dieną %',10,0,100,1],['revKeep','Lieka sukilimo % po pralaimėto mūšio',0,0,100,5],
@@ -130,7 +135,7 @@ const ITEMS={
   bread:{n:'Pyragas',i:'🥧',get d(){return `+${G('healBread')}% ❤`;},get heal(){return G('healBread')/100;},price:4,c:'food'},
   cfish:{n:'Kepta žuvis',i:'🍣',get d(){return `+${G('healFish')}% ❤`;},get heal(){return G('healFish')/100;},price:9,c:'food'},
   a1:{n:'Šoviniai',svg:'ammo',col:'#b9c2c6',d:'+10% žalos',price:1.2,c:'ammo'},a2:{n:'Sustiprinti šoviniai',svg:'ammo',col:'#5b9be6',d:'+20% žalos',price:3,c:'ammo'},a3:{n:'Šarvamušiai šoviniai',svg:'ammo',col:'#b07be6',d:'+35% žalos',price:7,c:'ammo'},
-  crate:{n:'Trofėjų dėžė',i:'📦',d:'Atidaryk',c:'gear'},
+  crate:{n:'Trofėjų dėžė',i:'📦',d:'Ginklas ar apranga',c:'gear'},crate2:{n:'Elitinė dėžė',i:'🎁',d:'Retesni daiktai',get price(){return G('cr2Price');},c:'gear'},
   grain:{n:'Grūdai',i:'🌾',price:1.5,c:'raw'},fish:{n:'Žuvis',i:'🐟',price:2.5,c:'raw'},
   iron:{n:'Geležis',i:'🪨',price:3,c:'raw'},clay:{n:'Molis',i:'🟤',price:2,c:'raw'},brick:{n:'Plytos',i:'🧱',price:6,c:'raw'},steel:{n:'Plienas',i:'🔩',price:11,c:'raw'},
   wood:{n:'Mediena',i:'🪵',price:4,c:'raw'},lead:{n:'Švinas',i:'🔘',price:5,c:'raw'},oil:{n:'Nafta',i:'🛢️',price:9,c:'raw'},
@@ -179,7 +184,7 @@ const SAVE='plieno-frontas-v3';
 let S=null,OWN=[],OWNC=[];
 function botName(){return pick(FIRST)+' '+pick(LAST);}
 function freshCountries(){return WORLD.map((d,i)=>({id:i,name:d.n,short:d.n,a:d.a,cap:M.caps[i],treasury:300,alive:M.caps[i]>=0,leader:botName(),playerPres:false,mobil:0,tax:5*Math.round(rr(1,5))}));}
-const freshInv=()=>({bread:5,cfish:0,a1:40,a2:0,a3:0,crate:1,grain:4,fish:0,iron:3,steel:2,wood:1,lead:0,oil:0,clay:0,brick:0,plank:0,fuel:0});
+const freshInv=()=>({bread:5,cfish:0,a1:40,a2:0,a3:0,crate:1,crate2:0,grain:4,fish:0,iron:3,steel:2,wood:1,lead:0,oil:0,clay:0,brick:0,plank:0,fuel:0});
 function newGame(name,countryId){
   S={v:3,tick:0,speed:1,owner:M.regions.map(g=>g.home),countries:freshCountries(),
     wars:[],battles:[],news:[],nextBattleId:1,nextWid:2,newsHot:true,
@@ -200,7 +205,7 @@ function load(){try{const t=localStorage.getItem(SAVE);if(!t)return false;const 
     q.companies=(q.companies||[]).map(c=>({type:COMPANY[c.type]?c.type:'mine',ae:c.lvl||0,st:0,workers:0,eff:0}));}
   if(!S.alliances){S.alliances=[];S.bld={};S.bills=[];S.votes=[];S.fin={t:{},y:{}};S.cfg={};S.p.mp=false;S.countries.forEach((c,i)=>{if(i!==S.p.country)c.tax=5*Math.round(rr(1,5));});S.battles.forEach(b=>b.bounty=[0,0]);}
   S.p.companies.forEach(c=>{if(c.reg==null)c.reg=S.countries[S.p.country].cap;});rebuildOwn();ensureParl();
-  S.p.inv=Object.assign(freshInv(),S.p.inv);recalc();msRoll();if(!S.cit)citInit();S.rev=S.rev||{};S.revCd=S.revCd||{};delete S['market'];if(!S.mk||MKEYS.some(k=>!S.mk[k]))mkInit();S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
+  S.p.inv=Object.assign(freshInv(),S.p.inv);recalc();msRoll();if(!S.cit)citInit();S.rev=S.rev||{};S.revCd=S.revCd||{};delete S['market'];if(!S.mk)mkInit();else MKEYS.forEach(k=>{if(!S.mk[k])mkOne(k);});S.orders=S.orders||[];S.p.cost=S.p.cost||{};return true;}catch(e){return false;}}
 function addNews(t,hot){S.news.unshift({t,tick:S.tick,hot:!!hot});if(S.news.length>150)S.news.length=150;if(hot||S.news.length<3)$('#tick1').textContent=t;}
 const C=i=>S.countries[i];
 const col=i=>`rgb(${COLORS[i].join(',')})`;
@@ -232,7 +237,8 @@ function mkBook(k){const o=S.mk[k],L=liq(k),a=[],b=[];for(let i=0;i<6;i++){const
 function mkTarget(k){return mkBase(k)*S.mk[k].trend*(1+(WARF[k]||(isG(k)?.45:0))*Math.min(1,S.battles.length/40)*.5);}
 function mkMove(k){const o=S.mk[k];o.m=clamp(o.m*Math.exp(.025*(R()+R()+R()-1.5)+.03*Math.log(mkTarget(k)/o.m)),mkBase(k)*.3,mkBase(k)*4);o.hist.push(+o.m.toFixed(3));if(o.hist.length>HIST)o.hist.shift();mkBook(k);}
 function mkInit(){S.mk={};S.orders=S.orders||[];S.nextOid=S.nextOid||1;S.p.cost=S.p.cost||{};
-  MKEYS.forEach(k=>{S.mk[k]={m:mkBase(k)*rr(.85,1.15),trend:rr(.85,1.15),hist:[],vol:0};for(let i=0;i<72;i++)mkMove(k);});}
+  MKEYS.forEach(mkOne);}
+function mkOne(k){S.mk[k]={m:mkBase(k)*rr(.85,1.15),trend:rr(.85,1.15),hist:[],vol:0};for(let i=0;i<72;i++)mkMove(k);}
 function mkTick(){
   MKEYS.forEach(k=>{const o=S.mk[k];o.vol*=.9;mkMove(k);
     if(R()<.5){const sd=R()<.5+.3*Math.log(mkTarget(k)/o.m)?'buy':'sell',q=1+Math.floor(R()*liq(k)*.6);o.vol+=q;tape(k,{n:pick(FIRST),s:sd,q,p:sd==='buy'?o.a[0][0]:o.b[0][0]});}});
@@ -322,7 +328,7 @@ function resolveBattle(b,win){
   const reg=M.regions[b.region],p=S.p;
   if(b.pl[0]||b.pl[1]){const mine=b.pl[win];
     if(mine>0){const reward=Math.round(15+mine/40);p.money+=reward;p.st.won++;track('win',1);p.st.money+=reward;let t=`Laimėjai mūšį dėl ${reg.name}! +₡${reward}`;
-      if(mine>=400){p.inv.crate++;p.st.crates++;t+=' ir 📦';}toast(t);}
+      if(mine>=400&&G('crWin')){p.inv.crate+=G('crWin');p.st.crates+=G('crWin');t+=` ir 📦×${G('crWin')}`;}toast(t);}
     else toast(`Mūšis dėl ${reg.name} pralaimėtas.`);}
   if(b.rev){rs(win===0?'won':'lost');if(win===0){delete S.rev[b.region];delete S.revCd[b.region];}else{S.rev[b.region]=G('revMax')*G('revKeep')/100;S.revCd[b.region]=S.tick+G('revCd');
       addNews(`✊ Sukilimas ${reg.name} numalšintas: ${C(b.def).short} išlaikė regioną.`,near(b.att,b.def));}}
@@ -680,6 +686,9 @@ const pay=c=>Object.entries(c).forEach(([k,v])=>S.p.inv[k]-=v);
 const eqG=s=>S.p.gear.find(g=>g.id===S.p.eq[s])||null;
 function addGear(s,r,v){const a=SLOT[s].rng[r],g={id:S.nextWid++,s,r,v:v||Math.round(rr(a[0],a[1])),dur:gMax(s,r)};S.p.gear.push(g);if(!eqG(s))S.p.eq[s]=g.id;return g;}
 function removeGear(g){const p=S.p;p.gear=p.gear.filter(x=>x!==g);if(p.eq[g.s]===g.id){const nx=p.gear.filter(x=>x.s===g.s).sort((a,b)=>b.v-a.v)[0];if(nx)p.eq[g.s]=nx.id;else delete p.eq[g.s];}}
+const crW=el=>RAR.map((_,i)=>Math.max(0,G((el?'c2W':'crW')+i)));
+function crRoll(el){const w=crW(el),t=w.reduce((a,b)=>a+b,0);if(!t)return 0;let x=R()*t;for(let i=0;i<w.length;i++){x-=w[i];if(x<0)return i;}return w.length-1;}
+const crOdds=el=>{const w=crW(el),t=w.reduce((a,b)=>a+b,0)||1;return RAR.map((r,i)=>w[i]?`<span style="color:${r.c}">${r.n} ${+(w[i]/t*100).toFixed(1)}%</span>`:'').filter(Boolean).join(' · ');};
 const rollR=()=>{const x=R();return AODDS.findIndex(o=>x<o);};
 const ammoOn=()=>{const k=S.p.ammoSel;return k&&S.p.inv[k]>0?k:null;};
 // everything the equipped gear adds up to
@@ -704,6 +713,8 @@ const A={
       pushFeed(b,s,{n:p.name,w:w?w.r:-1,d,c:crit,h:!precise,me:1});
       if(sideC(b,s)===p.country)p.fame+=d/120;}
     track('hits',n);track('dmg',total);
+    let c1=0,c2=0;p.crD=(p.crD||0)+total;p.cr2D=(p.cr2D||0)+total;while(p.crD>=G('crDmg')){p.crD-=G('crDmg');c1++;}while(p.cr2D>=G('cr2Dmg')){p.cr2D-=G('cr2Dmg');c2++;}
+    if(c1||c2){p.inv.crate+=c1;p.inv.crate2+=c2;p.st.crates+=c1+c2;toast(`${c1?`📦 Trofėjų dėžė${c1>1?' ×'+c1:''}! `:''}${c2?`🎁 Elitinė dėžė${c2>1?' ×'+c2:''}!`:''}`,3000);return;}
     if(n>1||dodged||bnt||!tabIsBattle())toast(`${anyCrit?'💥 ':''}${fmt(total)} žalos${dodged?` · išsisukai ${dodged}×`:''}${bnt?` · premija ₡${fmt1(bnt)}`:''}`);},
   craft(id){const r=RECIPES.find(x=>x.id===id);if(!has(r.cost))return toast('Trūksta žaliavų: '+costStr(r.cost));pay(r.cost);
     if(r.gw!=null){const g=addGear('w',r.gw);toast(`Pagaminta: ${WN[g.r]}, ataka +${g.v}%`,3000);}
@@ -712,11 +723,9 @@ const A={
   dismantle(id){const p=S.p,g=p.gear.find(x=>x.id===id);if(!g)return;const back=Math.max(1,Math.floor((g.s==='w'?WCOST[g.r].steel*.5:2+g.r*3)*g.dur/gMax(g.s,g.r)));
     removeGear(g);p.inv.steel+=back;toast(`Išardyta. +${back} ${ITEMS.steel.n}`);},
   equip(id){const g=S.p.gear.find(x=>x.id===id);if(!g)return;if(S.p.eq[g.s]===id)delete S.p.eq[g.s];else S.p.eq[g.s]=id;},
-  openCrate(){const p=S.p;if(p.inv.crate<1)return;p.inv.crate--;track('crate',1);const got=[];const m=Math.round(rr(20,80));p.money+=m;got.push('₡'+m);
-    for(let i=0;i<2;i++){const k=pick(RAWS.concat(['steel'])),q=Math.round(rr(3,8));p.inv[k]+=q;got.push(`${q}× ${ITEMS[k].n}`);}
-    const ak=R()<.7?'a1':R()<.75?'a2':'a3',a=Math.round(rr(10,30));p.inv[ak]+=a;got.push(`${a}× ${ITEMS[ak].n}`);
-    if(R()<.6){const g=addGear(pick(SLOTS),rollR());got.push(gFull(g.s,g.r));}
-    toast('📦 '+got.join(', '),4500);},
+  openCrate(k){const p=S.p;k=k==='crate2'?'crate2':'crate';if(p.inv[k]<1)return;p.inv[k]--;track('crate',1);const got=[],el=k==='crate2';let best=null;
+    for(let i=0;i<G(el?'cr2N':'crN');i++){const r=crRoll(el),g=addGear(R()<G('crWpn')/100?'w':pick(ARMOR),r);got.push(`${gFull(g.s,g.r)} +${g.v}%`);if(!best||g.r>best.r)best=g;}
+    if(best)invSel='g'+best.id;toast((el?'🎁 ':'📦 ')+got.join(', '),4500);},
   run(){if(S.p.money<50)return toast('Registracija kainuoja ₡50.');S.p.money-=50;S.election.candidate=true;toast('Užsiregistravai rinkimuose!');},
   attack(r){if(S.p.president)startBattle(S.p.country,r);},
   emigrate(ci){if(ci===S.p.country||!C(ci).alive)return;if(S.p.money<100)return toast('Emigracija kainuoja ₡100.');S.p.money-=100;S.p.country=ci;ensureParl();addNews(`${S.p.name} emigravo į šalį ${C(ci).short}.`,true);focusCountry(ci);},
@@ -906,6 +915,8 @@ function battleView(b){
      <div class="statstrip sm">${statLine(ps)}</div>
      <div class="row"><span class="grow loadout">${w?`<span class="fw">${gico('w',w.r)}</span> <span style="color:${RAR[w.r].c}">${WN[w.r]}</span> +${w.v}% <span class="muted">(${w.dur})</span>`:'<span class="muted">Be ginklo</span>'}</span><button class="btn sm alt" data-act="tab" data-i="inv">Ekipuotė</button></div>
      <div class="row"><span class="muted">Šoviniai</span><span class="chips grow">${[['','Be']].concat(Object.keys(AMMO).map(k=>[k,`+${AMMO[k]*100}% (${p.inv[k]})`])).map(([k,n])=>`<button class="chip${(p.ammoSel||'')===k?' on':''}" ${k?`style="color:${ITEMS[k].col}"`:''} data-act="ammoSel" data-i="${k}" ${k&&!p.inv[k]?'disabled':''}>${n}</button>`).join('')}</span></div>
+     <div class="crbar"><span>📦</span><div class="ebar rv cr"><i style="width:${Math.min(100,(p.crD||0)/G('crDmg')*100)}%"></i></div><span>🎁</span><div class="ebar rv cr2"><i style="width:${Math.min(100,(p.cr2D||0)/G('cr2Dmg')*100)}%"></i></div></div>
+     <div class="muted">Iki dėžių: 📦 ${fmt(Math.max(0,G('crDmg')-(p.crD||0)))} · 🎁 ${fmt(Math.max(0,G('cr2Dmg')-(p.cr2D||0)))} žalos</div>
      <div class="row"><span class="grow muted">Smūgių vienu paspaudimu</span>${[1,3,5].map(n=>`<button class="chip${p.mult===n?' on':''}" data-act="mult" data-i="${n}">×${n}</button>`).join('')}</div></div>
    <div class="muted">🏰 Bunkeriai ${bldSide(b,0,'b')} : ${bldSide(b,1,'b')} · 🎖 Kareivinės ${bldSide(b,0,'k')} : ${bldSide(b,1,'k')} (puolėjai : gynėjai)</div>
    <div class="muted">Pusė, kuri raunde padarė daugiau žalos, kas valandą gauna 1–3 taškus. ${G('rp')} taškų laimi raundą, ${G('rwin')} raundai laimi mūšį. Bendra žala: ${fmt(b.tot[0])} prieš ${fmt(b.tot[1])}.</div>`;
@@ -943,12 +954,12 @@ function renderInv(){
   h+=`<div class="row"><button class="btn grow" data-act="invView" data-i="craft">🛠 GAMINTI</button><button class="btn alt grow" data-act="invView" data-i="dismantle">🔧 ARDYTI</button></div>`;
   h+=`<div class="statstrip">${statLine(pstats())}</div>
    <div class="slots">${SLOTS.map(s=>{const g=eqG(s);return g?gTile(g,'slot'):`<div class="tile gt slot empty"><span class="fw big">${SVG[s==='w'?'w1':s]}</span><span class="te">${SLOT[s].n}</span></div>`;}).join('')}</div>`;
-  h+=`<h4 class="sec">DAIKTAI</h4><div class="tiles">${['crate','cfish','bread','a1','a2','a3'].map(k=>tile(k,invSel===k)).join('')}${Object.keys(ITEMS).filter(k=>ITEMS[k].c==='raw').map(k=>tile(k,invSel===k)).join('')}</div>`;
+  h+=`<h4 class="sec">DAIKTAI</h4><div class="tiles">${['crate','crate2','cfish','bread','a1','a2','a3'].map(k=>tile(k,invSel===k)).join('')}${Object.keys(ITEMS).filter(k=>ITEMS[k].c==='raw').map(k=>tile(k,invSel===k)).join('')}</div>`;
   if(invSel&&ITEMS[invSel]){const it=ITEMS[invSel],k=invSel;let act='';
     if(it.heal)act=`<button class="btn sm" data-act="eatItem" data-i="${k}" ${p.inv[k]?'':'disabled'}>Valgyti</button>`;
-    if(k==='crate')act=`<button class="btn sm" data-act="openCrate" ${p.inv.crate?'':'disabled'}>Atidaryti</button>`;
+    if(k==='crate'||k==='crate2')act=`<button class="btn sm" data-act="openCrate" data-i="${k}" ${p.inv[k]?'':'disabled'}>Atidaryti</button>`;
     if(AMMO[k])act=p.ammoSel===k?`<button class="btn sm alt" data-act="ammoSel" data-i="">Nebenaudoti</button>`:`<button class="btn sm" data-act="ammoSel" data-i="${k}">Naudoti mūšyje</button>`;
-    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${S.mk[k]?` · rinkoje ₡${p2(S.mk[k].m)}`:''}${p.ammoSel===k?' · naudojami':''}</div></div>${act}
+    h+=`<div class="box"><div class="row"><div class="grow"><b>${it.n}</b> <span class="muted">× ${fmt(p.inv[k])}</span><div class="muted">${it.d||'Žaliava gamybai'}${k==='crate'||k==='crate2'?`<div>Iškrenta ${G(k==='crate2'?'cr2N':'crN')} daikt. (ginklas ${G('crWpn')}%, apranga ${100-G('crWpn')}%): ${crOdds(k==='crate2')}</div><div>Gaunama kovojant: kas ${fmt(G(k==='crate2'?'cr2Dmg':'crDmg'))} žalos${k==='crate2'?', arba perkama rinkoje':''}.</div>`:''}${S.mk[k]?` · rinkoje ₡${p2(S.mk[k].m)}`:''}${p.ammoSel===k?' · naudojami':''}</div></div>${act}
       ${S.mk[k]?`<button class="btn sm alt" data-act="trade" data-i="${k}" data-s="sell">Į rinką</button>`:''}</div></div>`;}
   h+=`<h4 class="sec">EKIPUOTĖ (${p.gear.length})</h4>`;
   if(!p.gear.length)h+=`<div class="muted">Neturi ekipuotės. Pasigamink, nusipirk rinkoje arba laimėk trofėjų dėžę.</div>`;
@@ -1020,7 +1031,7 @@ function renderSheet(){
     if(cView==='pf'){const ps=pstats();h+=`<div class="statstrip">${statLine(ps)}</div><div class="box"><dl class="kv"><dt>Šalis</dt><dd>${cname(p.country)}</dd><dt>Prestižas</dt><dd>${p.prestige}</dd><dt>Gyvybės</dt><dd>${p.maxHp}</dd><dt>Darbo energija</dt><dd>${p.maxEn}</dd><dt>Sveikatos kaina už smūgį</dt><dd>${fmt1(ps.cost)}</dd><dt>Vidutinė smūgio žala</dt><dd>${fmt(hitDmg())}</dd><dt>Bendra žala</dt><dd>${fmt(p.dmg)}</dd><dt>Smūgiai</dt><dd>${fmt(p.st.hits)}</dd><dt>Laimėti mūšiai</dt><dd>${p.st.won}</dd><dt>Šlovė</dt><dd>${Math.round(p.fame)}</dd><dt>Įmonės</dt><dd>${p.companies.length}/${maxCo()}</dd></dl></div>`;}
   }
   if(tab==='market'){title='Rinka';
-    const F={all:()=>true,food:k=>mkCat(k)==='food',raw:k=>mkCat(k)==='raw',ammo:k=>mkCat(k)==='ammo',wpn:k=>mkCat(k)==='wpn',armor:k=>mkCat(k)==='armor',mine:k=>owned(k)>0};
+    const F={all:()=>true,food:k=>mkCat(k)==='food',raw:k=>mkCat(k)==='raw',ammo:k=>mkCat(k)==='ammo',wpn:k=>mkCat(k)==='wpn'||mkCat(k)==='gear',armor:k=>mkCat(k)==='armor',mine:k=>owned(k)>0};
     h+=`<div class="statstrip"><span>₡ ${fmt(p.money)}</span><span class="muted">Mokestis parduodant ${G('fee')}%</span></div>`;
     if(S.orders.length)h+=`<div class="box"><h4>Mano užsakymai (${S.orders.length})</h4>${S.orders.map(o=>`<div class="row"><span class="ti sm">${mkIcon(o.k)}</span><button class="grow linkrow" data-act="trade" data-i="${o.k}"><b class="${o.side==='buy'?'up':'dn'}">${o.side==='buy'?'Pirkti':'Parduoti'}</b> ${o.qty}× ${mkName(o.k)} po ₡${p2(o.price)}<div class="muted">įvykdyta ${o.done}/${o.qty} · rinkoje ₡${p2(S.mk[o.k].m)}</div></button><button class="btn sm alt" data-act="cancelOrder" data-i="${o.id}">Atšaukti</button></div>`).join('')}</div>`;
     h+=`<div class="chips">${[['all','Visos'],['food','Maistas'],['raw','Žaliavos'],['ammo','Šoviniai'],['wpn','Ginklai'],['armor','Apranga'],['mine','Turiu']].map(([k,n])=>`<button class="chip${mFilter===k?' on':''}" data-act="mFilter" data-i="${k}">${n}</button>`).join('')}</div>`;
@@ -1175,7 +1186,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(
     case 'bFilter':bFilter=t.dataset.i;break;
     case 'invView':invView=t.dataset.i;$('#sheetBody').scrollTop=0;break;
     case 'selItem':invSel=invSel===t.dataset.i?null:t.dataset.i;break;
-    case 'eatItem':A.eat(t.dataset.i);break;case 'openCrate':A.openCrate();break;
+    case 'eatItem':A.eat(t.dataset.i);break;case 'openCrate':A.openCrate(t.dataset.i);break;
     case 'craft':A.craft(t.dataset.i);break;case 'dismantle':A.dismantle(+t.dataset.i);break;case 'equip':A.equip(+t.dataset.i);break;
     case 'selGear':invSel=invSel==='g'+t.dataset.i?null:'g'+t.dataset.i;break;case 'ammoSel':S.p.ammoSel=t.dataset.i;break;
     case 'goto':{const g=M.regions[+t.dataset.r],r=cv.getBoundingClientRect();closeSheet();V.s=Math.max(V.s,2);V.x=r.width/2-g.lx*V.s;V.y=r.height/2-g.ly*V.s;sel=+t.dataset.r;showRegion(sel);break;}
@@ -1236,10 +1247,10 @@ function refresh(force){
   $('#lvl').firstChild.nodeValue=p.lvl;$('#xpbar').style.width=(p.lvl>=G('maxLvl')?100:p.xp/xpNeed(p.lvl)*100)+'%';{const f=ptsFree(),pb=$('#pBadge');pb.hidden=f<1;pb.textContent=f;}
   $('#hpbar').style.width=(p.hp/p.maxHp*100)+'%';$('#hptxt').textContent=`❤ ${Math.floor(p.hp)}/${p.maxHp}`;
   $('#enbar').style.width=(p.en/p.maxEn*100)+'%';$('#entxt').textContent=`⚡ ${Math.floor(p.en)}/${p.maxEn}`;
-  $('#money').textContent='₡ '+fmt(p.money);$('#inv').textContent=`🥧 ${p.inv.bread} · 🍣 ${p.inv.cfish}${p.inv.crate?' · 📦 '+p.inv.crate:''}`;
+  $('#money').textContent='₡ '+fmt(p.money);$('#inv').textContent=`🥧 ${p.inv.bread} · 🍣 ${p.inv.cfish}${p.inv.crate?' · 📦 '+p.inv.crate:''}${p.inv.crate2?' · 🎁 '+p.inv.crate2:''}`;
   $('#clock').textContent=timeStr(S.tick)+' · '+flagOf(myC().a)+' '+myC().short+(p.president?' · Pirmininkas':p.mp?' · Deputatas':'');$('#myflag').style.background=col(p.country);
   const nb=S.battles.filter(b=>b.att===p.country||b.def===p.country).length;const bb=$('#bBadge');bb.hidden=!nb;bb.textContent=nb;
-  {const nv=p.mp?(S.bills||[]).filter(b=>!b.vote).length:0,eb=$('#eBadge');eb.hidden=!nv;eb.textContent=nv;}const ib=$('#iBadge');ib.hidden=!p.inv.crate;ib.textContent=p.inv.crate;
+  {const nv=p.mp?(S.bills||[]).filter(b=>!b.vote).length:0,eb=$('#eBadge');eb.hidden=!nv;eb.textContent=nv;}const ib=$('#iBadge'),nc=p.inv.crate+p.inv.crate2;ib.hidden=!nc;ib.textContent=nc;
   document.querySelectorAll('#speed button').forEach(b=>b.classList.toggle('on',+b.dataset.s===S.speed));
   const ae=document.activeElement,busy=!force&&ae&&$('#sheetBody').contains(ae)&&(ae.tagName==='SELECT'||ae.type==='range'||ae.type==='number'||ae.dataset.cfg);
   if(tab==='trade'&&!force)tradeLive();else if(!busy||force)renderSheet();
