@@ -248,8 +248,8 @@ button.lvl{padding:0;color:var(--fg);cursor:pointer;}
 .ms .mp{font-family:var(--display);font-variant-numeric:tabular-nums;white-space:nowrap;}
 .skrow{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;flex-wrap:nowrap;}
 .mps{display:flex;flex-wrap:wrap;gap:5px;}
-.mps span{background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:5px;padding:3px 7px;font-size:13px;}
-.mps span small{color:var(--muted);}.mps span.me{border-color:var(--brass);color:var(--brass2);}.mps span.out{opacity:.5;}
+.mps span,.mps button{color:inherit;font:inherit;background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:5px;padding:3px 7px;font-size:13px;}
+.mps span small,.mps button small{color:var(--muted);}.mps span.me,.mps button.me{border-color:var(--brass);color:var(--brass2);}.mps span.out{opacity:.5;}
 .bill .btn.on{outline:2px solid var(--fg);outline-offset:-2px;}
 .bnt{font-size:13px;color:var(--brass2);}
 select.fit{flex:none;max-width:45%;}
@@ -370,7 +370,7 @@ body{background:radial-gradient(120% 80% at 50% 0%,#132634,var(--sea) 60%);lette
 .fr{border-radius:8px}
 .ebar{border-radius:999px;border-color:var(--line);background:rgba(0,0,0,.3)}.ebar i{border-radius:999px}
 .ebar.xp i{background:linear-gradient(90deg,#6a5cff,#9d8bff)}
-.upg button,.mps span{border-radius:10px;background:rgba(255,255,255,.04)}
+.upg button,.mps span,.mps button{border-radius:10px;background:rgba(255,255,255,.04)}
 .ms{border-radius:10px;background:rgba(255,255,255,.03)}
 .ms i{background:var(--gold)}
 select,input[type=text],input.num,.cfg input,.stepper{border-radius:12px;background:rgba(0,0,0,.3);border-color:var(--line2)}
@@ -410,6 +410,26 @@ h4.sec{border-bottom-color:var(--line);letter-spacing:.14em;font-size:12px}
 .tropts{display:grid;gap:8px}
 .tropt{display:grid;gap:2px;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--rc);border-left:5px solid var(--rc);background:linear-gradient(90deg,color-mix(in srgb,var(--rc) 18%,transparent),rgba(255,255,255,.02));color:inherit}
 .tropt small{color:var(--rc);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.05em}.tropt b{font-size:15px}
+/* ---- profiliai ir medaliai ---- */
+.mps button{font-size:13px;padding:3px 9px;border:1px solid var(--line)}
+.fr[data-act]{cursor:pointer}
+.pfh{display:flex;align-items:center;gap:12px}
+.pfav{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:24px;font-weight:700;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.15),0 8px 18px -8px rgba(0,0,0,.7)}
+.pfn{font-size:19px}
+.rkg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rkc{position:relative;display:grid;gap:2px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.035);min-width:0;overflow:hidden}
+.rkc .rkt{font-size:13px;font-weight:700;color:var(--muted)}.rkc b{font-size:19px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rkc .rkn{justify-self:end;font-weight:700;font-size:13px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.07);font-variant-numeric:tabular-nums}
+.rkc.g{background:linear-gradient(135deg,rgba(79,208,138,.16),rgba(79,208,138,.03));}.rkc.g .rkt,.rkc.g b{color:#8fd6aa}
+.rkc.y{background:linear-gradient(135deg,rgba(230,184,77,.18),rgba(230,184,77,.03));}.rkc.y .rkt,.rkc.y b{color:#e8cf95}
+.rkc.s .rkt{color:#a9bcc4}.rkc.w{background:linear-gradient(135deg,rgba(170,170,90,.12),rgba(255,255,255,.02))}.rkc.w .rkt{color:#d6d3a2}
+.rkc .rkn.top{background:var(--gold,#e6b84d);color:#1b1305}
+.skb{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;font-size:13px;margin:3px 0}
+.mdls{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px 6px}
+.mdl{display:grid;justify-items:center;gap:0;background:none;border:0;padding:0;color:inherit;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+.mdl .mdsvg{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 50% 60%,rgba(255,255,255,.08),rgba(0,0,0,.25));filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+.mdl b{margin-top:-8px;min-width:26px;padding:1px 7px;border-radius:999px;background:#111b21;border:2px solid var(--line2);font-size:13px;font-variant-numeric:tabular-nums}
+.mdl.off{opacity:.35}.mdl.off .mdsvg text{filter:grayscale(1)}
 </style>
 
 <div id="app">
