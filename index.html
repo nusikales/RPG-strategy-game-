@@ -596,16 +596,17 @@ const CFG=[
   ['uConMin','Kontrakto atlygis mažiausiai ₡',150,0,100000,10],['uConMax','Kontrakto atlygis daugiausiai ₡',4000,0,1000000,50],['uConDmg','Kontraktas: žalos už 1 ₡',60,1,100000,5],
   ['uConDays','Kontrakto trukmė dienomis',3,1,60,1],['uConKeep','Naujo dalinio nustatymas: atlygio dalis kasai %',30,0,100,5],['uConPow','Kontrakto žala pagal dalinio savaitės žalą (% per kontraktą)',60,5,500,5],['uConBack','Nepavykus kontraktui grąžinama šaliai %',50,0,100,5],['uConPri','Botai kovoja dėl kontrakto %',50,0,100,5],
   ['mkOffP','Kariaujanti šalis įdeda kontraktą į bendrą rinką per dieną %',60,0,100,5],['mkMax','Daugiausia kontraktų bendroje rinkoje',40,0,500,1],['mkH','Rinkos kontraktas galioja valandų',48,1,500,1],['mkBonus','Rinkos kontraktai moka daugiau %',20,0,300,5],
-  ['uDep','Užstatas priimant rinkos kontraktą % atlygio',25,0,100,5],['mkBot','Botų vadai ima kontraktą iš rinkos per dieną %',15,0,100,5],['mkWait','Botai rinkos kontraktą ima ne anksčiau nei po valandų',8,0,200,1],
+  ['uDep','Užstatas priimant rinkos kontraktą % atlygio',25,0,100,5],['mkBot','Laisvas botų dalinys žiūri į rinką kas 6 val. %',30,0,100,5],['uDepRes','Botų dalinys statydamas pasilieka užstatui ₡',80,0,100000,10],['uChip','Botai nariai užstatui gali sumesti % savo pinigų',50,0,100,5],['mkWait','Botai rinkos kontraktą ima ne anksčiau nei po valandų',8,0,200,1],
   ['uReqN','Prašymų įstoti į tavo dalinį per dieną (vidutiniškai)',2,0,50,.5],['uReqH','Prašymas ar kvietimas galioja valandų',48,1,500,1],['uInvP','Botas priima kvietimą %',60,0,100,5]]],
  ['Medaliai',[['mDmg','Medalis „Naikintojas“ kas tiek žalos',100000,1000,100000000,1000],['mLvl','Medalis „Patyręs“ kas tiek lygių',10,1,500,1],['mWin','Medalis „Nugalėtojas“ kas tiek laimėtų mūšių',10,1,10000,1],
   ['mBox','Medalis „Dėžių medžiotojas“ kas tiek atidarytų dėžių',10,1,10000,1],['mRev','Medalis „Sukilėlis“ kas tiek sukilimo veiksmų',25,1,10000,1]]],
  ['Sukilimai',[['revMax','Sukilimo lygis, nuo kurio prasideda mūšis',100,5,100000,5],['revHp','Sukilimo mygtuko kaina gyvybėmis',15,0,500,1],
   ['revMe','Tavo paspaudimas prideda sukilimo taškų',5,0,10000,1],['revBot','Boto veiksmas prideda sukilimo taškų',1,0,10000,.5],['revPay','Atlygis tau už paspaudimą ₡',2,0,10000,1],
   ['revFame','Šlovė už paspaudimą',3,0,1000,1],['revDecay','Sukilimo lygis mažėja per dieną %',10,0,100,1],['revKeep','Lieka sukilimo % po pralaimėto mūšio',0,0,100,5],
-  ['revCd','Pertrauka po sukilimo mūšio valandomis',24,0,1000,1],['revBon','Sukilėlių žalos priedas mūšyje %',25,0,500,5],['revLim','Daugiausia sukilimo mūšių vienai šaliai vienu metu',2,1,50,1],
+  ['revCd','Pertrauka po sukilimo mūšio valandomis',72,0,1000,1],['revBon','Sukilėlių žalos priedas mūšyje %',25,0,500,5],['revLim','Daugiausia sukilimo mūšių vienai šaliai vienu metu',2,1,50,1],
   ['revCash','Iždas atkurtai valstybei ₡',300,0,100000,50],['revAlly','Sukilti galima ir prieš sąjungininkę (1 taip, 0 ne)',0,0,1,1],
-  ['revPop','Sukilėlių jėga: % regiono jėgos už kiekvieną okupuotą savo regioną',100,0,1000,10],['revDef','Okupanto jėga sukilimo mūšyje %',60,0,300,5]]],
+  ['revPop','Sukilėlių jėga: % regiono jėgos už kiekvieną okupuotą savo regioną',100,0,1000,10],['revDef','Okupanto jėga sukilimo mūšyje %',60,0,300,5],
+  ['revRw','Sukilimo mūšis: raundai laimėti',1,1,5,1],['revDefLim','Daugiausia sukilimų prieš vieną šalį vienu metu',2,1,50,1],['revGap','Tarpas tarp naujų sukilimų prieš tą pačią šalį valandomis',12,0,500,1]]],
  ['Botai piliečiai',[['cStart','Botų piliečių naujame žaidime vienam regionui',2,0,50,1],['cMax','Daugiausia botų pasaulyje',10000,0,50000,100],
   ['cAct','Boto veiksmo tikimybė per valandą %',30,0,100,5],['cHp','Boto gyvybės',100,10,5000,10],['cHpReg','Boto gyvybių atsistatymas per valandą',20,0,500,1],
   ['cHitHp','Boto smūgio kaina gyvybėmis',10,0,500,1],['cDmg','Boto smūgio bazinė žala',60,0,100000,5],['cLvl','Boto smūgis stiprėja kartu su jo lygiu ir prestižu (1 taip, 0 ne)',1,0,1,1],
@@ -871,6 +872,7 @@ function makePeace(a,b,quiet,terms){const mine=x=>(x.att===a&&x.def===b)||(x.att
   if(!quiet)addNews(`🕊 ${C(a).short} ir ${C(b).short} pasirašė taiką${terms?': '+TERMS[terms]:''}.`,near(a,b));}
 // battle: sides 0 = attacker, 1 = defender; first to G('rwin') rounds, a round is won at G('rp') points
 const sideC=(b,s)=>s?b.def:b.att;
+const rwNeed=b=>b.rev?G('revRw'):G('rwin');
 const bonus=(b,s)=>b.bon[s]+(C(sideC(b,s)).mobil>S.tick?G('mobilBonus')/100:0);
 function startBattle(att,region,rev){
   if(S.battles.some(b=>b.region===region))return;
@@ -919,7 +921,7 @@ function battleTick(b){b.bp=[0,0];
     if(R()<.6)pushFeed(b,s,{n:pick(FIRST),w:Math.floor(R()*R()*R()*6),d:Math.round(d-part),c:false});}
   const sum=b.dmg[0]+b.dmg[1],lead=b.dmg[0]>b.dmg[1]?0:1,sh=b.dmg[lead]/(sum||1),g=sh>.8?3:sh>.62?2:1;
   b.pts[lead]+=g;b.gain={s:lead,g};
-  if(b.pts[lead]>=G('rp')){b.rw[lead]++;if(b.rw[lead]>=G('rwin'))return lead;
+  if(b.pts[lead]>=G('rp')){b.rw[lead]++;if(b.rw[lead]>=rwNeed(b))return lead;
     b.round++;b.pts=[0,0];b.dmg=[0,0];b.gain=null;
     if(near(b.att,b.def))addNews(`Raundą dėl ${M.regions[b.region].name} laimėjo ${C(sideC(b,lead)).short} (${b.rw[0]}:${b.rw[1]}).`,true);}
   return -1;
@@ -994,9 +996,12 @@ const revBusy=r=>S.battles.some(b=>b.region===r);
 const revCool=r=>Math.max(0,(S.revCd[r]||0)-S.tick);
 const rs=k=>{S.rstat=S.rstat||{};S.rstat[k]=(S.rstat[k]||0)+1;};
 const revCount=ci=>S.battles.filter(b=>b.rev&&b.att===ci).length;
+// an occupier faces at most revDefLim revolts at once and a new one only revGap hours after the last one started
+const revAgainst=ci=>S.battles.filter(b=>b.rev&&b.def===ci).length;
+const revOcc=o=>revAgainst(o)<G('revDefLim')&&S.tick-((S.revLast||{})[o]??-1e9)>=G('revGap');
 function revAdd(r,v){if(!revOk(r)||revBusy(r)||revCool(r))return false;const h=M.regions[r].home;
   S.rev[r]=Math.min(G('revMax'),(S.rev[r]||0)+v);
-  if(S.rev[r]>=G('revMax')&&revCount(h)<G('revLim')){S.rev[r]=0;startBattle(h,r,true);}return true;}
+  const o=S.owner[r];if(S.rev[r]>=G('revMax')&&revCount(h)<G('revLim')&&revOcc(o)){S.rev[r]=0;(S.revLast=S.revLast||{})[o]=S.tick;startBattle(h,r,true);}return true;}
 // regions occupied from each country where a revolt can be raised now
 function revTargets(){const t={};S.owner.forEach((o,r)=>{const h=M.regions[r].home;if(o!==h&&revOk(r)&&!revBusy(r)&&!revCool(r))(t[h]=t[h]||[]).push(r);});return t;}
 function revDay(){const k=1-G('revDecay')/100;for(const r in S.rev){if(!revOk(+r)){delete S.rev[r];continue;}S.rev[r]*=k;if(S.rev[r]<.5)delete S.rev[r];}
@@ -1153,7 +1158,7 @@ function uTakeMk(u,oid){const o=(S.uMkt||[]).find(x=>x.id===oid);if(!o||u.con||!
   if(u.m.includes(0))addNews(`📜 Dalinys „${u.n}“ paėmė ${C(o.ci).short} kontraktą iš rinkos: ${fmt(o.need)} žalos už ₡${fmt(o.rew)}, užstatas ₡${fmt(dep)}.`,true);return '';}
 function uDecline(u,oid){const o=(u.off||[]).find(x=>x.id===oid);if(!o)return;u.off=u.off.filter(x=>x!==o);uLog(u,`✖ Atmestas pasiūlymas: ${fmt(o.need)} žalos už ₡${fmt(o.rew)}`);}
 // every hour: finished or expired contracts
-function uTick(){if(S.tick%6===0)mkGen();for(const u of S.units||[]){const k=u.con;if(!k)continue;
+function uTick(){if(S.tick%6===0)mkGen();if(S.tick%6===3)uMkBots();for(const u of S.units||[]){const k=u.con;if(!k)continue;
   if(k.p>=k.need){const tot=k.rew*(1+uBon(u.id,'hq')/100),keep=tot*uKeep(u)/100,rest=tot-keep,by=k.by||{},sum=u.m.reduce((a,id)=>a+(by[id]||0),0);u.cash+=keep+(k.dep||0);let mine=0;
       // members are paid by their share of the contract damage (equally if nobody is recorded)
       u.m.forEach(id=>{const z=memOf(id);if(!z)return;const v=sum>0?rest*(by[id]||0)/sum:rest/u.m.length;if(z===S.p){S.p.money+=v;mine=v;}else z.m+=v;});u.cw=(u.cw||0)+1;u.con=null;
@@ -1194,12 +1199,18 @@ function unitDay(){S.units=S.units||[];const L=S.cit||[],mx=G('uMax');
   {const pu=S.p.u&&unitById(S.p.u);if(pu&&pu.lead===0&&pu.m.length<mx){const fr=L.filter(z=>!z.u&&z.c===pu.c);let n=G('uReqN');while(fr.length&&n>0){if(R()<Math.min(1,n))uAsk(pu,pick(fr));n-=1;}}}
   // bot leaders: build the cheapest upgrade they can pay for, take the best contract (own country or allies first)
   for(const u of S.units){if(u.lead===0)continue;const ks=Object.keys(UB).filter(k=>(u.b[k]||0)<G('uBldMax')).sort((a,b)=>uBuyCost(u,a)-uBuyCost(u,b));
-    if(ks.length&&u.cash>=uBuyCost(u,ks[0])*1.2)uBuild(u,ks[0],true);
+    if(ks.length&&u.cash>=uBuyCost(u,ks[0])*1.2+(u.con?0:G('uDepRes')))uBuild(u,ks[0],true);
     // a bot leader accepts the offer it thinks the unit can finish (best pay per damage), declines the rest
     if(!u.con&&u.off&&u.off.length){const cap=uExp(u)*1.15,ok=u.off.filter(o=>o.need<=cap&&o.rew*G('uConDmg')/o.need>=.8).sort((a,b)=>b.rew/b.need-a.rew/a.need);
       if(ok.length)uTake(u,ok[0].id);else if(R()<.5)uDecline(u,u.off[0].id);}
-    // otherwise sometimes take the best market contract it can finish and pay the deposit for
-    if(!u.con&&u.m.length>1&&(S.uMkt||[]).length&&R()<G('mkBot')/100){const cap=uExp(u)*1.1,ok=S.uMkt.filter(o=>mkOpen(o)&&S.tick-(o.t||0)>=G('mkWait')&&uCanMk(u,o)&&o.need<=cap&&uDepOf(o)<=u.cash).sort((a,b)=>b.rew/b.need-a.rew/a.need);if(ok.length)uTakeMk(u,ok[0].id);}}}
+  }}
+// every 6 hours idle bot units look at the open market: the best paying contract they can finish and pay the deposit for
+function uMkBots(){if(!(S.uMkt||[]).length)return;const L=(S.units||[]).filter(u=>u.lead!==0&&!u.con&&u.m.length>1);for(let i=L.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[L[i],L[j]]=[L[j],L[i]];}
+  for(const u of L){if(!S.uMkt.length)return;if(R()>=G('mkBot')/100)continue;const cap=uExp(u)*1.1,can=uSpare(u)+u.cash,ok=S.uMkt.filter(o=>mkOpen(o)&&S.tick-(o.t||0)>=G('mkWait')&&uCanMk(u,o)&&o.need<=cap&&uDepOf(o)<=can).sort((a,b)=>b.rew/b.need-a.rew/a.need);
+    if(ok.length){const dep=uDepOf(ok[0]);if(dep>u.cash)uFund(u,dep-u.cash);uTakeMk(u,ok[0].id);}}}
+// bot members chip in for a deposit: each gives part of the money he has above ₡30
+const uSpare=u=>u.m.reduce((a,id)=>{const z=id?citById(id):null;return a+(z?Math.max(0,z.m-30)*G('uChip')/100:0);},0);
+function uFund(u,need){const sp=uSpare(u);if(sp<=0)return;const k=Math.min(1,need/sp);for(const id of u.m){const z=id?citById(id):null;if(!z)continue;const v=Math.max(0,z.m-30)*G('uChip')/100*k;z.m-=v;u.cash+=v;}}
 // UI
 let unitId=0,uView='my',mkSort='pay',mkFit=false,fbShow=false;
 const uRow=u=>`<button class="trow" data-act="unit" data-i="${u.id}"><span class="uic">${u.ic}</span><span class="tn">${esc(u.n)}<small>${flagOf(C(u.c).a)} ${esc(C(u.c).short)} · 👥 ${u.m.length}/${G('uMax')} · 🏗 ${uLvl(u)}</small></span><span class="tv">🔥 ${fmt(u.d)}</span></button>`;
@@ -2127,7 +2138,7 @@ function feedRows(b,s){
 function battleView(b){
   const p=S.p,g=M.regions[b.region],pa=pct(b.dmg[0],b.dmg[1]),ps=pstats(),w=eqG('w');
   const hills=s=>`<div class="hill ${s?'d':'a'}"><i style="width:${Math.min(100,b.pts[s]/G('rp')*100)}%"></i></div>`;
-  return `<div class="feeds"><div class="feed l">${feedRows(b,0)}</div><div class="fmid"><span class="muted">Raundas</span><b>${b.round}</b><span class="muted">iš ${G('rwin')*2-1}</span></div><div class="feed r">${feedRows(b,1)}</div></div>
+  return `<div class="feeds"><div class="feed l">${feedRows(b,0)}</div><div class="fmid"><span class="muted">Raundas</span><b>${b.round}</b><span class="muted">iš ${rwNeed(b)*2-1}</span></div><div class="feed r">${feedRows(b,1)}</div></div>
    <div class="btitle">${b.rev?'✊ Sukilimas · ':''}${C(b.def).cap===b.region?'<span class="cap">★</span> ':''}${esc(g.name)} <button class="btn sm alt" data-act="goto" data-r="${b.region}" aria-label="Rodyti žemėlapyje">⌖</button></div>
    <div class="bbig">${flagBox(b.att)}<b>${b.rw[0]}</b><i>⚔</i><b>${b.rw[1]}</b>${flagBox(b.def)}</div>
    <div class="tickrow"><span class="muted" id="nextTick"></span>${b.gain?`<span class="gain ${b.gain.s?'d':'a'}">▲ +${b.gain.g} ${esc(C(sideC(b,b.gain.s)).short)}</span>`:'<span class="muted">Raundas prasideda</span>'}</div>
@@ -2149,7 +2160,7 @@ function battleView(b){
      <div class="muted">Iki dėžių: 📦 ${fmt(Math.max(0,G('crDmg')-(p.crD||0)))} · 🎁 ${fmt(Math.max(0,G('cr2Dmg')-(p.cr2D||0)))} žalos</div>
      <div class="row"><span class="grow muted">Smūgių vienu paspaudimu</span>${[1,3,5].map(n=>`<button class="chip${p.mult===n?' on':''}" data-act="mult" data-i="${n}">×${n}</button>`).join('')}</div></div>
    <div class="muted">🏰 Bunkeriai ${bldSide(b,0,'b')} : ${bldSide(b,1,'b')} · 🎖 Kareivinės ${bldSide(b,0,'k')} : ${bldSide(b,1,'k')} (puolėjai : gynėjai)</div>
-   <div class="muted">Pusė, kuri raunde padarė daugiau žalos, kas valandą gauna 1–3 taškus. ${G('rp')} taškų laimi raundą, ${G('rwin')} raundai laimi mūšį. Bendra žala: ${fmt(b.tot[0])} prieš ${fmt(b.tot[1])}.</div>`;
+   <div class="muted">Pusė, kuri raunde padarė daugiau žalos, kas valandą gauna 1–3 taškus. ${G('rp')} taškų laimi raundą, ${rwNeed(b)===1?'vienas raundas laimi sukilimo':rwNeed(b)+' raundai laimi'} mūšį. Bendra žala: ${fmt(b.tot[0])} prieš ${fmt(b.tot[1])}.</div>`;
 }
 function openSheet(t){tab=t;$('#rcard').hidden=true;$('#sheet').hidden=false;$('#sheet').classList.toggle('tall',t!=='more');
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===(t==='battle'?'battles':t==='trade'?'market':t)));$('#sheetBody').scrollTop=0;renderSheet();}
