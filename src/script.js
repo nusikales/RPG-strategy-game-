@@ -51,12 +51,14 @@ const CFG=[
   ['wHMin','Naujo darbuotojo laimė: mažiausiai %',55,0,100,5],['wHMax','Naujo darbuotojo laimė: daugiausiai %',85,0,100,5],
   ['wFor','Užsieniečio statsai geresni %',35,0,500,5],['wForWage','Užsieniečio alga didesnė %',15,0,500,5],['wCandCost','Naujų kandidatų kaina ₡',20,0,100000,5],
   ['wHapLo','Statsų daugiklis, kai laimė 0% (%)',50,0,300,5],['wHapHi','Statsų daugiklis, kai laimė 100% (%)',130,0,300,5],
-  ['wHapDay','Laimė mažėja per dieną',2,0,100,.5],['wUnpaid','Laimė krinta nesumokėjus algos',15,0,100,1],['wQuit','Darbuotojas išeina, kai laimė nukrenta iki % (0 = niekada)',5,0,100,1],
+  ['wHapDay','Laimė mažėja per dieną be priežasties',0,0,100,.5],['wTaxSafe','Mokestis %, nuo kurio krinta darbuotojų laimė',20,0,100,1],['wTaxK','Laimės kritimas per dieną už kiekvieną mokesčio %',.25,0,10,.05],['wUnpaid','Laimė krinta nesumokėjus algos',15,0,100,1],['wQuit','Darbuotojas išeina, kai laimė nukrenta iki % (0 = niekada)',5,0,100,1],
   ['wBoxP','Įrankių dėžės tikimybė per valandą už 1 sėkmės tašką %',.3,0,100,.05],['wWageMin','Mažiausia alga % nuo bazinės',25,0,100,5],
-  ['wPerkCh','Tikimybė, kad naujas darbuotojas turi perką %',40,0,100,5],['wPerkGood','Iš jų teigiamas perkas %',60,0,100,5],['wPerkMax','Daugiausia perkų vienam darbuotojui',3,1,10,1],['wPerkK','Perkų stiprumas %',100,0,500,10],
+  ['wPerkCh','Tikimybė, kad naujas darbuotojas turi perką %',45,0,100,5],['wPerkCh2','Tikimybė gauti dar vieną perką (kiekvieną kitą) %',25,0,100,5],['wPerkGood','Iš jų teigiamas perkas %',60,0,100,5],['wPerkMax','Daugiausia perkų vienam darbuotojui',3,1,10,1],['wPerkK','Perkų stiprumas %',100,0,500,10],
   ['wTrainCost','Treniruotės kaina ₡',0,0,100000,5],['trK','Treniruotės priedų stiprumas %',100,0,1000,10],
   ['trW0','Treniruotė: „Paprastas“ svoris',60,0,1000,1],['trW1','Treniruotė: „Retas“ svoris',27,0,1000,1],['trW2','Treniruotė: „Epinis“ svoris',10,0,1000,1],['trW3','Treniruotė: „Legendinis“ svoris',3,0,1000,1],
   ['tkHap','Pasirinkimo „Laimė“ svoris',25,0,1000,1],['tkStat','Pasirinkimo „Statsas“ svoris',35,0,1000,1],['tkWage','Pasirinkimo „Mažesnė alga“ svoris',15,0,1000,1],['tkRe','Pasirinkimo „Ridenti iš naujo“ svoris',10,0,1000,1],['tkPerk','Pasirinkimo „Perkas“ svoris',15,0,1000,1]]],
+ ['Darbo eventai',[['wEvP','Darbuotojas gauna darbo eventą per dieną %',25,0,100,1],['wEvGood','Iš jų geri eventai %',50,0,100,5],['wEvTwo','Eventas dviem darbuotojams: svoris',15,0,1000,1],['wEvAll','Visos įmonės eventas: svoris',15,0,1000,1],
+  ['wEvOne','Vieno darbuotojo eventas: svoris',70,0,1000,1],['wEvH','Eventas laukia sprendimo valandų',24,1,200,1],['wEvMax','Daugiausia laukiančių eventų',8,1,50,1],['wEvK','Eventų poveikio stiprumas %',100,0,500,10],['wEvCost','Eventų kainos (₡) daugiklis % nuo bazinės algos',100,0,2000,10]]],
  ['Šalis',[['seats','Vietos parlamente',10,3,30,1],['elecDays','Rinkimai kas kiek dienų',5,1,60,1],['favor','Botų palankumas tau %',35,0,100,5],['voteH','Balsavimo trukmė valandomis',6,1,72,1],
   ['presPay','Pirmininko alga per dieną ₡',40,0,10000,5],['mpPay','Deputato alga per dieną ₡',15,0,10000,5],['regInc','Regiono pajamos į iždą per valandą ₡',2,0,100,.5],['fee','Rinkos mokestis parduodant % (pradinis, toliau keičia parlamentai)',2,0,50,.5],
   ['allyMax','Daugiausia šalių aljanse',6,2,50,1],['allyCount','Daugiausia aljansų pasaulyje',12,0,50,1],['allyHelp','Sąjungininko pagalba mūšyje % jo jėgos',20,0,100,5],
@@ -68,7 +70,7 @@ const CFG=[
   ['c2W0','Elitinė dėžė: „Paprastas“ svoris',0,0,1000,1],['c2W1','Elitinė dėžė: „Neįprastas“ svoris',25,0,1000,1],['c2W2','Elitinė dėžė: „Retas“ svoris',35,0,1000,1],['c2W3','Elitinė dėžė: „Epinis“ svoris',25,0,1000,1],['c2W4','Elitinė dėžė: „Legendinis“ svoris',12,0,1000,1],['c2W5','Elitinė dėžė: „Mitinis“ svoris',3,0,1000,1],
   ['tbN','Daiktų įrankių dėžėje',1,1,20,1],['tbPrice','Įrankių dėžės bazinė kaina rinkoje ₡',30,1,1000000,5],['wiSell','Darbuotojo daikto pardavimo kaina ₡ (dauginama iš 2,5 kiekvienam retumui)',4,0,100000,1],
   ['tbW0','Įrankių dėžė: „Paprastas“ svoris',55,0,1000,1],['tbW1','Įrankių dėžė: „Neįprastas“ svoris',26,0,1000,1],['tbW2','Įrankių dėžė: „Retas“ svoris',12,0,1000,1],['tbW3','Įrankių dėžė: „Epinis“ svoris',5,0,1000,1],['tbW4','Įrankių dėžė: „Legendinis“ svoris',1.6,0,1000,.1],['tbW5','Įrankių dėžė: „Mitinis“ svoris',.4,0,1000,.1]]],
- ['Daliniai',[['uMax','Daugiausia narių dalinyje',10,2,100,1],['uCost','Dalinio įkūrimo kaina ₡',200,0,100000,10],['uBotCost','Dalinio įkūrimo kaina botui ₡',60,0,100000,5],['uMaxN','Daugiausia dalinių pasaulyje',500,0,5000,10],
+ ['Daliniai',[['uMax','Daugiausia narių dalinyje',10,2,100,1],['uCost','Dalinio įkūrimo kaina ₡',200,0,100000,10],['uBotCost','Dalinio įkūrimo kaina botui ₡',60,0,100000,5],['uMaxN','Daugiausia dalinių pasaulyje',1500,0,5000,10],['uPerC','Daugiausia dalinių šalyje (0 = pagal botų skaičių)',0,0,500,1],
   ['uLvlMin','Botas kuria dalinį nuo lygio',5,1,500,1],['uCreate','Botas kuria dalinį per dieną %',1.5,0,100,.5],['uJoin','Botas be dalinio stoja per dieną %',15,0,100,1],['uLeave','Botas išeina iš dalinio per dieną %',2,0,100,1],
   ['uDon','Botas aukoja daliniui savo pinigų per dieną %',5,0,100,1],['uBldMax','Aukščiausias dalinio pastato lygis',5,1,50,1],
   ['uRng','Šaudykla: žalos % už lygį',4,0,100,1],['uMed','Lauko ligoninė: mažesnė smūgio kaina % už lygį',5,0,20,1],['uHq','Štabas: kontraktų atlygis % už lygį',10,0,200,5],['uTrn','Treniruočių aikštelė: XP % už lygį',8,0,200,1],
@@ -663,11 +665,13 @@ function unitDay(){S.units=S.units||[];const L=S.cit||[],mx=G('uMax');
     const t=u.d-(u.dl||0);u.dl=u.d;u.dw=Math.round((u.dw||0)*6/7+t);}
   uOffers();const room={};S.units.forEach(u=>{if(u.m.length<mx)(room[u.c]=room[u.c]||[]).push(u);});
   const pj=G('uJoin')/100,pc=G('uCreate')/100,pl=G('uLeave')/100,cost=G('uBotCost'),don=G('uDon')/100;
+  // per-country limit so that big countries do not take all the slots: by default one unit per uMax bots of the country, plus one
+  const nU={},nB={};S.units.forEach(u=>nU[u.c]=(nU[u.c]||0)+1);L.forEach(z=>nB[z.c]=(nB[z.c]||0)+1);const capC=ci=>G('uPerC')||Math.ceil((nB[ci]||0)/mx)+1;
   for(const z of L){if(z.u){const u=unitById(z.u);if(!u){delete z.u;continue;}
       if(R()<pl&&!(u.lead===z.id&&u.m.length>1)){uLeave(u.id,z.id);continue;}
       if(z.m>30&&don>0){const v=z.m*don;z.m-=v;u.cash+=v;}continue;}
     if(R()<pj){const rs=room[z.c];if(rs&&rs.length){const u=pick(rs);if(u.lead===0){uAsk(u,z);continue;}uJoin(u,z.id);if(u.m.length>=mx)room[z.c]=rs.filter(x=>x!==u);continue;}}
-    if((z.l||1)+(z.r||0)*50>=G('uLvlMin')&&z.m>=cost*1.5&&R()<pc&&S.units.length<G('uMaxN')){z.m-=cost;const u=uNew(z.c,z.id);z.u=u.id;(room[z.c]=room[z.c]||[]).push(u);}}
+    if((z.l||1)+(z.r||0)*50>=G('uLvlMin')&&z.m>=cost*1.5&&R()<pc&&S.units.length<G('uMaxN')&&(nU[z.c]||0)<capC(z.c)){z.m-=cost;nU[z.c]=(nU[z.c]||0)+1;const u=uNew(z.c,z.id);z.u=u.id;(room[z.c]=room[z.c]||[]).push(u);}}
   // extra requests to the player's unit from free bots of its country
   {const pu=S.p.u&&unitById(S.p.u);if(pu&&pu.lead===0&&pu.m.length<mx){const fr=L.filter(z=>!z.u&&z.c===pu.c);let n=G('uReqN');while(fr.length&&n>0){if(R()<Math.min(1,n))uAsk(pu,pick(fr));n-=1;}}}
   // bot leaders: build the cheapest upgrade they can pay for, take the best contract (own country or allies first)
@@ -1058,11 +1062,15 @@ const workGain=()=>G('workGain')*(1+sk('eff')*skPer('eff')/100);
 function prodCount(c){const d=COMPANY[c.type];let n=Math.floor(c.eff/d.eff);if(d.inp)for(const k in d.inp)n=Math.min(n,Math.floor(S.p.inv[k]/d.inp[k]));return n;}
 function coProduce(c){const p=S.p,d=COMPANY[c.type],n=prodCount(c);if(n<1)return 0;let val=n*coQ(c)*S.mk[d.out].m;if(d.inp)for(const k in d.inp){p.inv[k]-=d.inp[k]*n;val-=d.inp[k]*n*S.mk[k].m;}p.inv[d.out]+=n*coQ(c);c.eff-=n*d.eff;
   // profit tax goes to the country that owns the region the company stands in
-  const lc=coLoc(c),tax=Math.min(p.money,Math.max(0,val)*C(lc).tax/100);p.money-=tax;C(lc).treasury+=tax;fin(lc,'tax',tax);lastTax+=tax;
+  const lc=coLoc(c),tax=Math.min(p.money,Math.max(0,val)*C(lc).tax/100);p.money-=tax;C(lc).treasury+=tax;fin(lc,'tax',tax);lastTax+=tax;const pt=coPt(c);pt.v+=val;pt.t+=tax;pt.n+=n*coQ(c);
   track('prod',n*coQ(c));return n*coQ(c);}
 // with autoProd on, every full portion of effort becomes goods right away (inputs are taken from the inventory)
 function coAutoAll(){if(!G('autoProd'))return null;const got={};S.p.companies.forEach(c=>{const n=coProduce(c);if(n){const o=COMPANY[c.type].out;got[o]=(got[o]||0)+n;}});return got;}
 const gotStr=got=>Object.keys(got).map(k=>`${got[k]}× ${ITEMS[k].n}`).join(', ');
+// ---------- company statistics: today (pt) and the last 7 days (ph); v = value made (minus inputs), t = tax, g = wages, e = effort, n = goods ----------
+const coPt=c=>c.pt||(c.pt={v:0,t:0,g:0,e:0,n:0});
+const coPf=d=>d?d.v-d.t-d.g:0;
+function coDayRoll(){for(const c of S.p.companies){const d=coPt(c);c.ph=c.ph||[];c.ph.unshift({v:r2(d.v),t:r2(d.t),g:r2(d.g),e:Math.round(d.e),n:d.n});if(c.ph.length>7)c.ph.length=7;c.pt=null;}}
 // ---------- company workers: NPCs who only work in companies ----------
 // stats: p = production (effort per hour), q = quickness (company storage), l = luck (toolbox drops), h = happiness 0–100 (multiplies the other three)
 const WST={p:{n:'Gamyba',ic:'🔨'},q:{n:'Greitumas',ic:'📦'},l:{n:'Sėkmė',ic:'🍀'},h:{n:'Laimė',ic:'😊'}};
@@ -1075,10 +1083,17 @@ const PERK={
   nakt:{n:'Naktinė pamaina',g:1,t:2,e:{fp:.6}},ist:{n:'Ištikimas',g:1,t:2,e:{loyal:1}},
   ment:{n:'Mentorius',g:1,t:3,e:{tp:1.1}},meist:{n:'Meistras',g:1,t:3,e:{all:1.15}},
   ting:{n:'Tinginys',g:0,e:{p:.8}},ner:{n:'Nerangus',g:0,e:{q:.75}},niur:{n:'Niurzga',g:0,e:{hd:2}},nev:{n:'Nevykėlis',g:0,e:{l:.7}},
-  god:{n:'Godus',g:0,e:{w:1.2}},gin:{n:'Ginčininkas',g:0,e:{th:-2}},velu:{n:'Vėluoja',g:0,e:{all:.9}}};
-const pkK=()=>G('wPerkK')/100,pkM=m=>1+(m-1)*pkK(),pcs=m=>Math.round(Math.abs(pkM(m)-1)*100);
+  god:{n:'Godus',g:0,e:{w:1.2}},gin:{n:'Ginčininkas',g:0,e:{th:-2}},velu:{n:'Vėluoja',g:0,e:{all:.9}},
+  ram:{n:'Ramus',g:1,t:0,e:{evb:.5}},sveik:{n:'Sveikuolis',g:1,t:0,e:{sick:0}},kol:{n:'Geras kolega',g:1,t:1,e:{th:1}},tvirt:{n:'Tvirtas',g:1,t:1,e:{tx:0}},
+  laimv:{n:'Laimės vaikas',g:1,t:2,e:{evg:1.6}},rad:{n:'Radinių medžiotojas',g:1,t:2,e:{bx:1.4}},
+  jaut:{n:'Jautrus mokesčiams',g:0,e:{tx:2}},nelm:{n:'Nelaimėlis',g:0,e:{evb:1.6}},lig:{n:'Ligotas',g:0,e:{sick:3}},plep:{n:'Plepys',g:0,e:{tp:.95}},isbl:{n:'Išsiblaškęs',g:0,e:{bx:.7}}};
+const pkK=()=>G('wPerkK')/100,pkM=m=>Math.max(0,1+(m-1)*pkK()),pcs=m=>Math.round(Math.abs(pkM(m)-1)*100);
 function perkDesc(id){const e=PERK[id].e,sg=m=>pkM(m)>=1?'+':'−';
-  if(e.w)return `Alga ${sg(e.w)}${pcs(e.w)}%`;if(e.hd)return e.hd<1?`Laimė mažėja ${pcs(e.hd)}% lėčiau`:`Laimė mažėja ${pcs(e.hd)}% greičiau`;
+  if(e.w)return `Alga ${sg(e.w)}${pcs(e.w)}%`;if(e.hd)return `Laimė ${e.hd>0?'+':'−'}${fmt1(Math.abs(e.hd)*pkK())} per dieną`;
+  if(e.tx!=null)return pkM(e.tx)<=0?'Mokesčiai jo laimės nemažina':`Dėl didelių mokesčių laimė krinta ${pcs(e.tx)}% ${pkM(e.tx)>1?'greičiau':'lėčiau'}`;
+  if(e.sick!=null)return pkM(e.sick)<=0?'Niekada neserga':`Serga ${fmt1(pkM(e.sick))}× dažniau`;
+  if(e.evb)return `Blogi darbo eventai ${pcs(e.evb)}% ${pkM(e.evb)>1?'dažniau':'rečiau'}`;if(e.evg)return `Geri darbo eventai ${pcs(e.evg)}% dažniau`;
+  if(e.bx)return `Įrankių dėžės ${pcs(e.bx)}% ${pkM(e.bx)>1?'dažniau':'rečiau'}`;
   if(e.fp)return `+${fmt1(e.fp*pkK())} effort/val.`;if(e.loyal)return 'Nesumokėjus algos laimė krinta perpus mažiau, niekada neišeina';
   if(e.tp)return `Kitų įmonės darbuotojų gamyba +${pcs(e.tp)}%`;if(e.th)return `Kitų įmonės darbuotojų laimė ${fmt1(e.th*pkK())} per dieną`;
   if(e.all)return `Visi statsai ${sg(e.all)}${pcs(e.all)}%`;const k=e.p?'p':e.q?'q':'l';return `${WST[k].n} ${sg(e[k])}${pcs(e[k])}%`;}
@@ -1095,22 +1110,28 @@ function wiNew(s,r){const a=WSLOT[s].rng[r],v=rr(a[0],a[1]);return {id:S.nextWid
 const wiPrice=r=>Math.round(G('wiSell')*Math.pow(2.5,r));
 // multipliers from perks (k: p, q, l, w, hd)
 function wEff(w,k){let m=1;for(const id of w.pk||[]){const e=PERK[id]&&PERK[id].e;if(!e)continue;if(e[k])m*=pkM(e[k]);if(e.all&&(k==='p'||k==='q'||k==='l'))m*=pkM(e.all);}return m;}
+const wFlat=(w,k)=>(w.pk||[]).reduce((a,id)=>a+(PERK[id]&&PERK[id].e[k]?PERK[id].e[k]*pkK():0),0);
+// effort buffs from work events: [{v: %, e: end tick, t: text}]
+const wBuff=w=>{let v=0;for(const b of w.bf||[])if(b.e>S.tick)v+=b.v;return Math.max(0,1+v/100);};
+const wSick=w=>(w.bf||[]).some(b=>b.e>S.tick&&b.v<=-100);
 const wHas=(w,f)=>(w.pk||[]).some(id=>PERK[id]&&PERK[id].e[f]);
 const wIt=(w,s)=>w.eq&&w.eq[s]?w.eq[s].v:0;
 const wHap=w=>clamp(w.h+wIt(w,'mug'),0,100);
 const wHM=w=>{const lo=G('wHapLo'),hi=G('wHapHi');return (lo+(hi-lo)*wHap(w)/100)/100;};
 // effective stat: (base + item) × perks × happiness; production also gets flat perks and mentors (team)
 function wStat(w,k,team){const it=wIt(w,k==='p'?'tool':k==='q'?'shoes':'charm');let v=(w[k]+it)*wEff(w,k);
-  if(k==='p')v+=(w.pk||[]).reduce((a,id)=>a+(PERK[id]&&PERK[id].e.fp?PERK[id].e.fp*pkK():0),0);return v*wHM(w)*(k==='p'?team||1:1);}
+  if(k==='p')v+=(w.pk||[]).reduce((a,id)=>a+(PERK[id]&&PERK[id].e.fp?PERK[id].e.fp*pkK():0),0);return v*wHM(w)*(k==='p'?(team||1)*wBuff(w):1);}
 const wWage=w=>r2(Math.max(G('wage')*G('wWageMin')/100,w.g*wEff(w,'w')));
 const coWk=c=>c.wk||(c.wk=[]);
 function coTeam(c,w){let m=1;for(const x of coWk(c))if(x!==w)for(const id of x.pk||[]){const e=PERK[id]&&PERK[id].e;if(e&&e.tp)m*=pkM(e.tp);}return m;}
-function rndPerk(g,t,not){const ks=Object.keys(PERK).filter(k=>PERK[k].g===g&&(t==null||PERK[k].t===t)&&!(not||[]).includes(k));return ks.length?pick(ks):null;}
+// perks that cancel each other are never rolled together
+const PERK_X={sveik:['lig'],lig:['sveik'],tvirt:['jaut'],jaut:['tvirt'],ram:['nelm'],nelm:['ram'],rad:['isbl'],isbl:['rad'],link:['niur'],niur:['link'],kol:['gin'],gin:['kol']};
+function rndPerk(g,t,not){not=(not||[]).concat(...(not||[]).map(k=>PERK_X[k]||[]));const ks=Object.keys(PERK).filter(k=>PERK[k].g===g&&(t==null||PERK[k].t===t)&&!(not||[]).includes(k));return ks.length?pick(ks):null;}
 // a new worker from country ci; foreigners have better stats but ask a higher wage
 function newWorker(ci,foreign,noId){const k=foreign?1+G('wFor')/100:1;
   const w={id:noId?0:S.nextWid++,n:botName(),o:ci,f:foreign?1:0,p:r2(rr(G('wPMin'),G('wPMax'))*k),q:Math.round(rr(G('wQMin'),G('wQMax'))*k),l:r2(rr(G('wLMin'),G('wLMax'))*k),
     h:Math.round(rr(G('wHMin'),G('wHMax'))),pk:[],eq:{},td:-1,opt:null,up:0};
-  if(R()<G('wPerkCh')/100){const id=rndPerk(R()<G('wPerkGood')/100?1:0);if(id)w.pk.push(id);}
+  for(let i=0;i<G('wPerkMax')&&R()<G(i?'wPerkCh2':'wPerkCh')/100;i++){const id=rndPerk(R()<G('wPerkGood')/100?1:0,null,w.pk.concat(PERK_X[w.pk[0]]||[]));if(id)w.pk.push(id);}
   const av=(a,b)=>(G(a)+G(b))/2||1,val=(w.p/av('wPMin','wPMax')+w.q/av('wQMin','wQMax')+w.l/av('wLMin','wLMax'))/3;
   w.g=Math.round(G('wage')*(.5+.5*val)*(foreign?1+G('wForWage')/100:1)*10)/10;return w;}
 // three different candidates: two from the company's country, one foreigner
@@ -1142,16 +1163,20 @@ function trBest(w,opts){const sc=o=>o.t*10+({stat:o.s==='p'?4:2,hap:w.h<60?6:1,w
   const re=opts.find(o=>o.k==='re');if(re&&(re.t>mo||!other.length))return re;return other.reduce((m,o)=>sc(o)>sc(m)?o:m,other[0]);}
 function trBot(w){w.opt=trRoll(w,0);for(let i=0;i<4&&w.opt;i++){const o=trBest(w,w.opt);if(trApply(w,o)||i===3)w.opt=null;}w.opt=null;}
 // ---- player's workers: wages and happiness every day, toolboxes every hour ----
-function wDay(){const p=S.p;let unpaid=0,paid=0;const quit=[];
+function wDay(){const p=S.p;let unpaid=0,paid=0;const quit=[];coDayRoll();wEvDay();
   p.companies.forEach(c=>{const L=coWk(c),th=L.reduce((a,w)=>a+(w.pk||[]).reduce((s,id)=>s+(PERK[id]&&PERK[id].e.th?PERK[id].e.th*pkK():0),0),0);
     L.forEach(w=>{const g=wWage(w),own=(w.pk||[]).reduce((s,id)=>s+(PERK[id]&&PERK[id].e.th?PERK[id].e.th*pkK():0),0);
-      if(p.money>=g){p.money-=g;paid+=g;w.up=0;}else{w.up=1;unpaid++;w.h-=G('wUnpaid')*(wHas(w,'loyal')?.5:1);}
-      w.h=Math.round(clamp(w.h-G('wHapDay')*wEff(w,'hd')+(th-own),0,100)*10)/10;});
+      if(p.money>=g){p.money-=g;paid+=g;w.up=0;coPt(c).g+=g;}else{w.up=1;unpaid++;w.h-=G('wUnpaid')*(wHas(w,'loyal')?.5:1);}
+      w.h=Math.round(clamp(w.h+wHapD(w,C(coLoc(c)).tax)+(th-own),0,100)*10)/10;w.bf=(w.bf||[]).filter(b=>b.e>S.tick);});
     const q=L.filter(w=>G('wQuit')>0&&w.h<=G('wQuit')&&!wHas(w,'loyal'));if(q.length){q.forEach(w=>{WSL.forEach(s=>{if(w.eq[s])p.wg.push(w.eq[s]);});quit.push(w);});c.wk=L.filter(w=>!q.includes(w));}});
   p.wPaid=r2(paid);if(unpaid)toast(`Neužteko pinigų algoms: ${unpaid} darb. šiandien nedirba ir liūdi.`,3500);
   quit.forEach(w=>addNews(`👷 ${w.n} išėjo iš tavo įmonės: laimė nukrito iki ${Math.round(w.h)}%.`,true));}
-function wHour(){const p=S.p,ch=G('wBoxP')/100;if(!ch)return;let n=0;p.companies.forEach(c=>coWk(c).forEach(w=>{if(!w.up&&R()<wStat(w,'l')*ch)n++;}));
-  if(n){p.inv.tbox+=n;toast(`🧰 Darbuotojai rado įrankių dėžę${n>1?' ×'+n:''}!`,3000);}}
+// daily happiness change: no decay on its own, only perks (hd) and high taxes in the country where the company stands
+function wHapD(w,tax){return -G('wHapDay')+wFlat(w,'hd')-Math.max(0,tax-G('wTaxSafe'))*G('wTaxK')*wEff(w,'tx');}
+// toolboxes: every hour each worker rolls his own chance from his luck
+const wBoxCh=w=>w.up||wSick(w)?0:Math.min(1,wStat(w,'l')*G('wBoxP')/100*wEff(w,'bx'));
+function wHour(){const p=S.p;if(!G('wBoxP'))return;const who=[];p.companies.forEach(c=>{coPt(c).e+=coAuto(c);coWk(c).forEach(w=>{if(R()<wBoxCh(w)){who.push(w.n);w.bx=(w.bx||0)+1;}});});
+  if(who.length){p.inv.tbox+=who.length;toast(`🧰 ${who.length>2?who.length+' darbuotojai':who.join(' ir ')} rado įrankių dėžę!`,3000);}}
 // ---- bot citizens use the same workers, stored compactly: [p,q,l,h,wage,'perk,perk',tool,shoes,charm,mug] ----
 const zW=a=>({p:a[0],q:a[1],l:a[2],h:a[3],g:a[4],pk:a[5]?a[5].split(','):[],eq:{tool:{v:a[6]||0},shoes:{v:a[7]||0},charm:{v:a[8]||0},mug:{v:a[9]||0}}});
 const zA=w=>[r2(w.p),Math.round(w.q),r2(w.l),Math.round(w.h),w.g,(w.pk||[]).join(','),...WSL.map(s=>w.eq[s]?w.eq[s].v:0)];
@@ -1165,11 +1190,99 @@ function citWk(z,c){const val=G('cWkVal'),lim=Math.min(G('cWkMax'),(z.co||0)*G('
   for(const w of ws){const g=wWage(w);
     if(z.m>=g){z.m-=g;inc+=wStat(w,'p',mt)*24*val;
       // toolboxes: expected 24 hourly rolls; the bot keeps an item only when it beats the one in that slot
-      const nb=24*wStat(w,'l')*ch,n=Math.floor(nb)+(R()<nb%1?1:0);for(let i=0;i<n;i++){const s=pick(WSL),a=WSLOT[s].rng[crRoll('tbox')],v=rr(a[0],a[1]);if(v>wIt(w,s))w.eq[s]={v:s==='shoes'||s==='mug'?Math.round(v):r2(v)};}}
+      const nb=24*wStat(w,'l')*ch*wEff(w,'bx'),n=Math.floor(nb)+(R()<nb%1?1:0);for(let i=0;i<n;i++){const s=pick(WSL),a=WSLOT[s].rng[crRoll('tbox')],v=rr(a[0],a[1]);if(v>wIt(w,s))w.eq[s]={v:s==='shoes'||s==='mug'?Math.round(v):r2(v)};}}
     else w.h-=G('wUnpaid')*(wHas(w,'loyal')?.5:1);
-    w.h=clamp(w.h-G('wHapDay')*wEff(w,'hd'),0,100);if(G('cWkTrain'))trBot(w);}
+    w.h=clamp(w.h+wHapD(w,C(z.c).tax),0,100);if(G('cWkTrain'))trBot(w);}
   z.w=ws.filter(w=>!(G('wQuit')>0&&w.h<=G('wQuit')&&!wHas(w,'loyal'))).map(zA);return inc;}
 // ---- player actions ----
+// ---------- work events: once a day a worker may get an event; each option has outcomes with their chances ----------
+// effects: [kind, value, who, days]; kinds: e = effort % for days, h = happiness, pk = new perk (1 good / 0 bad), rm = remove a perk (1 good / 0 bad), s = sick for days, b = toolboxes, m = money
+// who: a = the worker, b = the second worker, all = everyone in the company. c on an option = price in base wages (× workers when per = 1)
+const EVT={
+  tired:{n:'Pervargęs',ic:'😩',g:0,sc:1,d:'{a} sako, kad nebeturi jėgų.',def:1,o:[
+    {n:'Duoti laisvą dieną',r:[{p:100,x:[['e',-100,'a',1],['h',8,'a']]}]},
+    {n:'Liepti dirbti',r:[{p:60,x:[['h',-6,'a']]},{p:40,x:[['e',-30,'a',2],['h',-10,'a']]}]}]},
+  idea:{n:'Puiki idėja',ic:'💡',g:1,sc:1,d:'{a} sugalvojo, kaip pagreitinti darbą.',def:1,o:[
+    {n:'Išbandyti',r:[{p:50,x:[['e',25,'a',3]]},{p:30,x:[['e',10,'a',2]]},{p:20,x:[['e',-15,'a',1]]}]},
+    {n:'Skirti premiją',c:2,r:[{p:75,x:[['h',12,'a']]},{p:25,x:[['h',12,'a'],['pk',1,'a']]}]},
+    {n:'Atmesti',r:[{p:100,x:[['h',-4,'a']]}]}]},
+  cold:{n:'Peršalo',ic:'🤧',g:0,sc:1,d:'{a} kosti ir čiaudi.',def:1,o:[
+    {n:'Pas gydytoją',c:1.5,r:[{p:85,x:[['s',1,'a']]},{p:15,x:[['h',5,'a']]}]},
+    {n:'Tegul dirba',r:[{p:50,x:[['e',-20,'a',2]]},{p:30,x:[['s',3,'a']]},{p:20,x:[]}]}]},
+  course:{n:'Kvalifikacijos kursai',ic:'🎓',g:1,sc:1,d:'{a} nori važiuoti į kursus.',def:1,o:[
+    {n:'Siųsti į kursus',c:3,r:[{p:55,x:[['e',15,'a',4]]},{p:35,x:[['pk',1,'a']]},{p:10,x:[['h',6,'a']]}]},
+    {n:'Ne dabar',r:[{p:100,x:[['h',-3,'a']]}]}]},
+  trouble:{n:'Asmeninės bėdos',ic:'🌧',g:0,sc:1,d:'{a} išgyvena sunkų laiką namuose.',def:1,o:[
+    {n:'Paremti pinigais',c:2,r:[{p:70,x:[['h',10,'a']]},{p:30,x:[['rm',0,'a'],['h',5,'a']]}]},
+    {n:'Ignoruoti',r:[{p:75,x:[['h',-8,'a']]},{p:25,x:[['h',-8,'a'],['pk',0,'a']]}]}]},
+  oldbox:{n:'Sena dėžė sandėlyje',ic:'📦',g:1,sc:1,d:'{a} sandėlio kampe rado seną dėžę.',def:0,o:[
+    {n:'Atidaryti',r:[{p:60,x:[['b',1]]},{p:25,x:[['b',2]]},{p:15,x:[['h',-5,'a']]}]},
+    {n:'Atiduoti radėjui',r:[{p:100,x:[['h',10,'a']]}]}]},
+  praise:{n:'Klientų pagyrimas',ic:'⭐',g:1,sc:1,d:'Klientai gyria {a} darbą.',def:0,o:[
+    {n:'Pagirti viešai',r:[{p:80,x:[['h',8,'a']]},{p:20,x:[['h',8,'a'],['rm',0,'a']]}]},
+    {n:'Pakelti atsakomybę',r:[{p:60,x:[['e',20,'a',3],['h',-3,'a']]},{p:40,x:[['pk',1,'a']]}]}]},
+  fight:{n:'Ginčas',ic:'😤',g:0,sc:2,d:'{a} ir {b} susipyko dėl pamainų.',def:2,o:[
+    {n:'Pasikalbėti',r:[{p:60,x:[['h',3,'a'],['h',3,'b']]},{p:40,x:[['h',-5,'a'],['h',-5,'b']]}]},
+    {n:'Perskirti pamainas',r:[{p:100,x:[['e',-10,'a',2],['e',-10,'b',2],['h',2,'a'],['h',2,'b']]}]},
+    {n:'Nesikišti',r:[{p:50,x:[['h',-10,'a'],['h',-10,'b']]},{p:30,x:[['pk',0,'a']]},{p:20,x:[['h',4,'a'],['h',4,'b']]}]}]},
+  mentor:{n:'Mokymas',ic:'🤝',g:1,sc:2,d:'{a} siūlosi pamokyti {b}.',def:1,o:[
+    {n:'Leisti',r:[{p:65,x:[['e',20,'b',3],['e',-10,'a',1]]},{p:35,x:[['pk',1,'b'],['e',-10,'a',1]]}]},
+    {n:'Ne, tegul dirba',r:[{p:100,x:[]}]}]},
+  duo:{n:'Puiki komanda',ic:'🎯',g:1,sc:2,d:'{a} ir {b} kartu dirba ypač gerai.',def:0,o:[
+    {n:'Palikti vienoje pamainoje',r:[{p:70,x:[['e',15,'a',3],['e',15,'b',3]]},{p:30,x:[['h',6,'a'],['h',6,'b']]}]},
+    {n:'Premija abiem',c:2,r:[{p:100,x:[['h',10,'a'],['h',10,'b']]}]}]},
+  party:{n:'Įmonės vakarėlis',ic:'🎉',g:1,sc:'all',d:'Darbuotojai prašo surengti vakarėlį.',def:1,o:[
+    {n:'Surengti',c:1,per:1,r:[{p:75,x:[['h',8,'all']]},{p:25,x:[['h',15,'all'],['e',-20,'all',1]]}]},
+    {n:'Atšaukti',r:[{p:100,x:[['h',-4,'all']]}]}]},
+  broke:{n:'Įrangos gedimas',ic:'⚙',g:0,sc:'all',d:'Sugedo dalis įrangos.',def:1,o:[
+    {n:'Taisyti iš karto',c:4,r:[{p:100,x:[['e',-15,'all',1]]}]},
+    {n:'Dirbti su gedimu',r:[{p:50,x:[['e',-35,'all',2]]},{p:50,x:[]}]}]},
+  boom:{n:'Užsakymų bumas',ic:'📈',g:1,sc:'all',d:'Užsakymų daugiau nei įprastai.',def:1,o:[
+    {n:'Viršvalandžiai',r:[{p:100,x:[['e',30,'all',2],['h',-5,'all']]}]},
+    {n:'Įprastas tempas',r:[{p:100,x:[['e',10,'all',2]]}]}]},
+  inspect:{n:'Inspekcija',ic:'📋',g:0,sc:'all',d:'Atvyksta darbo inspekcija.',def:1,o:[
+    {n:'Pasiruošti',c:2,r:[{p:90,x:[]},{p:10,x:[['h',-3,'all']]}]},
+    {n:'Rizikuoti',r:[{p:60,x:[]},{p:40,x:[['m',-6],['h',-5,'all']]}]}]},
+  flu:{n:'Gripo banga',ic:'🦠',g:0,sc:'all',d:'Mieste siaučia gripas.',def:1,o:[
+    {n:'Skiepai visiems',c:1,per:1,r:[{p:90,x:[]},{p:10,x:[['s',1,'all']]}]},
+    {n:'Tikėtis geriausio',r:[{p:50,x:[['s',1,'all']]},{p:50,x:[['e',-15,'all',2]]}]}]}};
+const evK=()=>G('wEvK')/100;
+const evCost=(o,n)=>o.c?Math.round(o.c*G('wage')*G('wEvCost')/100*(o.per?Math.max(1,n):1)):0;
+function coById(id){return S.p.companies.find(c=>c.id===id);}
+const coId=c=>c.id||(c.id=S.nextWid++);
+function fxText(x,ev){const [k,v,who,d]=x,nm=who==='all'?'visų':who==='b'?'{b}':'{a}',K=evK();
+  switch(k){case 'e':return v<=-100?`${nm} nedirba ${d} d.`:`${nm} effort ${v>0?'+':'−'}${Math.round(Math.abs(v)*K)}% ${d} d.`;case 'h':return `${nm} laimė ${v>0?'+':'−'}${Math.round(Math.abs(v)*K)}`;
+    case 'pk':return `${nm} gauna ${v?'teigiamą':'neigiamą'} perką`;case 'rm':return `${nm} netenka ${v?'teigiamo':'neigiamo'} perko`;case 's':return `${nm} serga ${v} d.`;case 'b':return `🧰 +${v}`;case 'm':return `−₡${fmt(Math.round(v*-G('wage')))}`;}return '';}
+const evTxt=(t,e)=>{const a=e.a&&wById(e.a),b=e.b&&wById(e.b);return t.replace(/\{a\}/g,a?a.n:'Darbuotojas').replace(/\{b\}/g,b?b.n:'kolega');};
+function wById(id){for(const c of S.p.companies){const w=coWk(c).find(x=>x.id===id);if(w)return w;}return null;}
+// a day's events: each worker may start one (alone, with a colleague, or for the whole company)
+function wEvDay(){const p=S.p;p.wev=(p.wev||[]).filter(e=>{if(e.exp>S.tick)return true;evResolve(e,EVT[e.k].def,true);return false;});const ch=G('wEvP')/100;if(!ch)return;
+  const keys=Object.keys(EVT);for(const c of p.companies){const L=coWk(c);let allDone=false;
+    for(const w of L){if(p.wev.length>=G('wEvMax'))return;if(R()>=ch)continue;
+      const sw=[[1,G('wEvOne')],[2,L.length>1?G('wEvTwo'):0],['all',L.length>1&&!allDone?G('wEvAll'):0]],tot=sw.reduce((a,x)=>a+x[1],0);if(!tot)continue;let x=R()*tot,sc=1;for(const [k,v] of sw){x-=v;if(x<0){sc=k;break;}}
+      const gw=G('wEvGood')*wEff(w,'evg'),bw=(100-G('wEvGood'))*wEff(w,'evb'),good=R()*(gw+bw)<gw?1:0;
+      const ks=keys.filter(k=>EVT[k].sc===sc&&EVT[k].g===good);if(!ks.length)continue;let k=pick(ks);
+      if(sc===1&&!good&&wEff(w,'sick')>1&&R()<.5)k='cold';if(k==='cold'&&wEff(w,'sick')<=0)continue;
+      const e={id:S.nextWid++,k,co:coId(c),a:w.id,exp:S.tick+G('wEvH')};if(sc===2)e.b=pick(L.filter(x=>x!==w)).id;if(sc==='all'){allDone=true;delete e.a;}
+      p.wev.push(e);}}
+  if(p.wev.length)toast(`📣 Darbo eventai: ${p.wev.length}. Pažiūrėk įmonėse.`,3000);}
+function evTargets(e,who){const c=coById(e.co);if(!c)return [];if(who==='all')return coWk(c).slice();const w=wById(who==='b'?e.b:e.a);return w?[w]:[];}
+function evApply(e,x){const [k,v,who,d]=x,K=evK();
+  if(k==='b'){S.p.inv.tbox+=v;return;}if(k==='m'){S.p.money=Math.max(0,S.p.money+v*G('wage'));return;}
+  for(const w of evTargets(e,who)){switch(k){
+    case 'e':(w.bf=w.bf||[]).push({v:v<=-100?-100:Math.round(v*K),e:S.tick+d*24});break;
+    case 'h':w.h=clamp(Math.round((w.h+v*K)*10)/10,0,100);break;
+    case 's':if(wEff(w,'sick')<=0){x.got='sveikuolis neserga';break;}(w.bf=w.bf||[]).push({v:-100,e:S.tick+v*24});break;
+    case 'pk':{if((w.pk||[]).length>=G('wPerkMax'))break;const id=rndPerk(v,null,w.pk);if(id){w.pk.push(id);x.got=PERK[id].n;}break;}
+    case 'rm':{const L=(w.pk||[]).filter(id=>PERK[id]&&PERK[id].g===v);if(L.length){const id=pick(L);w.pk=w.pk.filter(y=>y!==id);x.got=PERK[id].n;}break;}}}}
+// picks an outcome of option oi by its chances and applies it; auto = nobody answered in time
+function evResolve(e,oi,auto){const D=EVT[e.k],o=D.o[oi],c=coById(e.co);if(!o||!c)return false;const n=coWk(c).length,cost=evCost(o,n);
+  if(cost&&S.p.money<cost){if(!auto)toast(`Reikia ₡${fmt(cost)}.`);if(!auto)return false;return evResolve(e,D.def===oi?D.o.length-1:D.def,true);}
+  S.p.money-=cost;let x=R()*o.r.reduce((a,r)=>a+r.p,0),r=o.r[0];for(const q of o.r){x-=q.p;if(x<0){r=q;break;}}
+  const fx=r.x.map(f=>f.slice());fx.forEach(f=>evApply(e,f));
+  const res=fx.length?fx.map(f=>evTxt(fxText(f),e)+(f.got?` („${f.got}“)`:'')).join(', '):'nieko neatsitiko';
+  const line=`${D.ic} ${D.n}: ${o.n}${auto?' (automatiškai)':''} → ${res}`;S.p.wlog=[{t:line,k:S.tick}].concat(S.p.wlog||[]).slice(0,12);
+  if(!auto)toast(line,4000);return true;}
 function wFind(id){for(const c of S.p.companies){const w=coWk(c).find(x=>x.id===id);if(w)return [w,c];}return [null,null];}
 const HU={i:-1},TU={w:0};
 const WA={
@@ -1187,7 +1300,10 @@ const WA={
   unequip(id,s){const p=S.p,[w]=wFind(id);if(!w||!w.eq[s])return;p.wg.push(w.eq[s]);delete w.eq[s];},
   sell(iid){const p=S.p,it=p.wg.find(x=>x.id===iid);if(!it)return;p.wg=p.wg.filter(x=>x!==it);const v=wiPrice(it.r);p.money+=v;toast(`Parduota: ${WSLOT[it.s].nm[it.r]} už ₡${v}`);}};
 let wkSel=0,wkSlot='';
-const wStatLine=(w,team)=>`<span>${WST.p.ic} ${fmt1(wStat(w,'p',team))}</span><span>${WST.q.ic} ${Math.round(wStat(w,'q'))}</span><span>${WST.l.ic} ${fmt1(wStat(w,'l'))}</span><span>${WST.h.ic} ${Math.round(wHap(w))}%</span>`;
+const wBuffLine=w=>{const L=(w.bf||[]).filter(b=>b.e>S.tick);return L.length?`<div class="pks">${L.map(b=>`<span class="pk ${b.v>0?'good':'bad'}">${b.v<=-100?'🤒 Serga / nedirba':`🔨 ${b.v>0?'+':''}${b.v}% effort`} · ${Math.ceil((b.e-S.tick)/24)} d.</span>`).join('')}</div>`:'';};
+// happiness others give this worker each day (perks like Ginčininkas / Geras kolega)
+const coTh=(c,w)=>coWk(c).filter(x=>x!==w).reduce((a,x)=>a+wFlat(x,'th'),0);
+const wStatLine=(w,team)=>`${wSick(w)?'<span>🤒</span>':''}<span>${WST.p.ic} ${fmt1(wStat(w,'p',team))}</span><span>${WST.q.ic} ${Math.round(wStat(w,'q'))}</span><span>${WST.l.ic} ${fmt1(wStat(w,'l'))}</span><span>${WST.h.ic} ${Math.round(wHap(w))}%</span>`;
 const perkChips=w=>(w.pk||[]).map(id=>`<span class="pk ${PERK[id].g?'good':'bad'}" title="${esc(perkDesc(id))}">${PERK[id].g?'▲':'▼'} ${PERK[id].n}</span>`).join('');
 function hireDraw(){const p=S.p,c=p.companies[HU.i];if(!c){$('#modal').hidden=true;return;}if(!c.cand)c.cand=wCands(coLoc(c));const n=coWk(c).length,cost=hireCost(n),full=n>=maxWk();
   $('#modal').innerHTML=`<div class="card"><div class="row"><h3 class="grow" style="margin:0">👷 Samdyti darbuotoją</h3><span class="muted">${n}/${maxWk()}</span></div>
@@ -1209,6 +1325,7 @@ function wRows(c,i){const p=S.p,d=wDay0();return coWk(c).map(w=>{const op=wkSel=
   let h=`<div class="wk${w.up?' unpaid':''}${op?' open':''}"><div class="row"><button class="wkh grow" data-act="wSel" data-i="${w.id}"><span class="wflag">${flagOf(C(w.o).a)}</span><span class="wn">${esc(w.n)}${w.f?' <small class="tag">užs.</small>':''}${w.up?' <small class="lack">nesumokėta</small>':''}</span><span class="wst">${wStatLine(w,coTeam(c,w))}</span></button>
     <button class="btn sm${tr?' alt':''}" data-act="wTrain" data-i="${w.id}" ${tr?'disabled':''}>${tr?'✔ Rytoj':w.opt?'Rinktis':'Treniruoti'}</button></div>`;
   if(op){h+=`${w.pk.length?`<div class="pks">${perkChips(w)}</div><div class="muted">${w.pk.map(id=>esc(PERK[id].n)+': '+esc(perkDesc(id))).join(' · ')}</div>`:'<div class="muted">Perkų nėra. Juos gali duoti treniruotė.</div>'}
+    ${wBuffLine(w)}<div class="muted">🧰 Įrankių dėžė: ${fmt1(wBoxCh(w)*100)}% kas valandą${w.bx?` · rado ${w.bx}`:''} · laimė per dieną ${(()=>{const v=wHapD(w,C(coLoc(c)).tax)+coTh(c,w);return (v>=0?'+':'−')+fmt1(Math.abs(v));})()}</div>
     <div class="muted">${esc(C(w.o).short)}${w.f?' (užsienietis)':''} · alga ₡${fmt1(wWage(w))}/d. · bazė: ${WST.p.ic} ${fmt1(w.p)} ${WST.q.ic} ${w.q} ${WST.l.ic} ${fmt1(w.l)} ${WST.h.ic} ${Math.round(w.h)}%</div>
     <div class="wslots">${WSL.map(s=>{const it=w.eq[s];return `<button class="wslot${wkSlot===s?' on':''}" data-act="wSlot" data-i="${s}" ${it?`style="--rc:${RAR[it.r].c}"`:''}>${it?wiIco(s,it.r):`<span class="wi empty">${WSLOT[s].ic}</span>`}<small>${it?esc(WSLOT[s].nm[it.r]):WSLOT[s].n}</small>${it?`<small>${wiVal(s,it.v)}</small>`:''}</button>`;}).join('')}</div>`;
     if(wkSlot){const it=w.eq[wkSlot],L=p.wg.filter(x=>x.s===wkSlot).sort((a,b)=>b.r-a.r||b.v-a.v);
@@ -1216,6 +1333,41 @@ function wRows(c,i){const p=S.p,d=wDay0();return coWk(c).map(w=>{const op=wkSel=
         ${L.length?L.slice(0,12).map(x=>`<div class="row">${wiIco(x.s,x.r)}<span class="grow" style="color:${RAR[x.r].c}">${esc(WSLOT[x.s].nm[x.r])}</span><span>${wiVal(x.s,x.v)}</span><button class="btn sm" data-act="wEquip" data-i="${w.id}" data-s="${x.id}">Uždėti</button></div>`).join(''):`<div class="muted">Neturi daiktų šiai vietai (${WSLOT[wkSlot].n.toLowerCase()}). Jų iškrenta iš 🧰 įrankių dėžių.</div>`}</div>`;}
     h+=`<div class="row"><span class="grow"></span><button class="btn sm red" data-act="wFire" data-i="${w.id}">Atleisti</button></div>`;}
   return h+'</div>';}).join('');}
+// ---- company statistics panel ----
+let coStatOpen=false,coDaySel=-1;
+function coSpark(c){const L=(c.ph||[]).slice(0,7).reverse().map(coPf),mx=Math.max(1,...L.map(Math.abs));if(!L.length)return '';const w=6,g=2,W=L.length*(w+g);
+  return `<svg class="spark" viewBox="0 0 ${W} 20" width="${W}" height="20" aria-hidden="true"><line x1="0" x2="${W}" y1="10" y2="10" class="ax"/>${L.map((v,i)=>{const hh=Math.max(1,Math.abs(v)/mx*9);return `<rect x="${i*(w+g)}" y="${v>=0?10-hh:10}" width="${w}" height="${hh}" rx="1.5" class="${v>=0?'pos':'neg'}"/>`;}).join('')}</svg>`;}
+function renderCoStats(){const p=S.p,C0=p.companies;if(!C0.length)return '';
+  let h=`<button class="btn alt costat-t" data-act="coStat">📊 Visų įmonių statistika ${coStatOpen?'▴':'▾'}</button>`;if(!coStatOpen)return h;
+  const nd=Math.max(0,...C0.map(c=>(c.ph||[]).length));
+  // days oldest → newest, then today (still running)
+  const days=[];for(let i=Math.min(7,nd)-1;i>=0;i--)days.push({l:i===0?'Vakar':`−${i+1} d.`,d:C0.map(c=>(c.ph||[])[i]||null)});days.push({l:'Šiand.',d:C0.map(c=>c.pt||null),now:1});
+  const tot=d=>d.d.reduce((a,x)=>a+coPf(x),0),vals=days.map(tot),past=vals.slice(0,-1),sum7=past.reduce((a,b)=>a+b,0);
+  if(coDaySel<0||coDaySel>=days.length)coDaySel=Math.max(0,days.length-2);
+  const best=C0.map(c=>[c,(c.ph||[]).reduce((a,x)=>a+coPf(x),0)]).sort((a,b)=>b[1]-a[1])[0];
+  h+=`<div class="box costat"><div class="rkg"><div class="rkc ${sum7>=0?'g':'r'}"><span class="rkt">Pelnas per ${past.length||0} d.</span><b>₡ ${fmt1(sum7)}</b></div><div class="rkc w"><span class="rkt">Vidutiniškai per dieną</span><b>₡ ${fmt1(past.length?sum7/past.length:0)}</b></div>
+    <div class="rkc y"><span class="rkt">Šiandien kol kas</span><b>₡ ${fmt1(vals[vals.length-1])}</b></div><div class="rkc g"><span class="rkt">Pelningiausia</span><b>${best&&past.length?esc(COMPANY[best[0].type].name):'–'}</b></div></div>`;
+  // bar chart: one bar per day, green above zero, red below; tap a bar to see that day
+  const W=320,H=130,top=18,bot=22,mx=Math.max(1,...vals.map(Math.abs)),hasNeg=vals.some(v=>v<0),zero=hasNeg?top+(H-top-bot)/2:H-bot,sc=(hasNeg?(H-top-bot)/2:(H-top-bot))/mx,bw=(W-(days.length-1)*6)/days.length;
+  h+=`<div class="muted">Dienos pelnas: pagamintų prekių vertė (be žaliavų) − mokesčiai − algos. Paspausk stulpelį.</div>
+   <svg class="cochart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Įmonių pelnas per dieną"><line x1="0" x2="${W}" y1="${zero}" y2="${zero}" class="ax"/>
+   ${days.map((d,i)=>{const v=vals[i],hh=Math.max(1.5,Math.abs(v)*sc),x=i*(bw+6),y=v>=0?zero-hh:zero,on=i===coDaySel;
+     return `<g class="cbar${on?' on':''}${d.now?' now':''}" data-act="coDay" data-i="${i}"><rect x="${x-3}" y="0" width="${bw+6}" height="${H}" class="hit"/><rect x="${x}" y="${y}" width="${bw}" height="${hh}" rx="4" class="${v>=0?'pos':'neg'}"><title>${d.l}: ₡${fmt1(v)}</title></rect>
+       ${on?`<text x="${x+bw/2}" y="${v>=0?y-5:y+hh+12}" text-anchor="middle" class="val">₡${fmt1(v)}</text>`:''}<text x="${x+bw/2}" y="${H-6}" text-anchor="middle" class="lbl">${d.l}</text></g>`;}).join('')}</svg>`;
+  const sd=days[coDaySel],sm=k=>sd.d.reduce((a,x)=>a+(x?x[k]:0),0);
+  h+=`<div class="costat-day"><b>${sd.l}${sd.now?' (diena dar vyksta)':''}</b><span>Vertė ₡${fmt1(sm('v'))}</span><span>Mokesčiai ₡${fmt1(sm('t'))}</span><span>Algos ₡${fmt1(sm('g'))}</span><span>Pagaminta ${fmt(sm('n'))}</span><span>🔨 ${fmt(sm('e'))} effort</span></div>`;
+  // per-company table
+  h+=`<div class="tlist">${C0.map((c,i)=>{const ws=coWk(c),p7=(c.ph||[]).reduce((a,x)=>a+coPf(x),0),hap=ws.length?ws.reduce((a,w)=>a+wHap(w),0)/ws.length:0,dv=coPf(sd.d[i]);
+    return `<div class="trow costat-r"><span class="ti sm">${ico(COMPANY[c.type].out)}</span><span class="tn">${esc(COMPANY[c.type].name)}<small>👷 ${ws.length}${ws.length?` · 😊 ${Math.round(hap)}%`:''} · 🔨 +${fmt1(coAuto(c))}/val. · ${sd.l.toLowerCase()} ₡${fmt1(dv)}</small>${coSpark(c)}</span><span class="tv ${p7>=0?'up':'dn'}">₡${fmt1(p7)}</span></div>`;}).join('')}</div></div>`;
+  return h;}
+// ---- pending work events ----
+function renderWEv(){const p=S.p,L=(p.wev||[]).filter(e=>coById(e.co)&&EVT[e.k]);let h='';
+  if(L.length){h+=`<div class="box wev-box"><h4>📣 Darbo eventai (${L.length})</h4>${L.map(e=>{const D=EVT[e.k],c=coById(e.co),n=coWk(c).length;
+    return `<div class="wev ${D.g?'good':'bad'}"><div class="row"><span class="wev-ic">${D.ic}</span><div class="grow"><b>${D.n}</b> <span class="muted">· ${esc(COMPANY[c.type].name)} · liko ${Math.max(1,e.exp-S.tick)} val.</span><div>${esc(evTxt(D.d,e))}</div></div></div>
+     ${D.o.map((o,oi)=>{const cost=evCost(o,n),tot=o.r.reduce((a,r)=>a+r.p,0);return `<button class="wopt" data-act="evPick" data-i="${e.id}" data-s="${oi}" ${cost>p.money?'disabled':''}><b>${o.n}${cost?` · ₡${fmt(cost)}`:''}${oi===D.def?' <small class="muted">(jei nepasirinksi)</small>':''}</b>
+       ${o.r.map(r=>`<small><i>${Math.round(r.p/tot*100)}%</i> ${esc(r.x.length?r.x.map(x=>evTxt(fxText(x),e)).join(', '):'nieko neatsitinka')}</small>`).join('')}</button>`;}).join('')}</div>`;}).join('')}</div>`;}
+  if((p.wlog||[]).length)h+=`<details class="box"><summary><b>Eventų istorija</b></summary><div class="news">${p.wlog.map(x=>`<div><time>${timeStr(x.k)}</time>${esc(x.t)}</div>`).join('')}</div></details>`;
+  return h;}
 const CA={
   coBuild(type){const p=S.p,n=p.companies.length,cost=buildCost(n);if(n>=maxCo())return toast('Pasiektas įmonių limitas. Kelk įgūdį „Įmonių limitas“.');
     if(p.inv.iron<cost)return toast(`Trūksta geležies: reikia ${cost}.`);p.inv.iron-=cost;p.companies.push({type,ae:0,st:0,wk:[],eff:0,reg:myC().cap});coView=null;toast(`Pastatyta: ${COMPANY[type].name}`);},
@@ -1570,6 +1722,7 @@ function renderSheet(){
   if(tab==='work'){title='Įmonės';
     const n=p.companies.length,bc=buildCost(n),wages=r2(p.companies.reduce((s,c)=>s+coWk(c).reduce((a,w)=>a+wWage(w),0),0)),unp=p.companies.reduce((s,c)=>s+coWk(c).filter(w=>w.up).length,0);
     h+=`<div class="statstrip"><span>⚡ ${Math.floor(p.en)}/${p.maxEn}</span><span>🏭 ${n}/${maxCo()}</span><span>${ITEMS.iron.i} ${fmt(p.inv.iron)}</span><span>🔨 +${fmt1(workGain())}</span>${wages?`<span class="muted">Algos ₡${fmt1(wages)}/d.</span>`:''}${p.inv.tbox?`<span>🧰 ${p.inv.tbox}</span>`:''}</div>`;
+    h+=renderCoStats()+renderWEv();
     if(unp)h+=`<div class="box" style="border-color:var(--hp)">Neužteko pinigų algoms: ${unp} darb. šiandien nedirba, o jų laimė krito. Algos mokamos kiekvieną rytą.</div>`;
     if(p.inv.tbox)h+=`<div class="row"><span class="grow muted">🧰 Turi ${p.inv.tbox} įrankių dėž. Jose daiktai darbuotojams.</span><button class="btn sm" data-act="crateUI" data-i="tbox">Atidaryti</button></div>`;
     if(n)h+=G('autoProd')?`<div class="muted">Gamyba energijos nekainuoja: kai sukaupi pakankamai effort, prekės pagaminamos pačios (žaliavos imamos iš inventoriaus).</div>`:`<button class="btn alt" data-act="coProdAll">Gaminti visose įmonėse</button>`;
@@ -1771,6 +1924,8 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(
     case 'hit':A.hit(+t.dataset.b,+t.dataset.s);break;
     case 'mult':S.p.mult=+t.dataset.i;break;
     case 'bFilter':bFilter=t.dataset.i;break;
+    case 'coStat':coStatOpen=!coStatOpen;break;case 'coDay':coDaySel=+t.dataset.i;break;
+    case 'evPick':{const e=(S.p.wev||[]).find(x=>x.id===+t.dataset.i);if(e&&evResolve(e,+t.dataset.s))S.p.wev=S.p.wev.filter(x=>x!==e);break;}
     case 'conBattles':bFilter='con';openSheet('battles');$('#sheetBody').scrollTop=0;return;
     case 'unit':unitId=+t.dataset.i;if(unitId===S.p.u){kView='u';uView='my';openSheet('country');}else openSheet('unit');$('#sheetBody').scrollTop=0;return;
     case 'uView':uView=t.dataset.i;break;case 'uNew':UA.create();break;case 'uJoin':UA.join(+t.dataset.i);break;case 'uLeave':UA.leave();break;
@@ -1877,7 +2032,7 @@ function refresh(force){
   $('#money').textContent='₡ '+fmt(p.money);$('#inv').textContent=`🥧 ${p.inv.bread} · 🍣 ${p.inv.cfish}${p.inv.crate?' · 📦 '+p.inv.crate:''}${p.inv.crate2?' · 🎁 '+p.inv.crate2:''}${p.inv.tbox?' · 🧰 '+p.inv.tbox:''}`;
   $('#clock').textContent=timeStr(S.tick)+' · '+flagOf(myC().a)+' '+myC().short+(p.president?' · Pirmininkas':p.mp?' · Deputatas':'');$('#myflag').style.background=col(p.country);
   const nb=S.battles.filter(b=>b.att===p.country||b.def===p.country).length;const bb=$('#bBadge');bb.hidden=!nb;bb.textContent=nb;
-  {const pu=p.u&&unitById(p.u),nv=(p.mp?(S.bills||[]).filter(b=>!b.vote).length:0)+(pu&&pu.lead===0?(pu.con?0:(pu.off||[]).filter(o=>o.exp>S.tick).length)+(pu.req||[]).filter(q=>{const z=citById(q.id);return z&&!z.u;}).length:0),eb=$('#eBadge');eb.hidden=!nv;eb.textContent=nv;}const ib=$('#iBadge'),nc=p.inv.crate+p.inv.crate2+(p.inv.tbox||0);ib.hidden=!nc;ib.textContent=nc;
+  {const pu=p.u&&unitById(p.u),nv=(p.mp?(S.bills||[]).filter(b=>!b.vote).length:0)+(pu&&pu.lead===0?(pu.con?0:(pu.off||[]).filter(o=>o.exp>S.tick).length)+(pu.req||[]).filter(q=>{const z=citById(q.id);return z&&!z.u;}).length:0),eb=$('#eBadge');eb.hidden=!nv;eb.textContent=nv;}const ib=$('#iBadge'),nc=p.inv.crate+p.inv.crate2+(p.inv.tbox||0);ib.hidden=!nc;ib.textContent=nc;{const wb=$('#wBadge'),ne=(p.wev||[]).length;if(wb){wb.hidden=!ne;wb.textContent=ne;}}
   document.querySelectorAll('#speed button').forEach(b=>b.classList.toggle('on',+b.dataset.s===S.speed));
   const ae=document.activeElement,busy=!force&&ae&&$('#sheetBody').contains(ae)&&(ae.tagName==='SELECT'||ae.type==='range'||ae.type==='number'||ae.type==='text'||ae.dataset.cfg);
   if(tab==='trade'&&!force)tradeLive();else if(!busy||force)renderSheet();

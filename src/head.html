@@ -281,7 +281,7 @@ details summary{cursor:pointer;padding:4px 0;}
 .cbtn:focus-visible,.trow:focus-visible{outline:2px solid var(--brass2);outline-offset:2px;}
 .cbtns{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;}
 .tlist{display:grid;gap:4px;}
-.trow{display:flex;align-items:center;gap:8px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--fg);font:inherit;font-size:14px;text-align:left;}
+.trow{box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:7px 10px;color:var(--fg);font:inherit;font-size:14px;text-align:left;}
 button.trow{cursor:pointer;transition:background .15s,border-color .15s;}button.trow:hover{border-color:var(--brass);}button.trow:active{background:#24404f;}
 .trow.me{border-color:var(--brass);background:rgba(217,164,65,.12);}
 .trow.gap{justify-content:center;color:var(--muted);background:none;border:0;padding:0;}
@@ -448,6 +448,28 @@ h4.sec{border-bottom-color:var(--line);letter-spacing:.14em;font-size:12px}
 .rng b{background:var(--brass);box-shadow:0 0 0 2px rgba(0,0,0,.5)}
 .trow .tn.lnk{background:none;border:0;color:inherit;font:inherit;text-align:left;padding:0;cursor:pointer}
 .seg.three button{font-size:13px;padding-inline:2px;letter-spacing:.02em}
+.costat-t{width:100%;margin-bottom:8px}
+.costat .rkc.r b{color:var(--hp)}
+.cochart{width:100%;height:auto;display:block;margin:6px 0}
+.cochart .ax{stroke:var(--line2,#2d4652);stroke-width:1}
+.cochart .hit{fill:transparent;cursor:pointer}
+.cochart .pos,.spark .pos{fill:var(--ok)}.cochart .neg,.spark .neg{fill:var(--hp)}
+.cochart .cbar.now rect.pos,.cochart .cbar.now rect.neg{opacity:.55}
+.cochart .cbar.on rect.pos,.cochart .cbar.on rect.neg{opacity:1;stroke:var(--fg);stroke-width:1.5}
+.cochart .lbl{fill:var(--muted);font-size:10px}.cochart .val{fill:var(--fg);font-size:11px;font-weight:700}
+.spark{display:block;margin-top:4px}.spark .ax{stroke:var(--line2,#2d4652);stroke-width:1}
+.costat-day{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin:2px 0 8px}.costat-day b{color:var(--fg);width:100%}
+.costat-r .tv.up{color:var(--ok)}.costat-r .tv.dn{color:var(--hp)}
+.wev{padding:10px 0;border-top:1px solid var(--line)}.wev:first-of-type{border-top:0}
+.wev-ic{font-size:22px;width:30px;text-align:center}
+.wev.good b{color:var(--ok)}.wev.bad>.row b{color:var(--hp)}
+.wopt{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;margin-top:6px;padding:8px 10px;border-radius:10px;border:1px solid var(--line2,#2d4652);background:var(--panel2);color:var(--fg);font:inherit}
+.wopt b{color:var(--fg)!important;font-size:14px}.wopt small{font-size:12px;color:var(--muted)}.wopt small i{font-style:normal;color:var(--brass);font-weight:700;display:inline-block;min-width:34px}
+.wopt:disabled{opacity:.5}
+.costat{min-width:0}.costat .rkg{grid-template-columns:repeat(2,minmax(0,1fr))}.costat .rkc{min-width:0}.costat .rkc b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.costat-r .tn{min-width:0}
+.costat>*{min-width:0}.costat-r small{white-space:normal}.costat-r .tn{flex:1;overflow:hidden}
+.costat-r .tv{flex:none}
 </style>
 
 <div id="app">
@@ -475,7 +497,7 @@ h4.sec{border-bottom-color:var(--line);letter-spacing:.14em;font-size:12px}
   <nav id="tabs">
     <button data-t="inv"><svg viewBox="0 0 24 24"><path d="M5 8h14v12H5zM9 8V5h6v3M5 13h14M11 12v3h2v-3"/></svg>Inventorius<span class="badge" id="iBadge" hidden></span></button>
     <button data-t="battles"><svg viewBox="0 0 24 24"><path d="M4 4l9 9M4 4v4M4 4h4M20 4l-9 9M20 4v4M20 4h-4M7 15l-3 3 2 2 3-3M17 15l3 3-2 2-3-3"/></svg>Mūšiai<span class="badge" id="bBadge" hidden></span></button>
-    <button data-t="work"><svg viewBox="0 0 24 24"><path d="M3 20V10l5 3V10l5 3V6h3l1 14M3 20h18M17 6h3v14"/></svg>Įmonės</button>
+    <button data-t="work"><svg viewBox="0 0 24 24"><path d="M3 20V10l5 3V10l5 3V6h3l1 14M3 20h18M17 6h3v14"/></svg>Įmonės<span class="badge" id="wBadge" hidden>!</span></button>
     <button data-t="market"><svg viewBox="0 0 24 24"><path d="M3 4h2l2 11h11l2-8H6M9 20a1 1 0 100-2 1 1 0 000 2zM17 20a1 1 0 100-2 1 1 0 000 2z"/></svg>Rinka</button>
     <button data-t="country"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>Šalis<span class="badge" id="eBadge" hidden>!</span></button>
     <button data-t="bots"><svg viewBox="0 0 24 24"><path d="M12 3v3M6 6h12v10H6zM9 11h.01M15 11h.01M9 20h6M3 10v4M21 10v4"/></svg>Botai</button>
